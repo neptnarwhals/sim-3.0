@@ -361,6 +361,9 @@
                 },
                 "FPdMS": {
                     "stratFilterCondition": "Active || Very-Active"
+                },
+                "FPhotabMS": {
+                    "stratFilterCondition": "Active || Very-Active"
                 }
             }
         },

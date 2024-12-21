@@ -68,6 +68,49 @@ class fpSim extends theoryClass<theory, milestones> implements specificTheoryPro
         () => this.variables[1].cost + Math.log10((this.variables[1].level % 100) + 1) < this.variables[2].cost,
         ...new Array(8).fill(true),
       ],
+      FPhotabMS: [
+        true, // t - 0
+        () => {
+          let mod100 = this.variables[1].level % 100;
+          if(mod100 > 85) {
+            let levelMinusMod = this.variables[1].level - mod100;
+            let totalCost = 0;
+            for(let i = mod100 + 1; i <= 101; i++) {
+              totalCost = add(totalCost, this.variables[1].data.cost.getCost(levelMinusMod + i));
+            }
+            if(totalCost < this.variables[2].cost + 0.1 && (this.milestones.sterm == 0 || totalCost < this.variables[7].cost)) {
+              return true;
+            }
+          }
+          return (this.variables[1].cost + Math.log10((this.variables[1].level % 100) + 1) < this.variables[2].cost) &&
+              (this.milestones.sterm == 0 || this.variables[1].cost + Math.log10((this.variables[1].level % 100) + 1) < this.variables[7].cost)
+        }, // c1 - 1
+        () => {
+          if(this.milestones.sterm == 0) return true;
+          // s:
+          return this.variables[2].cost + 0.1 < this.variables[7].cost;
+        }, //c2 - 2
+        //q1 - 3
+        () => {
+          let cond1 = this.variables[3].cost + Math.log10((this.variables[3].level % 10) + 1)*1.5 < this.variables[4].cost
+          //let cond2 = this.variables[3].cost + Math.log10((this.variables[3].level % 10) + 1) < this.variables[2].cost
+          return cond1;
+        }, //q1
+        () => {
+          let cond1 = true; //this.variables[4].cost + 0.05 < this.variables[2].cost;
+          let cond2 = true;
+          if(this.milestones.sterm != 0) {
+            cond2 = this.variables[4].cost + 0.1 < this.variables[7].cost;
+          }
+          return cond1 && cond2;
+        }, //q2 - 4
+        () => {
+          return true;
+        }, //r1 - 5
+        true, //n1 - 6
+        true, //s - 7
+        ...new Array(5).fill(true),
+      ],
     };
     const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
     return condition;
@@ -102,6 +145,7 @@ class fpSim extends theoryClass<theory, milestones> implements specificTheoryPro
     const tree: { [key in stratType[theory]]: Array<milestones> } = {
       FP: globalOptimalRoute,
       FPdMS: globalOptimalRoute,
+      FPhotabMS: globalOptimalRoute,
     };
     return tree[this.strat];
   }
@@ -238,7 +282,7 @@ class fpSim extends theoryClass<theory, milestones> implements specificTheoryPro
       this.updateN_flag = false;
     }
 
-    if (this.strat == "FPdMS" && this.lastPub > 700 && this.getS(this.variables[7].level) < 2) {
+    if (["FPdMS", "FPhotabMS"].includes(this.strat) && this.lastPub > 700 && this.getS(this.variables[7].level) < 2) {
       this.milestones.sterm = 1;
       if (this.ticks % 20 < 10 / this.getS(this.variables[7].level)) this.milestones.sterm = 0;
     }
