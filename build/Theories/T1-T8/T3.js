@@ -21,7 +21,7 @@ export default function t3(data) {
 class t3Sim extends theoryClass {
     getBuyingConditions() {
         const conditions = {
-            T3: new Array(12).fill(true), //t3
+            T3: new Array(12).fill(true),
             T3C11C12C21: [true, true, false, true, true, false, true, false, false, false, false, false],
             T3noC11C13C21C33: [true, true, true, false, true, false, false, true, true, true, true, false],
             T3noC13C32C33: [true, true, true, true, true, false, true, true, true, true, false, false],
@@ -232,17 +232,17 @@ class t3Sim extends theoryClass {
         this.currencies = [0, 0, 0];
         this.varNames = ["b1", "b2", "b3", "c11", "c12", "c13", "c21", "c22", "c23", "c31", "c32", "c33"];
         this.variables = [
-            new Variable({ cost: new ExponentialCost(10, 1.18099), stepwisePowerSum: { default: true }, firstFreeCost: true }), //b1
-            new Variable({ cost: new ExponentialCost(10, 1.308), stepwisePowerSum: { default: true } }), //b2
-            new Variable({ cost: new ExponentialCost(3000, 1.675), stepwisePowerSum: { default: true } }), //b3
-            new Variable({ cost: new ExponentialCost(20, 6.3496), varBase: 2 }), //c11
-            new Variable({ cost: new ExponentialCost(10, 2.74), varBase: 2 }), //c12
-            new Variable({ cost: new ExponentialCost(1000, 1.965), varBase: 2 }), //c13
-            new Variable({ cost: new ExponentialCost(500, 18.8343), varBase: 2 }), //c21
-            new Variable({ cost: new ExponentialCost(1e5, 3.65), varBase: 2 }), //c22
-            new Variable({ cost: new ExponentialCost(1e5, 2.27), varBase: 2 }), //c23
-            new Variable({ cost: new ExponentialCost(1e4, 1248.27), varBase: 2 }), //c31
-            new Variable({ cost: new ExponentialCost(1e3, 6.81744), varBase: 2 }), //c32
+            new Variable({ cost: new ExponentialCost(10, 1.18099), stepwisePowerSum: { default: true }, firstFreeCost: true }),
+            new Variable({ cost: new ExponentialCost(10, 1.308), stepwisePowerSum: { default: true } }),
+            new Variable({ cost: new ExponentialCost(3000, 1.675), stepwisePowerSum: { default: true } }),
+            new Variable({ cost: new ExponentialCost(20, 6.3496), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(10, 2.74), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(1000, 1.965), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(500, 18.8343), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(1e5, 3.65), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(1e5, 2.27), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(1e4, 1248.27), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(1e3, 6.81744), varBase: 2 }),
             new Variable({ cost: new ExponentialCost(1e5, 2.98), varBase: 2 }), //c33
         ];
         this.curMult = 0;

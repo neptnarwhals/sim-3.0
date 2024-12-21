@@ -136,6 +136,9 @@
                 },
                 "T4C3d66": {
                     "stratFilterCondition": "(Active || Very-Active) && rho >= 240"
+                },
+                "T4C366": {
+                    "stratFilterCondition": "(Idle || Semi-Idle) && rho >= 240"
                 }
             }
         },

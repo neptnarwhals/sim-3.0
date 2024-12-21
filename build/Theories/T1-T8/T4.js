@@ -43,6 +43,14 @@ class t4Sim extends theoryClass {
                 },
                 () => { var _a; return this.variables[7].cost + 0.5 < ((_a = this.recursionValue) !== null && _a !== void 0 ? _a : Infinity) && (this.curMult < 1 || this.variables[7].cost + l10(1.5) <= this.variables[2].cost); },
             ],
+            T4C366: [
+                false,
+                false,
+                () => { var _a; return this.variables[2].cost + 0.1 < ((_a = this.recursionValue) !== null && _a !== void 0 ? _a : Infinity); },
+                ...new Array(3).fill(false),
+                () => { var _a; return this.variables[6].cost + l10(10 + (this.variables[6].level % 10)) + 1 < ((_a = this.recursionValue) !== null && _a !== void 0 ? _a : Infinity); },
+                () => { var _a; return this.variables[7].cost + 0.5 < ((_a = this.recursionValue) !== null && _a !== void 0 ? _a : Infinity); },
+            ],
         };
         const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
         return condition;
@@ -68,6 +76,12 @@ class t4Sim extends theoryClass {
                 [0, 1, 0],
             ],
             T4C3: [
+                [0, 0, 0],
+                [0, 0, 1],
+                [0, 0, 2],
+                [0, 0, 3],
+            ],
+            T4C366: [
                 [0, 0, 0],
                 [0, 0, 1],
                 [0, 0, 2],
@@ -187,7 +201,7 @@ class t4Sim extends theoryClass {
     }
     simulate(data) {
         return __awaiter(this, void 0, void 0, function* () {
-            if ((this.recursionValue === null || this.recursionValue === undefined) && this.strat === "T4C3d66" && global.forcedPubTime === Infinity) {
+            if ((this.recursionValue === null || this.recursionValue === undefined) && ["T4C3d66", "T4C366"].includes(this.strat) && global.forcedPubTime === Infinity) {
                 data.recursionValue = Number.MAX_VALUE;
                 const tempSim = yield new t4Sim(data).simulate(data);
                 this.recursionValue = tempSim[9][0];
@@ -209,7 +223,7 @@ class t4Sim extends theoryClass {
                 this.ticks++;
             }
             this.pubMulti = Math.pow(10, (this.getTotMult(this.pubRho) - this.totMult));
-            const result = createResult(this, this.strat === "T4C3d66" ? ` q1:${this.variables[6].level} q2:${this.variables[7].level}` : "");
+            const result = createResult(this, ["T4C3d66", "T4C366"].includes(this.strat) ? ` q1:${this.variables[6].level} q2:${this.variables[7].level}` : "");
             while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT)
                 this.boughtVars.pop();
             global.varBuy.push([result[7], this.boughtVars]);
@@ -224,7 +238,7 @@ class t4Sim extends theoryClass {
         const rhodot = this.totMult + this.variableSum;
         this.rho = add(this.rho, rhodot + l10(this.dt));
         this.t += this.dt / 1.5;
-        this.dt *= this.strat === "T4C3d66" && this.recursionValue === Number.MAX_VALUE ? Math.min(1.3, this.ddt * 10) : this.ddt;
+        this.dt *= ["T4C3d66", "T4C366"].includes(this.strat) && this.recursionValue === Number.MAX_VALUE ? Math.min(1.3, this.ddt * 10) : this.ddt;
         if (this.maxRho < this.recovery.value)
             this.recovery.time = this.t;
         this.tauH = (this.maxRho - this.lastPub) / (this.t / 3600);
