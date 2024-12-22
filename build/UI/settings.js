@@ -11,6 +11,17 @@ event(settingsCloseBtn, "pointerdown", () => {
     settingsModal.close();
     document.body.style.overflow = "auto";
 });
+const instructionsBtn = qs(".instructionsBtn");
+const instructionsCloseBtn = qs(".instructionsCloseBtn");
+const instructionsModal = qs(".instructions");
+event(instructionsBtn, "pointerdown", () => {
+    instructionsModal.showModal();
+    document.body.style.overflow = "hidden";
+});
+event(instructionsCloseBtn, "pointerdown", () => {
+    instructionsModal.close();
+    document.body.style.overflow = "auto";
+});
 const dtSlider = qs(".dt");
 const dtOtp = qs(".dtOtp");
 const ddtSlider = qs(".ddt");

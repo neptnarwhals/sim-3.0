@@ -43,6 +43,7 @@ function createImage(mode: string) {
 
 const saveDist = qs(".saveDist");
 const getDist = qs(".getDist");
+const loadSave = qs(".loadSave");
 const modeInput = <HTMLTextAreaElement>qs("textarea");
 
 event(saveDist, "pointerdown", () => {
@@ -54,3 +55,25 @@ event(saveDist, "pointerdown", () => {
 event(getDist, "pointerdown", () => {
   modeInput.value = localStorage.getItem("savedDistribution") ?? modeInput.value;
 });
+
+event(loadSave, "pointerdown", () => {
+  let presumedSaveFile = modeInput.value;
+  const output = qs(".output");
+
+  fetch("https://ex-save-loader.hotab.pw/load",{
+    method: "POST",
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({savefile: presumedSaveFile})
+  }).then(res => res.json()).then(r => {
+    if(!r[1] || r[1] == "Not a savefile") {
+      output.textContent = "Error loading save file.";
+    } else {
+      modeInput.value = r[1];
+    }
+  }).catch(e => {
+    output.textContent = "Error loading save file.";
+  })
+})
