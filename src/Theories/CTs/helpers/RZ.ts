@@ -363,7 +363,7 @@ let riemannSiegelZeta = (t: number, n: number): ComplexValue =>
 export let zeta = (T: number): ComplexValue =>
 {
     let t = Math.abs(T);
-    let z;
+    let z: ComplexValue;
     if(t >= 1)
         z = riemannSiegelZeta(t, 1);
     else if(t < 0.1)
