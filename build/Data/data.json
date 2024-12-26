@@ -371,7 +371,10 @@
             "tauFactor": 0.4,
             "strats": {
                 "RZ": {
-                    "stratFilterCondition": "Idle || Semi-Idle || Active || Very-Active"
+                    "stratFilterCondition": "Idle || Semi-Idle"
+                },
+                "RZd": {
+                    "stratFilterCondition": "Active || Very-Active"
                 }
             }
         },

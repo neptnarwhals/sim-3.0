@@ -33,7 +33,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         ];
         const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
             RZ: new Array(6).fill(true),
-            // RZd: activeStrat,
+            RZd: activeStrat,
             // RZdBH: activeStrat,
             // RZSpiralswap: activeStrat,
             // RZMS: activeStrat,
@@ -50,7 +50,6 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             () => this.milestones[1] === 1,
             () => this.milestones[2] === 1,
             () => this.milestones[2] === 1,
-            // () => this.variables[6].level < 2,
         ];
     }
     getMilestoneTree() {
@@ -64,15 +63,15 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
                 [3, 1, 1, 0],
                 [3, 1, 1, 0], // RZ (idle)
             ],
-            // RZd: [
-            //     [0, 0, 0, 0],
-            //     [0, 1, 0, 0],
-            //     [0, 1, 1, 0],
-            //     [1, 1, 1, 0],
-            //     [2, 1, 1, 0],
-            //     [3, 1, 1, 0],
-            //     [3, 1, 1, 0], // RZd
-            // ],
+            RZd: [
+                [0, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 1, 1, 0],
+                [1, 1, 1, 0],
+                [2, 1, 1, 0],
+                [3, 1, 1, 0],
+                [3, 1, 1, 0], // RZd
+            ],
             // RZdBH: [
             //     [0, 0, 0, 0],
             //     [0, 1, 0, 0],
@@ -115,12 +114,6 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         return tree[this.strat];
     }
     getTotMult(val: number) {
-        // From the game. This computes from rho, NOT from tau!
-        // const pubPower = 0.2102;
-        // const tauRate = 0.4;
-        // const pubExp = pubPower / tauRate;
-        // const pubMult = BigNumber.TWO;
-        // var getPublicationMultiplier = (tau) => tau.pow(pubExp) * pubMult;
         return Math.max(0, val * 0.2102 + l10(2));
     }
     updateMilestones() {
