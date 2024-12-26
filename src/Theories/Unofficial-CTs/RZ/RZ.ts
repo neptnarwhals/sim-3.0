@@ -4,13 +4,13 @@ import Variable, { ExponentialCost, StepwiseCost } from "../../../Utils/variable
 import { specificTheoryProps, theoryClass, conditionFunction } from "../../theory.js";
 import { c1Exp, getBlackholeSpeed, getb, lookups, resolution, zeta } from "./RZhelpers.js";
 
-export default async function rz(data: theoryData) {
+export default async function rzOld(data: theoryData) {
   const sim = new rzSim(data);
   const res = await sim.simulate();
   return res;
 }
 
-type theory = "RZ";
+type theory = "RZold";
 
 class rzSim extends theoryClass<theory> implements specificTheoryProps {
   curMult: number;

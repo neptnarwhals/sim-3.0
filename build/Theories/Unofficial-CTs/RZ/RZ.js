@@ -12,7 +12,7 @@ import { add, createResult, l10, subtract, sleep, binarySearch } from "../../../
 import Variable, { ExponentialCost, StepwiseCost } from "../../../Utils/variable.js";
 import { theoryClass } from "../../theory.js";
 import { c1Exp, getBlackholeSpeed, getb, lookups, resolution, zeta } from "./RZhelpers.js";
-export default function rz(data) {
+export default function rzOld(data) {
     return __awaiter(this, void 0, void 0, function* () {
         const sim = new rzSim(data);
         const res = yield sim.simulate();

@@ -360,8 +360,9 @@ let riemannSiegelZeta = (t: number, n: number): ComplexValue =>
     return [Z*Math.cos(th), -Z*Math.sin(th), Z];
 }
 
-export let zeta = (T: number): ComplexValue =>
+export let zeta = (T: number, ticks: number, offGrid: boolean, cache: Array<ComplexValue>): ComplexValue =>
 {
+    if (!offGrid && cache[ticks]) return cache[ticks];
     let t = Math.abs(T);
     let z: ComplexValue;
     if(t >= 1)
@@ -382,5 +383,28 @@ export let zeta = (T: number): ComplexValue =>
     }
     if(T < 0)
         z[1] = -z[1];
+
+    if (!offGrid) cache[ticks] = z;
     return z;
+
 }
+
+// Mechanics to review:
+export const resolution = 4;
+export const getBlackholeSpeed = (z: number): number => Math.min(Math.pow(z, 2) + 0.004, 1 / resolution);
+export const getb = (level: number): number => 0.5 * level;
+export const c1Exp = [1, 1.14, 1.21, 1.25];
+
+// The lookup table only works before black hole is enabled in a pub, because then the time values would get misaligned.
+interface lookupsInterface {
+    zetaLookup: Array<ComplexValue>;
+    zetaDerivLookup: Array<ComplexValue>;
+    prevDt: number;
+    prevDdt: number;
+}
+export const lookups: lookupsInterface = {
+    zetaLookup: [],
+    zetaDerivLookup: [],
+    prevDt: 1.5,
+    prevDdt: 1.0001,
+};

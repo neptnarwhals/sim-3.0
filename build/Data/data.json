@@ -368,6 +368,14 @@
             }
         },
         "RZ": {
+            "tauFactor": 0.4,
+            "strats": {
+                "RZ": {
+                    "stratFilterCondition": "Idle || Semi-Idle || Active || Very-Active"
+                }
+            }
+        },
+        "RZold": {
             "tauFactor": 0.1,
             "UI_visible": false,
             "strats": {

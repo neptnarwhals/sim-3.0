@@ -120,6 +120,8 @@ export function reverseMulti(theory: string, value: number, sigma: number) {
       return value * (1 / 0.1625) * 2.5;
     case "FP":
       return (value - Math.log10(5)) * (1 / 0.331) * (10 / 3);
+    case "RZ":
+      return (value - Math.log10(2)) / 0.2102;
   }
   throw `Failed parsing multiplier. Please contact the author of the sim.`;
 }

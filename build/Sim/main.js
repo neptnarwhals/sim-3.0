@@ -25,7 +25,8 @@ import ef from "../Theories/CTs/EF.js";
 import csr2 from "../Theories/CTs/CSR2.js";
 import fi from "../Theories/CTs/FI";
 import fp from "../Theories/CTs/FP.js";
-import rz from "../Theories/Unofficial-CTs/RZ/RZ.js";
+import rzOld from "../Theories/Unofficial-CTs/RZ/RZ.js";
+import rz from "../Theories/CTs/RZ.js";
 import bt from "../Theories/Unofficial-CTs/BT.js";
 const output = qs(".output");
 export const global = {
@@ -119,10 +120,12 @@ function singleSim(data) {
                 return yield fp(sendData);
             case "FI":
                 return yield fi(sendData);
-            case "RZ":
-                return yield rz(sendData);
             case "BT":
                 return yield bt(sendData);
+            case "RZ":
+                return yield rz(sendData);
+            case "RZold":
+                return yield rzOld(sendData);
         }
     });
 }

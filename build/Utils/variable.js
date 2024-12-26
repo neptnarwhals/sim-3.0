@@ -67,8 +67,11 @@ function parseValue(val) {
         return log10(val);
     return Math.log10(Number(val));
 }
-export class CompositeCost {
+class BaseCost {
+}
+export class CompositeCost extends BaseCost {
     constructor(cutoff, cost1, cost2) {
+        super();
         this.cutoff = cutoff;
         this.cost1 = cost1;
         this.cost2 = cost2;
@@ -77,7 +80,7 @@ export class CompositeCost {
         return level < this.cutoff ? this.cost1.getCost(level) : this.cost2.getCost(level - this.cutoff);
     }
 }
-export class ExponentialCost {
+export class ExponentialCost extends BaseCost {
     /**
      * ExponentialCost constructor
      * @param {number} base BaseCost of the variable
@@ -85,6 +88,7 @@ export class ExponentialCost {
      * @param {boolean} log2 States whether the cost increase is log2 or not - optional, default: false
      */
     constructor(base, costInc, log2 = false) {
+        super();
         this.cost = parseValue(String(base));
         this.costInc = parseValue(String(costInc));
         if (log2)
@@ -94,12 +98,22 @@ export class ExponentialCost {
         return this.cost + this.costInc * level;
     }
 }
-export class StepwiseCost {
+export class StepwiseCost extends BaseCost {
     constructor(stepLength, cost) {
+        super();
         this.stepLength = stepLength;
         this.cost = cost;
     }
     getCost(level) {
         return this.cost.getCost(Math.floor(level / this.stepLength));
+    }
+}
+export class ConstantCost extends BaseCost {
+    constructor(base) {
+        super();
+        this.cost = parseValue(String(base));
+    }
+    getCost(level) {
+        return this.cost;
     }
 }

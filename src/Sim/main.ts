@@ -16,7 +16,8 @@ import ef from "../Theories/CTs/EF.js";
 import csr2 from "../Theories/CTs/CSR2.js";
 import fi from "../Theories/CTs/FI";
 import fp from "../Theories/CTs/FP.js";
-import rz from "../Theories/Unofficial-CTs/RZ/RZ.js";
+import rzOld from "../Theories/Unofficial-CTs/RZ/RZ.js";
+import rz from "../Theories/CTs/RZ.js";
 import bt from "../Theories/Unofficial-CTs/BT.js";
 
 const output = qs(".output");
@@ -132,10 +133,12 @@ async function singleSim(data: Omit<parsedData, "simAllInputs">): Promise<simRes
       return await fp(sendData);
     case "FI":
       return await fi(sendData);
-    case "RZ":
-      return await rz(sendData);
     case "BT":
       return await bt(sendData);
+    case "RZ":
+      return await rz(sendData);
+    case "RZold":
+      return await rzOld(sendData);
   }
 }
 

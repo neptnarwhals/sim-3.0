@@ -156,6 +156,8 @@ function getCurrencySymbol(value) {
         return "\u03C1";
     if (value === "lambda")
         return "\u03BB";
+    if (value === "delta")
+        return "\u03B4";
     if (/_/.test(value)) {
         value = value.replace(/{}/g, "");
         const split = value.split("_");
