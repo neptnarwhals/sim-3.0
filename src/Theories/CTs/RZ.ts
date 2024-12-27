@@ -293,7 +293,12 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         // this.output.innerHTML = this.outputResults;
         // this.outputResults = '';
         this.pubMulti = Math.pow(10, this.getTotMult(this.pubRho) - this.totMult);
-        const result = createResult(this, (["RZdBH", "RZBH"].includes(this.strat) && this.bhFoundZero) ? ` t=${Number(this.t_var.toFixed(2))}` : "");
+        let stratExtra = "";
+        if (this.strat.includes("BH"))
+        {
+            stratExtra = ` t=${this.bhAtRecovery ? this.t_var.toFixed(2) : this.targetZero.toFixed(2)}`
+        }
+        const result = createResult(this, stratExtra);
         while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT) this.boughtVars.pop();
         global.varBuy.push([result[7], this.boughtVars]);
         return result;
