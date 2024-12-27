@@ -40,7 +40,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             RZ: new Array(6).fill(true),
             RZd: activeStrat,
             RZBH: new Array(6).fill(true),
-            // RZdBH: activeStrat,
+            RZdBH: activeStrat,
             // RZSpiralswap: activeStrat,
             // RZMSd: activeStrat,
             // RZMS: new Array(6).fill(true),
@@ -86,17 +86,19 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
                 [1, 1, 1, 0],
                 [2, 1, 1, 0],
                 [3, 1, 1, 0],
+                [3, 1, 1, 0],
                 [3, 1, 1, 1], // RZBH
             ],
-            // RZdBH: [
-            //     [0, 0, 0, 0],
-            //     [0, 1, 0, 0],
-            //     [0, 1, 1, 0],
-            //     [1, 1, 1, 0],
-            //     [2, 1, 1, 0],
-            //     [3, 1, 1, 0],
-            //     [3, 1, 1, 1], // RZdBH
-            // ],
+            RZdBH: [
+                [0, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 1, 1, 0],
+                [1, 1, 1, 0],
+                [2, 1, 1, 0],
+                [3, 1, 1, 0],
+                [3, 1, 1, 0],
+                [3, 1, 1, 1], // RZdBH
+            ],
             // RZSpiralswap: [
             //     [0, 0, 0, 0],
             //     [0, 1, 0, 0],
@@ -188,7 +190,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         //         else this.milestones = this.milestoneTree[stage + 1];
         //     }
         // } else {
-        if (this.strat === "RZBH")
+        if (this.strat === "RZBH" || this.strat === "RZdBH")
         {
             // Black hole coasting
             if (this.maxRho < this.lastPub) this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
