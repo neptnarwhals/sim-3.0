@@ -25,6 +25,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
     maxTVar: number;
     bhSearchingRewind: boolean;
     bhFoundZero: boolean;
+    bhAtRecovery: boolean;
     bhzTerm: number;
     bhdTerm: number;
 
@@ -140,7 +141,10 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         else if ((this.strat === "RZBH" || this.strat === "RZdBH") && stage === 6)
         {
             // Black hole coasting
-            if (this.t_var <= this.targetZero) this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
+            if (
+                (!this.bhAtRecovery && (this.t_var <= this.targetZero)) ||
+                (this.bhAtRecovery && (this.maxRho < this.lastPub))
+            ) this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
             else this.milestones = this.milestoneTree[stage + 1];
         }
         else{
@@ -190,6 +194,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         this.offGrid = false;
         this.bhSearchingRewind = true;
         this.bhFoundZero = false;
+        this.bhAtRecovery = false;
         this.bhzTerm = 0;
         this.bhdTerm = 0;
         this.maxTVar = 0;
@@ -408,12 +413,12 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
                 startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 2100);
             }
             let bestSim: rzSim = new rzSim(this._originalData);
-            bestSim.targetZero = goodzeros.goodzeros[startZeroIndex];
+            bestSim.bhAtRecovery = true;
             let bestSimRes = await bestSim.simulate();
             for(let i = startZeroIndex; i < goodzeros.goodzeros.length; i++) {
                 let zero = goodzeros.goodzeros[i];
                 console.log("Simulating zero = "+zero);
-                if(zero > bestSim.maxTVar * 1.5) {
+                if(zero > bestSim.maxTVar * 10) {
                     // We don't look  any further than this!
                     break;
                 }

@@ -129,7 +129,8 @@ class rzSim extends theoryClass {
         }
         else if ((this.strat === "RZBH" || this.strat === "RZdBH") && stage === 6) {
             // Black hole coasting
-            if (this.t_var <= this.targetZero)
+            if ((!this.bhAtRecovery && (this.t_var <= this.targetZero)) ||
+                (this.bhAtRecovery && (this.maxRho < this.lastPub)))
                 this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
             else
                 this.milestones = this.milestoneTree[stage + 1];
@@ -176,6 +177,7 @@ class rzSim extends theoryClass {
         this.offGrid = false;
         this.bhSearchingRewind = true;
         this.bhFoundZero = false;
+        this.bhAtRecovery = false;
         this.bhzTerm = 0;
         this.bhdTerm = 0;
         this.maxTVar = 0;
@@ -376,12 +378,12 @@ class rzSimWrap extends theoryClass {
                     startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 2100);
                 }
                 let bestSim = new rzSim(this._originalData);
-                bestSim.targetZero = goodzeros.goodzeros[startZeroIndex];
+                bestSim.bhAtRecovery = true;
                 let bestSimRes = yield bestSim.simulate();
                 for (let i = startZeroIndex; i < goodzeros.goodzeros.length; i++) {
                     let zero = goodzeros.goodzeros[i];
                     console.log("Simulating zero = " + zero);
-                    if (zero > bestSim.maxTVar * 1.5) {
+                    if (zero > bestSim.maxTVar * 10) {
                         // We don't look  any further than this!
                         break;
                     }
