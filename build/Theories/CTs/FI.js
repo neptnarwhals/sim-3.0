@@ -20,11 +20,24 @@ export default function fi(data) {
 }
 class fiSim extends theoryClass {
     getBuyingConditions() {
+        let activeStrat = [
+            true,
+            //q1 mod 23
+            () => this.variables[1].cost + Math.log10((this.variables[1].level % 23) + 1) < this.variables[2].cost,
+            true,
+            true,
+            true,
+            //n mod 11 - 5
+            () => this.variables[5].cost + Math.log10((this.variables[5].level % 11) + 1) < this.variables[4].cost //n - 5
+        ];
         const conditions = {
             FI: new Array(6).fill(true),
+            // ["tdot", "q1", "q2", "k", "m", "n"]
+            FId: activeStrat,
+            FIPermaSwap: new Array(6).fill(true),
+            FIdPermaSwap: activeStrat,
         };
-        const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
-        return condition;
+        return conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
     }
     getMilestoneConditions() {
         const conditions = [
@@ -56,8 +69,26 @@ class fiSim extends theoryClass {
         for (let i = 0; i < pointUnlocks.length; i++)
             if (maxVal > pointUnlocks[i])
                 points++;
-        let fx = Math.min(avaliable[3], points, maxVal >= 1150 ? 3 : 2);
+        let fx;
+        if (this.strat.includes("PermaSwap")) {
+            fx = Math.min(avaliable[3], points, maxVal > 1050 ? 3 : 2);
+            if (this.maxRho < 1076 && fx == 3) {
+                fx -= 1;
+            }
+        }
+        else {
+            fx = Math.min(avaliable[3], points, maxVal >= 1150 ? 3 : 2);
+        }
         points -= fx;
+        if (this.strat.includes("PermaSwap")) {
+            // Swap back.
+            if (this.maxFx === 3 && this.maxRho < 1074) {
+                this.variables[2].data.cost = new ExponentialCost(1e-10, 2.27e3);
+                this.variables[2].reset();
+                this.q = 0;
+                this.maxFx = fx;
+            }
+        }
         if (fx > this.maxFx) {
             if (fx === 1) {
                 this.variables[2].data.cost = new ExponentialCost(1e7, 3e3);
@@ -69,10 +100,12 @@ class fiSim extends theoryClass {
                 this.variables[2].reset();
                 this.q = 0;
             }
-            else if (fx === 3 && this.maxFx < 2) {
-                this.variables[2].data.cost = new ExponentialCost(1e95, 1.08e3);
-                this.variables[2].reset();
-                this.q = 0;
+            else if (fx === 3) {
+                if (this.strat.includes("PermaSwap") || this.maxFx < 2) {
+                    this.variables[2].data.cost = new ExponentialCost(1e95, 1.08e3);
+                    this.variables[2].reset();
+                    this.q = 0;
+                }
             }
             this.maxFx = fx;
         }
@@ -192,8 +225,7 @@ class fiSim extends theoryClass {
                 this.tick();
                 if (this.rho > this.maxRho)
                     this.maxRho = this.rho;
-                if (this.lastPub < 1150)
-                    this.updateMilestones();
+                this.updateMilestones();
                 this.curMult = Math.pow(10, (this.getTotMult(this.maxRho) - this.totMult));
                 this.buyVariables();
                 pubCondition =
