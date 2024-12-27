@@ -2,7 +2,7 @@ import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
 import Variable, { ExponentialCost, StepwiseCost, CompositeCost, ConstantCost } from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
-import { c1Exp, getBlackholeSpeed, getb, lookups, resolution, zeta } from "./helpers/RZ.js";
+import { c1Exp, getBlackholeSpeed, getb, lookups, resolution, zeta, ComplexValue } from "./helpers/RZ.js";
 
 
 export default async function rz(data: theoryData) {
@@ -22,6 +22,11 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
     offGrid: boolean;
     pubUnlock: number;
 
+    bhSearchingRewind: boolean;
+    bhFoundZero: boolean;
+    bhzTerm: number;
+    bhdTerm: number;
+
     getBuyingConditions() {
         const activeStrat = [
             () => this.variables[0].level < this.variables[1].level * 4 + (this.milestones[0] ? 2 : 1),
@@ -34,9 +39,11 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
             RZ: new Array(6).fill(true),
             RZd: activeStrat,
+            RZBH: new Array(6).fill(true),
             // RZdBH: activeStrat,
             // RZSpiralswap: activeStrat,
-            // RZMS: activeStrat,
+            // RZMSd: activeStrat,
+            // RZMS: new Array(6).fill(true),
             // RZnoB: [true, true, false, true, true, false, false],
         };
         return conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
@@ -72,6 +79,15 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
                 [3, 1, 1, 0],
                 [3, 1, 1, 0], // RZd
             ],
+            RZBH: [
+                [0, 0, 0, 0],
+                [0, 1, 0, 0],
+                [0, 1, 1, 0],
+                [1, 1, 1, 0],
+                [2, 1, 1, 0],
+                [3, 1, 1, 0],
+                [3, 1, 1, 1], // RZBH
+            ],
             // RZdBH: [
             //     [0, 0, 0, 0],
             //     [0, 1, 0, 0],
@@ -88,8 +104,16 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             //     [2, 1, 0, 0],
             //     [3, 1, 0, 0],
             //     [3, 1, 1, 0],
+            //     //[3, 1, 1, 1], // Dummy line
+            // ],
+            // RZMSd: [
+            //     [0, 0, 0, 0],
+            //     [0, 1, 0, 0],
+            //     [0, 1, 1, 0],
+            //     [1, 1, 1, 0],
+            //     [2, 1, 1, 0],
             //     [3, 1, 1, 0],
-            //     [3, 1, 1, 1], // Dummy line
+            //     //[3, 1, 1, 1], // Dummy line
             // ],
             // RZMS: [
             //     [0, 0, 0, 0],
@@ -164,9 +188,49 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         //         else this.milestones = this.milestoneTree[stage + 1];
         //     }
         // } else {
+        if (this.strat === "RZBH")
+        {
+            // Black hole coasting
+            if (this.maxRho < this.lastPub) this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
+            else this.milestones = this.milestoneTree[stage + 1];
+        }
+        else{
             this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
+        }
+        
+
         // }
     }
+
+    snapZero() {
+        this.bhSearchingRewind = false;
+        this.offGrid = true;
+        let z:ComplexValue;
+        let tmpZ:ComplexValue;
+        let bhdt:number;
+        let dNewt:number;
+
+        do {
+            z = zeta(this.t_var, this.ticks, this.offGrid, lookups.zetaLookup);
+            tmpZ = zeta(this.t_var + 1 / 100000, this.ticks, this.offGrid, lookups.zetaDerivLookup);
+            dNewt = (tmpZ[2] - z[2]) * 100000;
+            bhdt = Math.max(-1, -z[2] / dNewt);
+            bhdt = Math.min(bhdt, 0.75);
+            this.t_var += bhdt;
+        }
+        while (Math.abs(bhdt) >= 1e-9)
+        
+        this.bhFoundZero = true;
+        z = zeta(this.t_var, this.ticks, this.offGrid, lookups.zetaLookup);
+        tmpZ = zeta(this.t_var + 1 / 100000, this.ticks, this.offGrid, lookups.zetaDerivLookup);
+        let dr = tmpZ[0] - z[0];
+        let di = tmpZ[1] - z[1];
+        this.bhdTerm = l10(Math.sqrt(dr * dr + di * di) * 100000);
+        this.rCoord = z[0];
+        this.iCoord = z[1];
+        this.bhzTerm = Math.abs(z[2]);
+    }
+
     constructor(data: theoryData) {
         super(data);
         this.totMult = this.getTotMult(data.rho);
@@ -177,6 +241,10 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         this.rCoord = -1.4603545088095868;
         this.iCoord = 0;
         this.offGrid = false;
+        this.bhSearchingRewind = true;
+        this.bhFoundZero = false;
+        this.bhzTerm = 0;
+        this.bhdTerm = 0;
         this.varNames = ["c1", "c2", "b", "w1", "w2", "w3"/*, "b+"*/];
         this.variables = [
             new Variable({
@@ -279,12 +347,20 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
     }
     tick() {
         let t_dot: number;
-        if (this.milestones[3]) {
+        /*
+        if (this.bhFoundZero) {
             t_dot = 0;
             // t_dot = getBlackholeSpeed(this.zTerm);
             this.offGrid = true;
-        } else t_dot = 1 / resolution;
-        this.t_var += (this.dt * t_dot) / 1.5;
+        }
+        else t_dot = 1 / resolution;
+        */
+
+        if (!this.milestones[3]){
+            t_dot = 1 / resolution;
+            this.t_var += (this.dt * t_dot) / 1.5;
+        }
+
         const tTerm = l10(this.t_var);
         const bonus = l10(this.dt) + this.totMult;
         const w1Term = this.milestones[1] ? this.variables[3].value : 0;
@@ -294,20 +370,42 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         const c2Term = this.variables[1].value;
         const bTerm = getb(this.variables[2].level);
 
-        const z = zeta(this.t_var, this.ticks, this.offGrid, lookups.zetaLookup);
-        if (this.milestones[1]) {
-            const tmpZ = zeta(this.t_var + 1 / 100000, this.ticks, this.offGrid, lookups.zetaDerivLookup);
-            const dr = tmpZ[0] - z[0];
-            const di = tmpZ[1] - z[1];
-            const derivTerm = l10(Math.sqrt(dr * dr + di * di) * 100000);
-            // derivCurrency.value += dTerm.pow(bTerm) * w1Term * w2Term * w3Term * bonus;
-            this.currencies[1] = add(this.currencies[1], derivTerm * bTerm + w1Term + w2Term + w3Term + bonus);
+        if (!this.bhFoundZero){
+            const z = zeta(this.t_var, this.ticks, this.offGrid, lookups.zetaLookup);
+            if (this.milestones[1]) {
+                const tmpZ = zeta(this.t_var + 1 / 100000, this.ticks, this.offGrid, lookups.zetaDerivLookup);
+                const dr = tmpZ[0] - z[0];
+                const di = tmpZ[1] - z[1];
+                const derivTerm = l10(Math.sqrt(dr * dr + di * di) * 100000);
+                // derivCurrency.value += dTerm.pow(bTerm) * w1Term * w2Term * w3Term * bonus;
+                this.currencies[1] = add(this.currencies[1], derivTerm * bTerm + w1Term + w2Term + w3Term + bonus);
+
+                if (this.milestones[3]){
+                    let dNewt = (tmpZ[2] - z[2]) * 100000;
+                    let bhdt = Math.max(-1, -z[2] / dNewt);
+                    bhdt = Math.min(bhdt, 0.75);
+
+                    if (this.bhSearchingRewind && bhdt > 0) {
+                        t_dot = 1 / resolution;
+                        this.t_var += (this.dt * t_dot) / 1.5;
+                    }
+                    else {
+                        this.snapZero();
+                    }
+                }
+            }
+            this.rCoord = z[0];
+            this.iCoord = z[1];
+            this.zTerm = Math.abs(z[2]);
+            this.currencies[0] = add(this.currencies[0], tTerm + c1Term + c2Term + w1Term + bonus - l10(this.zTerm / (2 ** bTerm) + 0.01));
         }
-        this.rCoord = z[0];
-        this.iCoord = z[1];
-        this.zTerm = Math.abs(z[2]);
+        else {
+            this.currencies[1] = add(this.currencies[1], this.bhdTerm * bTerm + w1Term + w2Term + w3Term + bonus);
+            this.currencies[0] = add(this.currencies[0], tTerm + c1Term + c2Term + w1Term + bonus - l10(this.bhzTerm / (2 ** bTerm) + 0.01));
+        }
+
         // normCurrency.value += tTerm * c1Term * c2Term * w1Term * bonus / (zTerm / BigNumber.TWO.pow(bTerm) + bMarginTerm);
-        this.currencies[0] = add(this.currencies[0], tTerm + c1Term + c2Term + w1Term + bonus - l10(this.zTerm / (2 ** bTerm) + 0.01));
+        
         this.t += this.dt / 1.5;
         this.dt *= this.ddt;
         if (this.maxRho < this.recovery.value) this.recovery.time = this.t;

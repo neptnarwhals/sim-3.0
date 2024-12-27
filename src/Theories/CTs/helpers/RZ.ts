@@ -173,7 +173,7 @@ const zeta01Table: Array<[number, number]> = [
     ]
 ];
 
-type ComplexValue = [number, number, number];
+export type ComplexValue = [number, number, number];
 
 let zetaSmall = (t: number): ComplexValue =>
 {
@@ -366,7 +366,7 @@ export let zeta = (T: number, ticks: number, offGrid: boolean, cache: Array<Comp
     let t = Math.abs(T);
     let z: ComplexValue;
     if(t >= 1)
-        z = riemannSiegelZeta(t, 1);
+        z = riemannSiegelZeta(t, 2);
     else if(t < 0.1)
         z = zetaSmall(t);
     else

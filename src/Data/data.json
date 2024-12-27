@@ -375,6 +375,10 @@
         },
         "RZd": {
           "stratFilterCondition": "Active || Very-Active"
+        },
+        "RZBH": {
+          "stratFilterCondition": "(Idle || Semi-Idle) && rho >= 600 && false",
+          "UI_visible":false
         }
       }
     },
