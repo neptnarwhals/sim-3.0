@@ -41,9 +41,9 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             RZd: activeStrat,
             RZBH: new Array(6).fill(true),
             RZdBH: activeStrat,
-            // RZSpiralswap: activeStrat,
-            // RZMSd: activeStrat,
-            // RZMS: new Array(6).fill(true),
+            RZSpiralswap: activeStrat,
+            RZdMS: activeStrat,
+            RZMS: new Array(6).fill(true),
             // RZnoB: [true, true, false, true, true, false, false],
         };
         return conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
@@ -60,73 +60,33 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         ];
     }
     getMilestoneTree() {
+        const noBHRoute = [
+            [0, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 1, 0],
+            [1, 1, 1, 0],
+            [2, 1, 1, 0],
+            [3, 1, 1, 0],
+            [3, 1, 1, 0]
+        ]
+        const BHRoute = [
+            [0, 0, 0, 0],
+            [0, 1, 0, 0],
+            [0, 1, 1, 0],
+            [1, 1, 1, 0],
+            [2, 1, 1, 0],
+            [3, 1, 1, 0],
+            [3, 1, 1, 0],
+            [3, 1, 1, 1]
+        ]
         const tree: { [key in stratType[theory]]: Array<Array<number>> } = {
-            RZ: [
-                [0, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 1, 1, 0],
-                [1, 1, 1, 0],
-                [2, 1, 1, 0],
-                [3, 1, 1, 0],
-                [3, 1, 1, 0], // RZ (idle)
-            ],
-            RZd: [
-                [0, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 1, 1, 0],
-                [1, 1, 1, 0],
-                [2, 1, 1, 0],
-                [3, 1, 1, 0],
-                [3, 1, 1, 0], // RZd
-            ],
-            RZBH: [
-                [0, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 1, 1, 0],
-                [1, 1, 1, 0],
-                [2, 1, 1, 0],
-                [3, 1, 1, 0],
-                [3, 1, 1, 0],
-                [3, 1, 1, 1], // RZBH
-            ],
-            RZdBH: [
-                [0, 0, 0, 0],
-                [0, 1, 0, 0],
-                [0, 1, 1, 0],
-                [1, 1, 1, 0],
-                [2, 1, 1, 0],
-                [3, 1, 1, 0],
-                [3, 1, 1, 0],
-                [3, 1, 1, 1], // RZdBH
-            ],
-            // RZSpiralswap: [
-            //     [0, 0, 0, 0],
-            //     [0, 1, 0, 0],
-            //     [1, 1, 0, 0],
-            //     [2, 1, 0, 0],
-            //     [3, 1, 0, 0],
-            //     [3, 1, 1, 0],
-            //     //[3, 1, 1, 1], // Dummy line
-            // ],
-            // RZMSd: [
-            //     [0, 0, 0, 0],
-            //     [0, 1, 0, 0],
-            //     [0, 1, 1, 0],
-            //     [1, 1, 1, 0],
-            //     [2, 1, 1, 0],
-            //     [3, 1, 1, 0],
-            //     //[3, 1, 1, 1], // Dummy line
-            // ],
-            // RZMS: [
-            //     [0, 0, 0, 0],
-            //     [0, 1, 0, 0],
-            //     [0, 1, 1, 0],
-            //     [1, 1, 1, 0],
-            //     [2, 1, 1, 0],
-            //     [3, 1, 1, 0],
-            //     [3, 1, 1, 0],
-            //     [3, 1, 1, 1], // Dummy line
-            // ],
+            RZ: noBHRoute,
+            RZd: noBHRoute,
+            RZBH: BHRoute,
+            RZdBH: BHRoute,
+            RZSpiralswap: noBHRoute,
+            RZdMS: noBHRoute,
+            RZMS: noBHRoute,
             // RZnoB: [
             //     [0, 0, 0, 0],
             //     [0, 1, 0, 0],
@@ -184,13 +144,35 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         //                 milestoneCount--;
         //             }
         //         }
-        //     } else {
-        //         // Black hole coasting
-        //         if (this.maxRho < this.lastPub) this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
-        //         else this.milestones = this.milestoneTree[stage + 1];
         //     }
-        // } else {
-        if (this.strat === "RZBH" || this.strat === "RZdBH")
+        if (this.strat === "RZSpiralswap" && stage >= 2 && stage <= 4)
+        {
+            // Spiralswap
+            let priority = originPriority;
+            if (this.zTerm > 1) priority = peripheryPriority;
+            let milestoneCount = stage;
+            this.milestones = [0, 0, 0, 0];
+            for (let i = 0; i < priority.length; i++) {
+                while (this.milestones[priority[i] - 1] < max[priority[i] - 1] && milestoneCount > 0) {
+                    this.milestones[priority[i] - 1]++;
+                    milestoneCount--;
+                }
+            }
+        }
+        else if ((this.strat === "RZMS" || this.strat === "RZdMS") && stage >= 2 && stage <= 4)
+        {
+            let priority = peripheryPriority;
+            if (this.maxRho > this.lastPub) priority = originPriority;
+            let milestoneCount = stage;
+            this.milestones = [0, 0, 0, 0];
+            for (let i = 0; i < priority.length; i++) {
+                while (this.milestones[priority[i] - 1] < max[priority[i] - 1] && milestoneCount > 0) {
+                    this.milestones[priority[i] - 1]++;
+                    milestoneCount--;
+                }
+            }
+        }
+        else if ((this.strat === "RZBH" || this.strat === "RZdBH") && stage === 6)
         {
             // Black hole coasting
             if (this.maxRho < this.lastPub) this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
@@ -199,9 +181,6 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         else{
             this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
         }
-        
-
-        // }
     }
 
     snapZero() {
