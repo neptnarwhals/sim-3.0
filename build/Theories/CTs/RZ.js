@@ -23,19 +23,27 @@ class rzSim extends theoryClass {
         const activeStrat = [
             () => this.variables[0].level < this.variables[1].level * 4 + (this.milestones[0] ? 2 : 1),
             true,
-            true,
+            () => this.t_var >= 16,
             () => (this.milestones[2] ? this.variables[3].cost + l10(4 + 0.5 * (this.variables[3].level % 8) + 0.0001) < this.variables[4].cost : true),
             true,
             true,
         ];
+        const semiPassiveStrat = [
+            true,
+            true,
+            () => this.t_var >= 16,
+            true,
+            true,
+            true
+        ];
         const conditions = {
             RZ: new Array(6).fill(true),
             RZd: activeStrat,
-            RZBH: new Array(6).fill(true),
+            RZBH: semiPassiveStrat,
             RZdBH: activeStrat,
             RZSpiralswap: activeStrat,
             RZdMS: activeStrat,
-            RZMS: new Array(6).fill(true),
+            RZMS: semiPassiveStrat,
             // RZnoB: [true, true, false, true, true, false, false],
         };
         return conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
