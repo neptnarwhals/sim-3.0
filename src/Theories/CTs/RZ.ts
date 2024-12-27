@@ -6,7 +6,7 @@ import { c1Exp, getBlackholeSpeed, getb, lookups, resolution, zeta, ComplexValue
 import goodzeros from "./helpers/RZgoodzeros.json" assert { type: "json" };
 
 export default async function rz(data: theoryData) {
-    return await ((new rzSim(data)).simulate());
+    return await ((new rzSimWrap(data)).simulate());
 }
 
 type theory = "RZ";
@@ -21,7 +21,8 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
     iCoord: number;
     offGrid: boolean;
     pubUnlock: number;
-
+    targetZero: number;
+    maxTVar: number;
     bhSearchingRewind: boolean;
     bhFoundZero: boolean;
     bhzTerm: number;
@@ -131,7 +132,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         else if ((this.strat === "RZBH" || this.strat === "RZdBH") && stage === 6)
         {
             // Black hole coasting
-            if (this.maxRho < this.lastPub) this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
+            if (this.t_var <= this.targetZero) this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
             else this.milestones = this.milestoneTree[stage + 1];
         }
         else{
@@ -172,6 +173,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         super(data);
         this.totMult = this.getTotMult(data.rho);
         this.curMult = 0;
+        this.targetZero = 999999999;
         this.currencies = [0, 0];
         this.t_var = 0;
         this.zTerm = 0;
@@ -182,6 +184,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         this.bhFoundZero = false;
         this.bhzTerm = 0;
         this.bhdTerm = 0;
+        this.maxTVar = 0;
         this.varNames = ["c1", "c2", "b", "w1", "w2", "w3"/*, "b+"*/];
         this.variables = [
             new Variable({
@@ -351,6 +354,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             this.maxTauH = this.tauH;
             this.pubT = this.t;
             this.pubRho = this.maxRho;
+            this.maxTVar = this.t_var;
         }
         // this.outputResults += `${this.t},${this.t_var},${this.currencies[0]},${this.currencies[1]}<br>`;
     }
@@ -376,5 +380,63 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
                     this.variables[i].buy();
                 } else break;
             }
+    }
+}
+
+class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
+    _originalData: theoryData;
+
+    constructor(data: theoryData) {
+        super(data);
+        this._originalData = data;
+    }
+    async simulate() {
+        if(this.strat.includes("BH") && this.lastPub >= 600) {
+            let startZeroIndex = 0;
+            if(this.lastPub >= 785) {
+                startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 1100);
+            }
+            if(this.lastPub >= 950) {
+                startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 2100);
+            }
+            let bestSim: rzSim = new rzSim(this._originalData);
+            bestSim.targetZero = goodzeros.goodzeros[startZeroIndex];
+            let bestSimRes = await bestSim.simulate();
+            for(let i = startZeroIndex; i < goodzeros.goodzeros.length; i++) {
+                let zero = goodzeros.goodzeros[i];
+                console.log("Simulating zero = "+zero);
+                if(zero > bestSim.maxTVar * 1.5) {
+                    // We don't look  any further than this!
+                    break;
+                }
+                let internalSim = new rzSim(this._originalData)
+                internalSim.targetZero = zero;
+                let res = await internalSim.simulate();
+                if(bestSim.maxTauH < internalSim.maxTauH) {
+                    bestSim = internalSim;
+                    bestSimRes = res;
+                }
+            }
+            for (let key in bestSim) {
+                // @ts-ignore
+                if (bestSim.hasOwnProperty(key) && typeof bestSim[key] !== "function") {
+                    // @ts-ignore
+                    this[key] = bestSim[key];
+                }
+            }
+            return bestSimRes;
+        }
+        else {
+            let internalSim = new rzSim(this._originalData);
+            let ret = await internalSim.simulate();
+            for (let key in internalSim) {
+                // @ts-ignore
+                if (internalSim.hasOwnProperty(key) && typeof internalSim[key] !== "function") {
+                    // @ts-ignore
+                    this[key] = internalSim[key];
+                }
+            }
+            return ret;
+        }
     }
 }
