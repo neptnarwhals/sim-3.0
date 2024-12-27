@@ -34,7 +34,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             () => this.variables[0].level < this.variables[1].level * 4 + (this.milestones[0] ? 2 : 1),
             true,
             () => this.t_var >= 16,
-            () => (this.milestones[2] ? this.variables[3].cost + l10(4 + 0.5 * (this.variables[3].level % 8) + 0.0001) < this.variables[4].cost : true),
+            () => (this.milestones[2] ? this.variables[3].cost + l10(4 + 0.5 * (this.variables[3].level % 8) + 0.0001) < Math.min(this.variables[4].cost, this.variables[5].cost) : true),
             true,
             true,
         ];
