@@ -445,7 +445,7 @@
     "modes": ["All", "Single sim", "Chain", "Steps", "Amount", "Time", "Time diff."],
     "modeInputDescriptions": ["", "", "", "Step length: ", "Amount of pubs (Chain): ", "Total Time: "],
     "modeInputPlaceholder": [
-        "<sigma> <t1>* [t2]* ... [wsp]* ... [fp]* \n\n*[r/t/m] = rho/tau/total multiplier | default tau",
+        "<sigma> <t1>* [t2]* ... [wsp]* ... [rz]* \n\n*[r/t/m] = rho/tau/total multiplier | default tau",
         "",
         "",
         "",

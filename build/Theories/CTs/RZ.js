@@ -78,15 +78,7 @@ class rzSim extends theoryClass {
             RZSpiralswap: noBHRoute,
             RZdMS: noBHRoute,
             RZMS: noBHRoute,
-            // RZnoB: [
-            //     [0, 0, 0, 0],
-            //     [0, 1, 0, 0],
-            //     [0, 1, 1, 0],
-            //     [1, 1, 1, 0],
-            //     [2, 1, 1, 0],
-            //     [3, 1, 1, 0],
-            //     [3, 1, 1, 0], // RZnob
-            // ],
+            // RZnoB: noBHRoute,
         };
         return tree[this.strat];
     }
@@ -99,43 +91,6 @@ class rzSim extends theoryClass {
         const max = [3, 1, 1, 1];
         const originPriority = [2, 1, 3];
         const peripheryPriority = [2, 3, 1];
-        // if (this.strat === "RZSpiralswap") {
-        //     // RZSS
-        //     if (stage <= 1 || stage === 5) {
-        //         this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
-        //     } else if (stage <= 4) {
-        //         // Spiralswap
-        //         let priority = originPriority;
-        //         if (this.zTerm > 1) priority = peripheryPriority;
-        //         let milestoneCount = stage;
-        //         this.milestones = [0, 0, 0, 0];
-        //         for (let i = 0; i < priority.length; i++) {
-        //             while (this.milestones[priority[i] - 1] < max[priority[i] - 1] && milestoneCount > 0) {
-        //                 this.milestones[priority[i] - 1]++;
-        //                 milestoneCount--;
-        //             }
-        //         }
-        //     } else {
-        //         // Black hole coasting
-        //         if (this.maxRho < this.lastPub) this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
-        //         else this.milestones = this.milestoneTree[stage + 1];
-        //     }
-        // } else if (this.strat === "RZMS") {
-        //     // RZMS
-        //     if (stage <= 1 || stage === 5) {
-        //         this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
-        //     } else if (stage <= 4) {
-        //         let priority = peripheryPriority;
-        //         if (this.maxRho > this.lastPub) priority = originPriority;
-        //         let milestoneCount = stage;
-        //         this.milestones = [0, 0, 0, 0];
-        //         for (let i = 0; i < priority.length; i++) {
-        //             while (this.milestones[priority[i] - 1] < max[priority[i] - 1] && milestoneCount > 0) {
-        //                 this.milestones[priority[i] - 1]++;
-        //                 milestoneCount--;
-        //             }
-        //         }
-        //     }
         if (this.strat === "RZSpiralswap" && stage >= 2 && stage <= 4) {
             // Spiralswap
             let priority = originPriority;
@@ -285,7 +240,6 @@ class rzSim extends theoryClass {
                 this.tick();
                 if (this.currencies[0] > this.maxRho)
                     this.maxRho = this.currencies[0];
-                // Eternal milestone swapping
                 this.updateMilestones();
                 this.curMult = Math.pow(10, this.getTotMult(this.maxRho) - this.totMult);
                 this.buyVariables();
@@ -296,7 +250,7 @@ class rzSim extends theoryClass {
             // this.output.innerHTML = this.outputResults;
             // this.outputResults = '';
             this.pubMulti = Math.pow(10, this.getTotMult(this.pubRho) - this.totMult);
-            const result = createResult(this, "");
+            const result = createResult(this, (["RZdBH", "RZBH"].includes(this.strat) && this.bhFoundZero) ? ` t=${Number(this.t_var.toFixed(2))}` : "");
             while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT)
                 this.boughtVars.pop();
             global.varBuy.push([result[7], this.boughtVars]);
