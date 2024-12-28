@@ -392,13 +392,13 @@
           "stratFilterCondition": "(Active || Very-Active) && rho >= 600"
         },
         "RZSpiralswap": {
-          "stratFilterCondition": "Very-Active && rho >= 50 && rho < 600"
+          "stratFilterCondition": "Very-Active && rho >= 50 && rho < 400"
         },
         "RZMS": {
-          "stratFilterCondition": "Semi-Idle && rho >= 50 && rho < 600"
+          "stratFilterCondition": "Semi-Idle && rho >= 50 && rho < 400"
         },
         "RZdMS": {
-          "stratFilterCondition": "(Active || Very-Active) && rho >= 50 && rho < 600"
+          "stratFilterCondition": "(Active || Very-Active) && rho >= 50 && rho < 400"
         }
       }
     },

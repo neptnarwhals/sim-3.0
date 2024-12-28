@@ -28,19 +28,42 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
     bhAtRecovery: boolean;
     bhzTerm: number;
     bhdTerm: number;
+    normalPubRho: number;
 
     getBuyingConditions() {
         const activeStrat = [
-            () => this.variables[0].level < this.variables[1].level * 4 + (this.milestones[0] ? 2 : 1),
-            true,
+            () => {
+                if(this.normalPubRho != -1 && this.variables[1].cost > this.normalPubRho - l10(2)) {
+                    return this.variables[0].cost <= this.normalPubRho - l10(8);
+                }
+                else {
+                    return this.variables[0].level < this.variables[1].level * 4 + (this.milestones[0] ? 2 : 1);
+                }
+            },
+            () => {
+                if(this.normalPubRho == -1) {
+                    return true;
+                }
+                return this.variables[1].cost <= this.normalPubRho - l10(2);
+            },
             () => this.t_var >= 16,
             () => (this.milestones[2] ? this.variables[3].cost + l10(4 + 0.5 * (this.variables[3].level % 8) + 0.0001) < Math.min(this.variables[4].cost, this.variables[5].cost) : true),
             true,
             true,
         ];
         const semiPassiveStrat = [
-            true,
-            true,
+            () => {
+                if(this.normalPubRho == -1) {
+                    return true;
+                }
+                return this.variables[0].cost <= this.normalPubRho - l10(8);
+            },
+            () => {
+                if(this.normalPubRho == -1) {
+                    return true;
+                }
+                return this.variables[1].cost <= this.normalPubRho - l10(2);
+            },
             () => this.t_var >= 16,
             true,
             true,
@@ -198,6 +221,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         this.bhzTerm = 0;
         this.bhdTerm = 0;
         this.maxTVar = 0;
+        this.normalPubRho = -1;
         this.varNames = ["c1", "c2", "b", "w1", "w2", "w3"/*, "b+"*/];
         this.variables = [
             new Variable({
@@ -296,7 +320,10 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         let stratExtra = "";
         if (this.strat.includes("BH"))
         {
-            stratExtra = ` t=${this.bhAtRecovery ? this.t_var.toFixed(2) : this.targetZero.toFixed(2)}`
+            stratExtra += ` t=${this.bhAtRecovery ? this.t_var.toFixed(2) : this.targetZero.toFixed(2)}`
+        }
+        if (this.normalPubRho != -1) {
+            stratExtra += ` c1=${this.variables[0].level} c2=${this.variables[1].level}`
         }
         const result = createResult(this, stratExtra);
         while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT) this.boughtVars.pop();
@@ -424,7 +451,7 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
                 let zero = goodzeros.goodzeros[i];
                 console.log("Simulating zero = "+zero);
                 if(zero > bestSim.maxTVar * 10) {
-                    // We don't look  any further than this!
+                    // We don't look any further than this!
                     break;
                 }
                 let internalSim = new rzSim(this._originalData)
@@ -434,6 +461,16 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
                     bestSim = internalSim;
                     bestSimRes = res;
                 }
+
+                let internalSim2 = new rzSim(this._originalData)
+                internalSim2.targetZero = zero;
+                internalSim2.normalPubRho = bestSim.pubRho;
+                let res2 = await internalSim2.simulate();
+                if(bestSim.maxTauH < internalSim2.maxTauH) {
+                    bestSim = internalSim2;
+                    bestSimRes = res2;
+                }
+
             }
             for (let key in bestSim) {
                 // @ts-ignore
