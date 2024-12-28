@@ -405,7 +405,7 @@ class rzSimWrap extends theoryClass {
                 if (this.lastPub >= 850) {
                     startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 1100);
                 }
-                if (this.lastPub >= 850) {
+                if (this.lastPub >= 950) {
                     startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 2100);
                 }
                 let bestSim = new rzSim(this._originalData);
