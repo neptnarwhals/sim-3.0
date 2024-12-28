@@ -400,7 +400,7 @@ eval("module.exports = /*#__PURE__*/JSON.parse('{\"theories\":{\"T1\":{\"tauFact
 /***/ ((module) => {
 
 "use strict";
-eval("module.exports = /*#__PURE__*/JSON.parse('{\"goodzeros\":[263.575,298,344.675,353.5,388.85,400,462.075,498.6,606.4,679.75,834.675,978.775,1115.075,1287.425,1686.425,2139.38,2401.5,2990.425,3489.675,5683.97,7406.45,7749.975,11032.425]}');\n\n//# sourceURL=webpack:///./build/Theories/CTs/helpers/RZgoodzeros.json?");
+eval("module.exports = /*#__PURE__*/JSON.parse('{\"goodzeros\":[263.575,298,344.675,353.5,388.85,400,462.075,498.6,606.4,679.75,834.675,978.775,1115.075,1287.425,1686.425,2139.38,2401.5,2990.425,3489.67,5193.4,5683.97,7406.43,7749.95,11032.41]}');\n\n//# sourceURL=webpack:///./build/Theories/CTs/helpers/RZgoodzeros.json?");
 
 /***/ })
 
