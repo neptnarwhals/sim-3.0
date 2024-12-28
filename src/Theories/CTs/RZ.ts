@@ -34,10 +34,10 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         const activeStrat = [
             () => {
                 if(this.normalPubRho != -1 && this.variables[1].cost > this.normalPubRho - l10(2)) {
-                    return this.variables[0].cost <= this.normalPubRho - l10(7.3 + 0.8 * this.variables[0].level % 8);
+                    return this.variables[0].cost <= this.normalPubRho - l10(10);
                 }
                 else {
-                    let precond = this.normalPubRho == -1 || this.variables[0].cost <= this.normalPubRho - l10(7.3 + 0.8 * this.variables[0].level % 8);
+                    let precond = this.normalPubRho == -1 || this.variables[0].cost <= this.normalPubRho - l10(10);
                     return precond && this.variables[0].level < this.variables[1].level * 4 + (this.milestones[0] ? 2 : 1);
                 }
             },
@@ -451,10 +451,6 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
             for(let i = startZeroIndex; i < goodzeros.goodzeros.length; i++) {
                 let zero = goodzeros.goodzeros[i];
                 console.log("Simulating zero = "+zero);
-                if(zero > bestSim.maxTVar * 10) {
-                    // We don't look any further than this!
-                    break;
-                }
                 let internalSim = new rzSim(this._originalData)
                 internalSim.targetZero = zero;
                 let res = await internalSim.simulate();
@@ -485,14 +481,19 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
         else {
             let internalSim = new rzSim(this._originalData);
             let ret = await internalSim.simulate();
-            for (let key in internalSim) {
+            let internalSim2 = new rzSim(this._originalData);
+            internalSim2.normalPubRho = internalSim.pubRho;
+            let ret2 = internalSim2.simulate();
+            let bestSim = internalSim.maxTauH > internalSim2.maxTauH ? internalSim: internalSim2;
+            let bestRet = internalSim.maxTauH > internalSim2.maxTauH ? ret: ret2;
+            for (let key in bestSim) {
                 // @ts-ignore
-                if (internalSim.hasOwnProperty(key) && typeof internalSim[key] !== "function") {
+                if (bestSim.hasOwnProperty(key) && typeof bestSim[key] !== "function") {
                     // @ts-ignore
-                    this[key] = internalSim[key];
+                    this[key] = bestSim[key];
                 }
             }
-            return ret;
+            return bestRet;
         }
     }
 }
