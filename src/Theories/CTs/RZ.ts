@@ -441,7 +441,7 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
             if(this.lastPub >= 850) {
                 startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 1100);
             }
-            if(this.lastPub >= 950) {
+            if(this.lastPub >= 850) {
                 startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 2100);
             }
             let bestSim: rzSim = new rzSim(this._originalData);
@@ -464,7 +464,7 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
 
                 let internalSim2 = new rzSim(this._originalData)
                 internalSim2.targetZero = zero;
-                internalSim2.normalPubRho = bestSim.pubRho;
+                internalSim2.normalPubRho = internalSim.pubRho;
                 let res2 = await internalSim2.simulate();
                 if(bestSim.maxTauH < internalSim2.maxTauH) {
                     bestSim = internalSim2;
