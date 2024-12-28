@@ -438,7 +438,7 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
     async simulate() {
         if(this.strat.includes("BH") && this.lastPub >= 600) {
             let startZeroIndex = 0;
-            if(this.lastPub >= 785) {
+            if(this.lastPub >= 850) {
                 startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 1100);
             }
             if(this.lastPub >= 950) {

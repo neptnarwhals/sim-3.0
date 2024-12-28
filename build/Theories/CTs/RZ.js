@@ -401,7 +401,7 @@ class rzSimWrap extends theoryClass {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.strat.includes("BH") && this.lastPub >= 600) {
                 let startZeroIndex = 0;
-                if (this.lastPub >= 785) {
+                if (this.lastPub >= 850) {
                     startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 1100);
                 }
                 if (this.lastPub >= 950) {
