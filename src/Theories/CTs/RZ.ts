@@ -37,7 +37,8 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
                     return this.variables[0].cost <= this.normalPubRho - l10(8);
                 }
                 else {
-                    return this.variables[0].level < this.variables[1].level * 4 + (this.milestones[0] ? 2 : 1);
+                    let precond = this.normalPubRho == -1 || this.variables[0].cost <= this.normalPubRho - l10(8);
+                    return precond && this.variables[0].level < this.variables[1].level * 4 + (this.milestones[0] ? 2 : 1);
                 }
             },
             () => {
