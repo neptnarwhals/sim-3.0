@@ -11,6 +11,39 @@ export default async function rz(data: theoryData) {
 
 type theory = "RZ";
 
+function mergeSortedLists(list1: Array<number>, list2: Array<number>): Array<number> {
+    let mergedList = [];
+    let i = 0; // Pointer for list1
+    let j = 0; // Pointer for list2
+
+    // Merge lists while both have elements left
+    while (i < list1.length && j < list2.length) {
+        if (list1[i] <= list2[j]) {
+            mergedList.push(list1[i]);
+            i++;
+        } else {
+            mergedList.push(list2[j]);
+            j++;
+        }
+    }
+
+    // Add remaining elements from list1, if any
+    while (i < list1.length) {
+        mergedList.push(list1[i]);
+        i++;
+    }
+
+    // Add remaining elements from list2, if any
+    while (j < list2.length) {
+        mergedList.push(list2[j]);
+        j++;
+    }
+
+    return mergedList;
+}
+
+let rzZeros = mergeSortedLists(goodzeros.genericZeros, goodzeros.rzSpecificZeros);
+let rzdZeros = mergeSortedLists(goodzeros.genericZeros, goodzeros.rzdSpecificZeros);
 
 class rzSim extends theoryClass<theory> implements specificTheoryProps {
     curMult: number;
@@ -438,19 +471,19 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
     }
     async simulate() {
         if(this.strat.includes("BH") && this.lastPub >= 600) {
+            let zeroList = this.strat.startsWith("RZd") ? rzdZeros : rzZeros;
             let startZeroIndex = 0;
             if(this.lastPub >= 850) {
-                startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 1100);
+                startZeroIndex = zeroList.findIndex((x) => x > 1100);
             }
             if(this.lastPub >= 950) {
-                startZeroIndex = goodzeros.goodzeros.findIndex((x) => x > 2100);
+                startZeroIndex = zeroList.findIndex((x) => x > 2100);
             }
             let bestSim: rzSim = new rzSim(this._originalData);
             bestSim.bhAtRecovery = true;
             let bestSimRes = await bestSim.simulate();
-            for(let i = startZeroIndex; i < goodzeros.goodzeros.length; i++) {
-                let zero = goodzeros.goodzeros[i];
-                console.log("Simulating zero = "+zero);
+            for(let i = startZeroIndex; i < zeroList.length; i++) {
+                let zero = zeroList[i];
                 let internalSim = new rzSim(this._originalData)
                 internalSim.targetZero = zero;
                 let res = await internalSim.simulate();

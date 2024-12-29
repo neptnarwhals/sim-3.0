@@ -1,5 +1,5 @@
 {
-    "goodzeros":[
+    "genericZeros":[
         263.575,
         298,
         344.675,
@@ -29,5 +29,11 @@
         7406.43,
         7749.95,
         11032.41
+    ],
+    "rzSpecificZeros": [
+        4340.10
+    ],
+    "rzdSpecificZeros": [
+
     ]
 }
