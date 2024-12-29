@@ -52,10 +52,10 @@ class rzSim extends theoryClass {
         const activeStrat = [
             () => {
                 if (this.normalPubRho != -1 && this.variables[1].cost > this.normalPubRho - l10(2)) {
-                    return this.variables[0].cost <= this.normalPubRho - l10(10 + this.variables[0].level % 8);
+                    return this.variables[0].cost <= this.normalPubRho - l10(8 + this.variables[0].level % 8);
                 }
                 else {
-                    let precond = this.normalPubRho == -1 || this.variables[0].cost <= this.normalPubRho - l10(10 + this.variables[0].level % 8);
+                    let precond = this.normalPubRho == -1 || this.variables[0].cost <= this.normalPubRho - l10(8 + this.variables[0].level % 8);
                     return precond && this.variables[0].level < this.variables[1].level * 4 + (this.milestones[0] ? 2 : 1);
                 }
             },
