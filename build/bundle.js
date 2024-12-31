@@ -400,7 +400,7 @@ eval("module.exports = /*#__PURE__*/JSON.parse('{\"theories\":{\"T1\":{\"tauFact
 /***/ ((module) => {
 
 "use strict";
-eval("module.exports = /*#__PURE__*/JSON.parse('{\"genericZeros\":[263.575,298,344.675,353.5,388.85,400,462.075,498.6,606.4,679.75,834.675,978.775,1115.075,1287.425,1686.425,2139.38,2401.5,2990.425,3126.47,3343.63,3489.67,3778.85,5193.4,5237.82,5683.97,5854.2,7406.43,7749.95,11032.41],\"rzSpecificZeros\":[4340.1],\"rzdSpecificZeros\":[],\"rzIdleBHBoundaries\":[{\"toRho\":700,\"from\":0,\"to\":1000},{\"toRho\":780,\"from\":500,\"to\":1200},{\"toRho\":840,\"from\":900,\"to\":1300},{\"toRho\":920,\"from\":1000,\"to\":1800},{\"toRho\":970,\"from\":1500,\"to\":3500},{\"toRho\":1000,\"from\":2000,\"to\":4500},{\"toRho\":1350,\"from\":2800,\"to\":6000},{\"toRho\":9999999999,\"from\":5500,\"to\":999999999}]}');\n\n//# sourceURL=webpack:///./build/Theories/CTs/helpers/RZgoodzeros.json?");
+eval("module.exports = /*#__PURE__*/JSON.parse('{\"genericZeros\":[263.575,298,344.675,353.5,388.85,400,462.075,498.6,606.4,679.75,834.675,978.775,1115.075,1287.425,1686.425,2139.4,2401.5,2990.425,3126.475,3343.625,3489.675,3778.85,5193.425,5237.825,5683.975,5854.2,7406.45,7749.975,11032.425],\"rzSpecificZeros\":[4340.1],\"rzdSpecificZeros\":[],\"rzIdleBHBoundaries\":[{\"toRho\":700,\"from\":0,\"to\":1000},{\"toRho\":780,\"from\":500,\"to\":1200},{\"toRho\":840,\"from\":900,\"to\":1300},{\"toRho\":920,\"from\":1000,\"to\":1800},{\"toRho\":970,\"from\":1500,\"to\":3500},{\"toRho\":1000,\"from\":2000,\"to\":4500},{\"toRho\":1350,\"from\":2800,\"to\":6000},{\"toRho\":9999999999,\"from\":5500,\"to\":999999999}]}');\n\n//# sourceURL=webpack:///./build/Theories/CTs/helpers/RZgoodzeros.json?");
 
 /***/ })
 
