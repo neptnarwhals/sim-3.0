@@ -477,7 +477,7 @@ class rzSimWrap extends theoryClass {
                     // }
                     if (!this.strat.startsWith("RZd")) {
                         // Actual bounds are 14 to 18, saves 23m, but performance is shit.
-                        for (let j = 14; j <= 14; j++) {
+                        for (let j = 14; j <= 15; j++) {
                             let internalSim3 = new rzSim(this._originalData);
                             internalSim3.targetZero = zero;
                             internalSim3.normalPubRho = internalSim.pubRho;
