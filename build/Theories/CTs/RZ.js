@@ -452,6 +452,14 @@ class rzSimWrap extends theoryClass {
                         }
                     }
                 }
+                else {
+                    for (let x of goodzeros.rzdIdleBoundaries) {
+                        if (this._originalData.rho <= x.toRho) {
+                            boundaryCondition = x;
+                            break;
+                        }
+                    }
+                }
                 for (let i = startZeroIndex; i < zeroList.length; i++) {
                     let zero = zeroList[i];
                     if (boundaryCondition != null) {
