@@ -75,7 +75,10 @@ class rzSim extends theoryClass {
                 if (this.normalPubRho == -1) {
                     return true;
                 }
-                return this.variables[0].cost <= this.normalPubRho - l10(7.3 + 0.8 * this.variables[0].level % 8);
+                if (this.maxC1Level == -1) {
+                    return this.variables[0].cost <= this.normalPubRho - l10(7.3 + 0.8 * this.variables[0].level % 8);
+                }
+                return this.variables[0].level < this.maxC1Level;
             },
             () => {
                 if (this.normalPubRho == -1) {
@@ -234,6 +237,8 @@ class rzSim extends theoryClass {
         this.bhdTerm = 0;
         this.maxTVar = 0;
         this.normalPubRho = -1;
+        this.maxC1Level = -1;
+        this.maxC1LevelActual = -1;
         this.varNames = ["c1", "c2", "b", "w1", "w2", "w3" /*, "b+"*/];
         this.variables = [
             new Variable({
@@ -321,7 +326,10 @@ class rzSim extends theoryClass {
                 stratExtra += ` t=${this.bhAtRecovery ? this.t_var.toFixed(2) : this.targetZero.toFixed(2)}`;
             }
             if (this.normalPubRho != -1) {
-                stratExtra += ` c1=${this.variables[0].level} c2=${this.variables[1].level}`;
+                if (this.maxC1LevelActual == -1)
+                    stratExtra += ` c1=${this.variables[0].level} c2=${this.variables[1].level}`;
+                else
+                    stratExtra += ` c1=${this.variables[0].level}/${this.maxC1LevelActual} c2=${this.variables[1].level}`;
             }
             const result = createResult(this, stratExtra);
             while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT)
@@ -458,13 +466,29 @@ class rzSimWrap extends theoryClass {
                         bestSim = internalSim;
                         bestSimRes = res;
                     }
-                    let internalSim2 = new rzSim(this._originalData);
-                    internalSim2.targetZero = zero;
-                    internalSim2.normalPubRho = internalSim.pubRho;
-                    let res2 = yield internalSim2.simulate();
-                    if (bestSim.maxTauH < internalSim2.maxTauH) {
-                        bestSim = internalSim2;
-                        bestSimRes = res2;
+                    // let internalSim2 = new rzSim(this._originalData)
+                    // internalSim2.targetZero = zero;
+                    // internalSim2.normalPubRho = internalSim.pubRho;
+                    // internalSim2.maxC1LevelActual = internalSim.variables[0].level;
+                    // let res2 = await internalSim2.simulate();
+                    // if(bestSim.maxTauH < internalSim2.maxTauH) {
+                    //     bestSim = internalSim2;
+                    //     bestSimRes = res2;
+                    // }
+                    if (!this.strat.startsWith("RZd")) {
+                        // Actual bounds are 14 to 18, saves 23m, but performance is shit.
+                        for (let j = 14; j <= 14; j++) {
+                            let internalSim3 = new rzSim(this._originalData);
+                            internalSim3.targetZero = zero;
+                            internalSim3.normalPubRho = internalSim.pubRho;
+                            internalSim3.maxC1Level = internalSim.variables[0].level - j;
+                            internalSim3.maxC1LevelActual = internalSim.variables[0].level;
+                            let res3 = yield internalSim3.simulate();
+                            if (bestSim.maxTauH < internalSim3.maxTauH) {
+                                bestSim = internalSim3;
+                                bestSimRes = res3;
+                            }
+                        }
                     }
                 }
                 for (let key in bestSim) {
