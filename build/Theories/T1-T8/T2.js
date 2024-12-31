@@ -13,7 +13,7 @@ import Variable, { ExponentialCost } from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 export default function t2(data) {
     return __awaiter(this, void 0, void 0, function* () {
-        const sim = new t2Sim(data);
+        const sim = new t2SimWrap(data);
         const res = yield sim.simulate();
         return res;
     });
@@ -31,6 +31,26 @@ class t2Sim extends theoryClass {
                 () => this.curMult < 2900,
                 () => this.curMult < 2250,
                 () => this.curMult < 1150,
+            ],
+            T2MCAlt: [
+                () => this.curMult < 3500,
+                () => this.curMult < 2700,
+                () => this.curMult < 2050,
+                () => this.curMult < 550,
+                () => this.curMult < 3500,
+                () => this.curMult < 2700,
+                () => this.curMult < 2050,
+                () => this.curMult < 550,
+            ],
+            T2MCAlt2: [
+                () => this.curMult < 3500,
+                () => this.curMult < 2700,
+                () => this.curMult < 2050,
+                () => this.curMult < 550,
+                () => this.curMult < 3500,
+                () => this.curMult < 2700,
+                () => this.curMult < 2050,
+                () => this.curMult < 550,
             ],
             T2MS: new Array(8).fill(true),
             T2QS: new Array(8).fill(true),
@@ -68,6 +88,8 @@ class t2Sim extends theoryClass {
         const tree = {
             T2: globalOptimalRoute,
             T2MC: globalOptimalRoute,
+            T2MCAlt: globalOptimalRoute,
+            T2MCAlt2: globalOptimalRoute,
             T2MS: globalOptimalRoute,
             T2QS: globalOptimalRoute,
         };
@@ -136,6 +158,7 @@ class t2Sim extends theoryClass {
         this.r2 = 0;
         this.r3 = 0;
         this.r4 = 0;
+        this.targetRho = -1;
         //initialize variables
         this.varNames = ["q1", "q2", "q3", "q4", "r1", "r2", "r3", "r4"];
         this.variables = [
@@ -170,9 +193,15 @@ class t2Sim extends theoryClass {
                     this.updateMilestones();
                 this.curMult = Math.pow(10, (this.getTotMult(this.maxRho) - this.totMult));
                 this.buyVariables();
-                pubCondition = (global.forcedPubTime !== Infinity ? this.t > global.forcedPubTime : this.t > this.pubT * 2 || this.pubRho > this.cap[0]) && this.pubRho > 15;
+                if (this.targetRho != -1) {
+                    pubCondition = this.maxRho >= this.targetRho;
+                }
+                else {
+                    pubCondition = (global.forcedPubTime !== Infinity ? this.t > global.forcedPubTime : this.t > this.pubT * 2 || this.pubRho > this.cap[0]) && this.pubRho > 15;
+                }
                 this.ticks++;
             }
+            console.log(this.maxRho, this.targetRho);
             this.pubMulti = Math.pow(10, (this.getTotMult(this.pubRho) - this.totMult));
             const result = createResult(this, "");
             while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT)
@@ -198,7 +227,11 @@ class t2Sim extends theoryClass {
         if (this.maxRho < this.recovery.value)
             this.recovery.time = this.t;
         this.tauH = (this.maxRho - this.lastPub) / (this.t / 3600);
-        if (this.maxTauH < this.tauH || this.maxRho >= this.cap[0] - this.cap[1] || this.pubRho < 15 || global.forcedPubTime !== Infinity) {
+        if (this.maxTauH < this.tauH ||
+            this.maxRho >= this.cap[0] - this.cap[1] ||
+            this.pubRho < 15 ||
+            global.forcedPubTime !== Infinity ||
+            this.targetRho != -1) {
             this.maxTauH = this.tauH;
             this.pubT = this.t;
             this.pubRho = this.maxRho;
@@ -217,5 +250,38 @@ class t2Sim extends theoryClass {
                 else
                     break;
             }
+    }
+}
+class t2SimWrap extends theoryClass {
+    constructor(data) {
+        super(data);
+        this._originalData = data;
+    }
+    simulate() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let bestSim, bestSimRes;
+            if (this.strat == "T2MCAlt2") {
+                this._originalData.strat = "T2MC";
+                let internalSim = new t2Sim(this._originalData);
+                // internalSim.strat = "T2MC";
+                let res = yield internalSim.simulate();
+                this._originalData.strat = "T2MCAlt2";
+                bestSim = new t2Sim(this._originalData);
+                bestSim.targetRho = internalSim.pubRho;
+                bestSimRes = yield bestSim.simulate();
+            }
+            else {
+                bestSim = new t2Sim(this._originalData);
+                bestSimRes = yield bestSim.simulate();
+            }
+            for (let key in bestSim) {
+                // @ts-ignore
+                if (bestSim.hasOwnProperty(key) && typeof bestSim[key] !== "function") {
+                    // @ts-ignore
+                    this[key] = bestSim[key];
+                }
+            }
+            return bestSimRes;
+        });
     }
 }

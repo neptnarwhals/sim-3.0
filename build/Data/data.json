@@ -31,6 +31,12 @@
                 "T2MC": {
                     "stratFilterCondition": "!Idle && rho > 250"
                 },
+                "T2MCAlt": {
+                    "stratFilterCondition": "false"
+                },
+                "T2MCAlt2": {
+                    "stratFilterCondition": "!Idle && rho > 250"
+                },
                 "T2MS": {
                     "stratFilterCondition": "(Active || Very-Active) && rho < 250"
                 },
