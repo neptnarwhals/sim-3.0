@@ -473,17 +473,25 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
         if(this.strat.includes("BH") && this.lastPub >= 600) {
             let zeroList = this.strat.startsWith("RZd") ? rzdZeros : rzZeros;
             let startZeroIndex = 0;
-            if(this.lastPub >= 850) {
-                startZeroIndex = zeroList.findIndex((x) => x > 1100);
-            }
-            if(this.lastPub >= 950) {
-                startZeroIndex = zeroList.findIndex((x) => x > 2100);
-            }
             let bestSim: rzSim = new rzSim(this._originalData);
             bestSim.bhAtRecovery = true;
             let bestSimRes = await bestSim.simulate();
+            let boundaryCondition = null;
+            if(!this.strat.startsWith("RZd")) {
+                for(let x of goodzeros.rzIdleBHBoundaries) {
+                    if(this._originalData.rho <= x.toRho) {
+                        boundaryCondition = x;
+                        break;
+                    }
+                }
+            }
             for(let i = startZeroIndex; i < zeroList.length; i++) {
                 let zero = zeroList[i];
+                if(boundaryCondition != null) {
+                    if(zero < boundaryCondition.from || zero > boundaryCondition.to) {
+                        continue;
+                    }
+                }
                 let internalSim = new rzSim(this._originalData)
                 internalSim.targetZero = zero;
                 let res = await internalSim.simulate();
