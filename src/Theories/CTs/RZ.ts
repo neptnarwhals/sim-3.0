@@ -510,15 +510,6 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
                     bestSimRes = res;
                 }
 
-                // let internalSim2 = new rzSim(this._originalData)
-                // internalSim2.targetZero = zero;
-                // internalSim2.normalPubRho = internalSim.pubRho;
-                // internalSim2.maxC1LevelActual = internalSim.variables[0].level;
-                // let res2 = await internalSim2.simulate();
-                // if(bestSim.maxTauH < internalSim2.maxTauH) {
-                //     bestSim = internalSim2;
-                //     bestSimRes = res2;
-                // }
                 if(!this.strat.startsWith("RZd")) {
                     // Actual bounds are 14 to 18, saves 23m, but performance is shit.
                     for (let j = 14; j <= 15; j++) {
@@ -532,6 +523,17 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
                             bestSim = internalSim3;
                             bestSimRes = res3;
                         }
+                    }
+                }
+                else {
+                    let internalSim2 = new rzSim(this._originalData)
+                    internalSim2.targetZero = zero;
+                    internalSim2.normalPubRho = internalSim.pubRho;
+                    internalSim2.maxC1LevelActual = internalSim.variables[0].level;
+                    let res2 = await internalSim2.simulate();
+                    if(bestSim.maxTauH < internalSim2.maxTauH) {
+                        bestSim = internalSim2;
+                        bestSimRes = res2;
                     }
                 }
             }
