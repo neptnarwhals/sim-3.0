@@ -326,10 +326,10 @@ class rzSim extends theoryClass {
                 stratExtra += ` t=${this.bhAtRecovery ? this.t_var.toFixed(2) : this.targetZero.toFixed(2)}`;
             }
             if (this.normalPubRho != -1) {
-                if (this.maxC1LevelActual == -1)
-                    stratExtra += ` c1=${this.variables[0].level} c2=${this.variables[1].level}`;
-                else
-                    stratExtra += ` c1=${this.variables[0].level}/${this.maxC1LevelActual} c2=${this.variables[1].level}`;
+                // if(this.maxC1LevelActual == -1)
+                stratExtra += ` c1=${this.variables[0].level} c2=${this.variables[1].level}`;
+                // else
+                //     stratExtra += ` c1=${this.variables[0].level}/${this.maxC1LevelActual} c2=${this.variables[1].level}`
             }
             const result = createResult(this, stratExtra);
             while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT)
