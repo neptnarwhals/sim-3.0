@@ -182,7 +182,7 @@ class rzSim extends theoryClass {
         }
         else if ((this.strat === "RZMS" || this.strat === "RZdMS") && stage >= 2 && stage <= 4) {
             let priority = peripheryPriority;
-            if (this.maxRho > this.lastPub)
+            if (this.maxRho > this.lastPub + this.swapPointDelta)
                 priority = originPriority;
             let milestoneCount = stage;
             this.milestones = [0, 0, 0, 0];
@@ -250,6 +250,7 @@ class rzSim extends theoryClass {
         this.normalPubRho = -1;
         this.maxC1Level = -1;
         this.maxC1LevelActual = -1;
+        this.swapPointDelta = 0;
         this.varNames = ["c1", "c2", "b", "w1", "w2", "w3" /*, "b+"*/];
         this.variables = [
             new Variable({
@@ -335,6 +336,9 @@ class rzSim extends theoryClass {
             let stratExtra = "";
             if (this.strat.includes("BH")) {
                 stratExtra += ` t=${this.bhAtRecovery ? this.t_var.toFixed(2) : this.targetZero.toFixed(2)}`;
+            }
+            if (this.strat.includes("MS") && this.swapPointDelta != 0) {
+                stratExtra += ` swap=${(this.lastPub + this.swapPointDelta).toFixed(2)}`;
             }
             if (this.normalPubRho != -1) {
                 // if(this.maxC1LevelActual == -1)
@@ -520,6 +524,66 @@ class rzSimWrap extends theoryClass {
                     }
                 }
                 return bestSimRes;
+            }
+            else if (this.strat.includes("MS") && this._originalData.rho <= 400 && this._originalData.rho >= 10) {
+                let normalSims = [
+                    new rzSim(this._originalData),
+                    new rzSim(this._originalData),
+                    new rzSim(this._originalData),
+                    new rzSim(this._originalData),
+                    new rzSim(this._originalData),
+                    new rzSim(this._originalData),
+                    new rzSim(this._originalData)
+                ];
+                let normalRets = [];
+                normalSims[1].swapPointDelta = -1;
+                normalSims[2].swapPointDelta = -2;
+                normalSims[3].swapPointDelta = -3;
+                normalSims[4].swapPointDelta = -4;
+                normalSims[5].swapPointDelta = -5;
+                normalSims[6].swapPointDelta = -6;
+                for (let i = 0; i < normalSims.length; i++) {
+                    normalRets.push(yield normalSims[i].simulate());
+                }
+                let coastSims = [];
+                let coastRets = [];
+                for (let i = 0; i < normalSims.length; i++) {
+                    let ss = new rzSim(this._originalData);
+                    ss.normalPubRho = normalSims[i].pubRho;
+                    ss.swapPointDelta = normalSims[i].swapPointDelta;
+                    coastSims.push(ss);
+                    coastRets.push(yield ss.simulate());
+                }
+                let totalArr = [];
+                let retArr = [];
+                for (let sim of normalSims) {
+                    totalArr.push(sim);
+                }
+                for (let sim of coastSims) {
+                    totalArr.push(sim);
+                }
+                for (let ret of normalRets) {
+                    retArr.push(ret);
+                }
+                for (let ret of coastRets) {
+                    retArr.push(ret);
+                }
+                let bestSim = totalArr[0];
+                let bestRet = retArr[0];
+                for (let i = 0; i < totalArr.length; i++) {
+                    if (bestSim.maxTauH < totalArr[i].maxTauH) {
+                        bestSim = totalArr[i];
+                        bestRet = retArr[i];
+                    }
+                }
+                for (let key in bestSim) {
+                    // @ts-ignore
+                    if (bestSim.hasOwnProperty(key) && typeof bestSim[key] !== "function") {
+                        // @ts-ignore
+                        this[key] = bestSim[key];
+                    }
+                }
+                return bestRet;
             }
             else {
                 let internalSim = new rzSim(this._originalData);
