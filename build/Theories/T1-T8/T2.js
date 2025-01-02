@@ -52,6 +52,16 @@ class t2Sim extends theoryClass {
                 () => this.curMult < 2050,
                 () => this.curMult < 550,
             ],
+            T2MCAlt3: [
+                () => this.curMult < this.stop1,
+                () => this.curMult < this.stop2,
+                () => this.curMult < this.stop3,
+                () => this.curMult < this.stop4,
+                () => this.curMult < this.stop1,
+                () => this.curMult < this.stop2,
+                () => this.curMult < this.stop3,
+                () => this.curMult < this.stop4,
+            ],
             T2MS: new Array(8).fill(true),
             T2QS: new Array(8).fill(true),
         };
@@ -90,6 +100,7 @@ class t2Sim extends theoryClass {
             T2MC: globalOptimalRoute,
             T2MCAlt: globalOptimalRoute,
             T2MCAlt2: globalOptimalRoute,
+            T2MCAlt3: globalOptimalRoute,
             T2MS: globalOptimalRoute,
             T2QS: globalOptimalRoute,
         };
@@ -159,6 +170,10 @@ class t2Sim extends theoryClass {
         this.r3 = 0;
         this.r4 = 0;
         this.targetRho = -1;
+        this.stop1 = 3500;
+        this.stop2 = 2700;
+        this.stop3 = 2050;
+        this.stop4 = 550;
         //initialize variables
         this.varNames = ["q1", "q2", "q3", "q4", "r1", "r2", "r3", "r4"];
         this.variables = [
@@ -201,9 +216,14 @@ class t2Sim extends theoryClass {
                 }
                 this.ticks++;
             }
-            console.log(this.maxRho, this.targetRho);
             this.pubMulti = Math.pow(10, (this.getTotMult(this.pubRho) - this.totMult));
-            const result = createResult(this, "");
+            let result;
+            if (this.strat == "T2MCAlt3") {
+                result = createResult(this, ` 4:${this.stop4} 3:${this.stop3} 2:${this.stop2} 1:${this.stop1}`);
+            }
+            else {
+                result = createResult(this, "");
+            }
             while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT)
                 this.boughtVars.pop();
             global.varBuy.push([result[7], this.boughtVars]);
@@ -260,15 +280,27 @@ class t2SimWrap extends theoryClass {
     simulate() {
         return __awaiter(this, void 0, void 0, function* () {
             let bestSim, bestSimRes;
-            if (this.strat == "T2MCAlt2") {
+            if (this.strat == "T2MCAlt2" || this.strat == "T2MCAlt3") {
+                let savedStrat = this.strat;
                 this._originalData.strat = "T2MC";
                 let internalSim = new t2Sim(this._originalData);
                 // internalSim.strat = "T2MC";
                 let res = yield internalSim.simulate();
-                this._originalData.strat = "T2MCAlt2";
-                bestSim = new t2Sim(this._originalData);
-                bestSim.targetRho = internalSim.pubRho;
-                bestSimRes = yield bestSim.simulate();
+                this._originalData.strat = savedStrat;
+                if (savedStrat == "T2MCAlt2") {
+                    bestSim = new t2Sim(this._originalData);
+                    bestSim.targetRho = internalSim.pubRho;
+                    bestSimRes = yield bestSim.simulate();
+                }
+                else {
+                    bestSim = new t2Sim(this._originalData);
+                    bestSim.stop4 = 750;
+                    bestSim.stop3 = 1700;
+                    bestSim.stop2 = 2650;
+                    bestSim.stop1 = 3700;
+                    bestSim.targetRho = internalSim.pubRho;
+                    bestSimRes = yield bestSim.simulate();
+                }
             }
             else {
                 bestSim = new t2Sim(this._originalData);

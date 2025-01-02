@@ -56,7 +56,12 @@ class rzSim extends theoryClass {
                 }
                 else {
                     let precond = this.normalPubRho == -1 || this.variables[0].cost <= this.normalPubRho - l10(10 + this.variables[0].level % 8);
-                    return precond && this.variables[0].level < this.variables[1].level * 4 + (this.milestones[0] ? 2 : 1);
+                    let levelCond = this.variables[0].level < this.variables[1].level * 4 + (this.milestones[0] ? 2 : 1);
+                    // let percentCond = this.variables[0].cost < this.variables[1].cost - l10(8 + this.variables[0].level % 8);
+                    // if(this.strat.includes("BH"))
+                    //     return precond && percentCond;
+                    // else
+                    return precond && levelCond;
                 }
             },
             () => {
@@ -66,7 +71,13 @@ class rzSim extends theoryClass {
                 return this.variables[1].cost <= this.normalPubRho - l10(2);
             },
             () => this.t_var >= 16,
-            () => (this.milestones[2] ? this.variables[3].cost + l10(4 + 0.5 * (this.variables[3].level % 8) + 0.0001) < Math.min(this.variables[4].cost, this.variables[5].cost) : true),
+            () => {
+                // if(this.strat.includes("BH") && this.variables[3].cost * 10 % 10 > 3 && this.variables[3].cost * 10 % 10 < 4) {
+                //     // We want it this late!
+                //     return true;
+                // }
+                return (this.milestones[2] ? this.variables[3].cost + l10(4 + 0.5 * (this.variables[3].level % 8) + 0.0001) < Math.min(this.variables[4].cost, this.variables[5].cost) : true);
+            },
             true,
             true,
         ];
