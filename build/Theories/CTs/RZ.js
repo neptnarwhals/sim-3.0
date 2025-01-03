@@ -196,10 +196,16 @@ class rzSim extends theoryClass {
         else if ((this.strat === "RZBH" || this.strat === "RZdBH") && stage === 6) {
             // Black hole coasting
             if ((!this.bhAtRecovery && (this.t_var <= this.targetZero)) ||
-                (this.bhAtRecovery && (this.maxRho < this.lastPub)))
+                (this.bhAtRecovery && (this.maxRho < this.lastPub))) {
                 this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
-            else
+            }
+            else {
+                if (!this.bhAtRecovery)
+                    this.t_var = this.targetZero + 0.01;
+                this.blackhole = true;
+                this.offGrid = true;
                 this.milestones = this.milestoneTree[stage + 1];
+            }
         }
         else {
             this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
@@ -207,7 +213,6 @@ class rzSim extends theoryClass {
     }
     snapZero() {
         this.bhSearchingRewind = false;
-        this.offGrid = true;
         let z;
         let tmpZ;
         let bhdt;
@@ -241,6 +246,7 @@ class rzSim extends theoryClass {
         this.rCoord = -1.4603545088095868;
         this.iCoord = 0;
         this.offGrid = false;
+        this.blackhole = false;
         this.bhSearchingRewind = true;
         this.bhFoundZero = false;
         this.bhAtRecovery = false;
@@ -323,7 +329,8 @@ class rzSim extends theoryClass {
                 this.tick();
                 if (this.currencies[0] > this.maxRho)
                     this.maxRho = this.currencies[0];
-                this.updateMilestones();
+                if (!this.blackhole)
+                    this.updateMilestones();
                 this.curMult = Math.pow(10, this.getTotMult(this.maxRho) - this.totMult);
                 this.buyVariables();
                 pubCondition = (global.forcedPubTime !== Infinity ? this.t > global.forcedPubTime : this.t > this.pubT * 2 || this.pubRho > this.cap[0] || this.curMult > 30) && this.pubRho > this.pubUnlock;
