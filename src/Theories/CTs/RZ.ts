@@ -252,7 +252,6 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             this.t_var += bhdt;
         }
         while (Math.abs(bhdt) >= 1e-9)
-        console.log(this.t_var);
         
         this.bhFoundZero = true;
         z = zeta(this.t_var, this.ticks, this.offGrid, lookups.zetaLookup);
