@@ -225,6 +225,7 @@ class rzSim extends theoryClass {
             bhdt = Math.min(bhdt, 0.75);
             this.t_var += bhdt;
         } while (Math.abs(bhdt) >= 1e-9);
+        console.log(this.t_var);
         this.bhFoundZero = true;
         z = zeta(this.t_var, this.ticks, this.offGrid, lookups.zetaLookup);
         tmpZ = zeta(this.t_var + 1 / 100000, this.ticks, this.offGrid, lookups.zetaDerivLookup);
