@@ -19,6 +19,8 @@ import fp from "../Theories/CTs/FP.js";
 import rzOld from "../Theories/Unofficial-CTs/RZ/RZ.js";
 import rz from "../Theories/CTs/RZ.js";
 import bt from "../Theories/Unofficial-CTs/BT.js";
+import bap from "../Theories/Unofficial-CTs/BaP.js";
+import mf from "../Theories/Unofficial-CTs/MF.js";
 
 const output = qs(".output");
 
@@ -139,6 +141,10 @@ async function singleSim(data: Omit<parsedData, "simAllInputs">): Promise<simRes
       return await rz(sendData);
     case "RZold":
       return await rzOld(sendData);
+    case "BaP":
+      return await bap(sendData);
+    case "MF":
+      return await mf(sendData);
   }
 }
 

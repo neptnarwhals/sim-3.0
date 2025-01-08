@@ -438,7 +438,7 @@
       }
     },
     "BT": {
-      "tauFactor": 0.1,
+      "tauFactor": 0.4,
       "UI_visible":false,
       "strats": {
         "BT": {
@@ -446,6 +446,33 @@
         },
         "BTd": {
           "stratFilterCondition": "Active || Very-Active"
+        }
+      }
+    },
+    "BaP": {
+      "tauFactor": 0.4,
+      "UI_visible":false,
+      "strats": {
+        "BaP": {
+          "stratFilterCondition": "true"
+        }
+      }
+    },
+    "MF": {
+      "tauFactor": 1,
+      "UI_visible":false,
+      "strats": {
+        "MF": {
+          "stratFilterCondition": "true"
+        },
+        "MF2": {
+          "stratFilterCondition": "true"
+        },
+        "MF3": {
+          "stratFilterCondition": "true"
+        },
+        "MF4": {
+          "stratFilterCondition": "true"
         }
       }
     }
