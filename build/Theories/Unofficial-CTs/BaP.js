@@ -84,7 +84,7 @@ class bapSim extends theoryClass {
                 sum += 1 / (i * i);
             }
             if (r_ms) {
-                return 1 / ((Math.PI * Math.PI) / 6 - sum);
+                return l10(1 / ((Math.PI * Math.PI) / 6 - sum));
             }
             return l10(sum + (1 / (c1 * c1)));
         }
@@ -154,8 +154,6 @@ class bapSim extends theoryClass {
         this.milestoneConditions = this.getMilestoneConditions();
         //this.milestoneTree = this.getMilestoneTree();
         this.updateMilestones();
-        console.log(data.rho);
-        console.log(this.milestones);
     }
     simulate() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -174,7 +172,6 @@ class bapSim extends theoryClass {
                 pubCondition = (global.forcedPubTime !== Infinity ? this.t > global.forcedPubTime : this.t > this.pubT * 2 || this.pubRho > this.cap[0]) && this.pubRho > this.pubUnlock;
                 this.ticks++;
             }
-            console.log(this.milestones);
             this.pubMulti = Math.pow(10, (this.getTotMult(this.pubRho) - this.totMult));
             const result = createResult(this, "");
             while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT)

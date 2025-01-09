@@ -84,7 +84,7 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
             sum += 1 / (i * i);
         }
         if (r_ms) {
-            return 1 / ((Math.PI * Math.PI) / 6 - sum);
+            return l10(1 / ((Math.PI * Math.PI) / 6 - sum));
         }
         return l10(sum + (1 / (c1 * c1)));
     }
@@ -159,8 +159,6 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     this.milestoneConditions = this.getMilestoneConditions();
     //this.milestoneTree = this.getMilestoneTree();
     this.updateMilestones();
-    console.log(data.rho)
-    console.log(this.milestones)
   }
   async simulate() {
     let pubCondition = false;
@@ -175,7 +173,6 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
       pubCondition = (global.forcedPubTime !== Infinity ? this.t > global.forcedPubTime : this.t > this.pubT * 2 || this.pubRho > this.cap[0]) && this.pubRho > this.pubUnlock;
       this.ticks++;
     }
-    console.log(this.milestones)
     this.pubMulti = 10 ** (this.getTotMult(this.pubRho) - this.totMult);
     const result = createResult(this, "");
 
