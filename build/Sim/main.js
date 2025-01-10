@@ -25,7 +25,6 @@ import ef from "../Theories/CTs/EF.js";
 import csr2 from "../Theories/CTs/CSR2.js";
 import fi from "../Theories/CTs/FI";
 import fp from "../Theories/CTs/FP.js";
-import rzOld from "../Theories/Unofficial-CTs/RZ/RZ.js";
 import rz from "../Theories/CTs/RZ.js";
 import bt from "../Theories/Unofficial-CTs/BT.js";
 import bap from "../Theories/Unofficial-CTs/BaP.js";
@@ -38,6 +37,7 @@ export const global = {
     simulating: false,
     forcedPubTime: Infinity,
     showA23: false,
+    showUnofficials: false,
     varBuy: [[0, [{ variable: "var", level: 0, cost: 0, timeStamp: 0 }]]],
     customVal: null,
 };
@@ -126,8 +126,6 @@ function singleSim(data) {
                 return yield bt(sendData);
             case "RZ":
                 return yield rz(sendData);
-            case "RZold":
-                return yield rzOld(sendData);
             case "BaP":
                 return yield bap(sendData);
             case "MF":
@@ -196,10 +194,11 @@ function simAll(data) {
         const sigma = data.modeInput[0];
         const values = data.modeInput.slice(1, data.modeInput.length);
         const res = [];
-        for (let i = 0; i < values.length; i++) {
+        const totalSimmed = Math.min(values.length, global.showUnofficials ? Infinity : 15);
+        for (let i = 0; i < totalSimmed; i++) {
             if (values[i] === 0)
                 continue;
-            output.innerText = `Simulating ${getTheoryFromIndex(i)}/${getTheoryFromIndex(values.length - 1)}`;
+            output.innerText = `Simulating ${getTheoryFromIndex(i)}/${getTheoryFromIndex(totalSimmed - 1)}`;
             yield sleep();
             if (!global.simulating)
                 break;

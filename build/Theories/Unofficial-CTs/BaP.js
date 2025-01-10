@@ -20,8 +20,16 @@ export default function bt(data) {
 }
 class bapSim extends theoryClass {
     getBuyingConditions() {
+        const idlestrat = new Array(12).fill(true);
+        const activestrat = [
+            true,
+            () => this.variables[1].cost + l10(0.5 * this.variables[0].level % 64) < this.variables[2].cost && (this.milestones[0] > 0 || this.variables[1].level < 65),
+            ...new Array(10).fill(true)
+        ];
         const conditions = {
-            BaP: new Array(12).fill(true)
+            BaP: idlestrat,
+            BaPd: activestrat,
+            BaPdMS: activestrat,
         };
         const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
         return condition;
@@ -67,7 +75,16 @@ class bapSim extends theoryClass {
         }
         let milestoneCount = stage;
         const max = [1, 1, a_max, q_max, stage === 20 ? 1 : 0];
-        const priority = [1, 2, 3, 4, 5];
+        const apriority = [1, 2, 3, 4, 5];
+        const qpriority = [1, 2, 4, 3, 5];
+        let priority = apriority;
+        if (this.strat == "BaPdMS") {
+            const tm300 = this.t % 300;
+            if (tm300 < 100)
+                priority = qpriority;
+            else if (tm300 < 300)
+                priority = apriority;
+        }
         this.milestones = [0, 0, 0, 0, 0];
         for (let i = 0; i < priority.length; i++) {
             while (this.milestones[priority[i] - 1] < max[priority[i] - 1] && milestoneCount > 0) {
@@ -152,7 +169,6 @@ class bapSim extends theoryClass {
         ];
         this.conditions = this.getBuyingConditions();
         this.milestoneConditions = this.getMilestoneConditions();
-        //this.milestoneTree = this.getMilestoneTree();
         this.updateMilestones();
     }
     simulate() {

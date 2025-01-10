@@ -10,6 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { simulate, global } from "../Sim/main.js";
 import { qs, event, sleep, ce, qsa, convertTime, logToExp } from "../Utils/helpers.js";
 import { getSimState, setSimState } from "./simState.js";
+import jsondata from "../Data/data.json" assert { type: "json" };
+import { theoryUpdate } from "./render.js";
 //Inputs
 const theory = qs(".theory");
 const strat = qs(".strat");
@@ -33,6 +35,8 @@ const simulateButton = qs(".simulate");
 const dtOtp = qs(".dtOtp");
 const ddtOtp = qs(".ddtOtp");
 const showA23 = qs(".a23");
+const showUnofficials = qs(".unofficials");
+const theories = Object.keys(jsondata.theories);
 let prevMode = "All";
 const tau = `<span style="font-size:0.9rem; font-style:italics">&tau;</span>`;
 const tableHeaders = {
@@ -44,6 +48,22 @@ thead.innerHTML = tableHeaders.all;
 table.classList.add("big");
 if (localStorage.getItem("autoSave") === "true")
     setTimeout(() => getSimState(), 500);
+event(showUnofficials, "click", () => __awaiter(void 0, void 0, void 0, function* () {
+    if (global.showUnofficials != showUnofficials.checked) {
+        global.showUnofficials = showUnofficials.checked;
+        while (theory.firstChild)
+            theory.firstChild.remove();
+        for (let i = 0; i < theories.length; i++) {
+            if (jsondata.theories[theories[i]].UI_visible === false && !global.showUnofficials)
+                continue;
+            const option = ce("option");
+            option.value = theories[i];
+            option.textContent = theories[i];
+            theory.appendChild(option);
+            theoryUpdate();
+        }
+    }
+}));
 event(simulateButton, "click", () => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     global.dt = parseFloat((_a = dtOtp.textContent) !== null && _a !== void 0 ? _a : "1.5");

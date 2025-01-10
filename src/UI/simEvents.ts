@@ -1,6 +1,9 @@
 import { simulate, inputData, global } from "../Sim/main.js";
 import { qs, event, sleep, ce, qsa, convertTime, logToExp } from "../Utils/helpers.js";
 import { getSimState, setSimState } from "./simState.js";
+import jsondata from "../Data/data.json" assert { type: "json" };
+import { json } from "stream/consumers";
+import { theoryUpdate } from "./render.js";
 
 //Inputs
 const theory = qs<HTMLSelectElement>(".theory");
@@ -28,6 +31,9 @@ const simulateButton = qs(".simulate");
 const dtOtp = qs(".dtOtp");
 const ddtOtp = qs(".ddtOtp");
 const showA23 = <HTMLInputElement>qs(".a23");
+const showUnofficials = <HTMLInputElement>qs(".unofficials");
+
+const theories = Object.keys(jsondata.theories) as Array<theoryType>;
 
 let prevMode = "All";
 
@@ -42,6 +48,22 @@ thead.innerHTML = tableHeaders.all;
 table.classList.add("big");
 
 if (localStorage.getItem("autoSave") === "true") setTimeout(() => getSimState(), 500);
+
+event(showUnofficials, "click", async () => {
+  if (global.showUnofficials != showUnofficials.checked)
+  {
+    global.showUnofficials = showUnofficials.checked;
+    while (theory.firstChild) theory.firstChild.remove();
+    for (let i = 0; i < theories.length; i++) {
+      if ((jsondata.theories[theories[i]] as unknown as Record<"UI_visible", boolean>).UI_visible === false && !global.showUnofficials) continue;
+      const option = ce<HTMLSelectElement>("option");
+      option.value = theories[i];
+      option.textContent = theories[i];
+      theory.appendChild(option);
+      theoryUpdate();
+    }
+  }
+})
 
 event(simulateButton, "click", async () => {
   global.dt = parseFloat(dtOtp.textContent ?? "1.5");

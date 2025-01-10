@@ -1,6 +1,7 @@
 import { qs, qsa, event, ce, findIndex } from "../Utils/helpers.js";
 import data from "../Data/data.json" assert { type: "json" };
 import { updateTimeDiffTable } from "../Sim/parsers.js";
+import { global } from "../Sim/main.js";
 
 //Inputs
 const theory = qs<HTMLSelectElement>(".theory");
@@ -26,7 +27,7 @@ const theories = Object.keys(data.theories) as Array<theoryType>;
 
 window.onload = () => {
   for (let i = 0; i < theories.length; i++) {
-    if ((data.theories[theories[i]] as unknown as Record<"UI_visible", boolean>).UI_visible === false) continue;
+    if ((data.theories[theories[i]] as unknown as Record<"UI_visible", boolean>).UI_visible === false && !global.showUnofficials) continue;
     const option = ce<HTMLSelectElement>("option");
     option.value = theories[i];
     option.textContent = theories[i];

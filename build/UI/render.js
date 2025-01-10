@@ -1,6 +1,7 @@
 import { qs, qsa, event, ce, findIndex } from "../Utils/helpers.js";
 import data from "../Data/data.json" assert { type: "json" };
 import { updateTimeDiffTable } from "../Sim/parsers.js";
+import { global } from "../Sim/main.js";
 //Inputs
 const theory = qs(".theory");
 const strat = qs(".strat");
@@ -22,7 +23,7 @@ const theories = Object.keys(data.theories);
 window.onload = () => {
     var _a;
     for (let i = 0; i < theories.length; i++) {
-        if (data.theories[theories[i]].UI_visible === false)
+        if (data.theories[theories[i]].UI_visible === false && !global.showUnofficials)
             continue;
         const option = ce("option");
         option.value = theories[i];

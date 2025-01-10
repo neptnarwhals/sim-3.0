@@ -411,32 +411,6 @@
         }
       }
     },
-    "RZold": {
-      "tauFactor": 0.1,
-      "UI_visible":false,
-      "strats": {
-        "RZ": {
-          "stratFilterCondition": "Idle || Semi-Idle"
-        },
-        "RZd": {
-          "stratFilterCondition": "Active || Very-Active"
-        },
-        "RZdBH": {
-          "stratFilterCondition": "false",
-          "UI_visible": false
-        },
-        "RZSpiralswap": {
-          "stratFilterCondition": "Very-Active && rho >= 50"
-        },
-        "RZMS": {
-          "stratFilterCondition": "(Active || Very-Active) && rho >= 50"
-        },
-        "RZnoB": {
-          "stratFilterCondition": "false",
-          "UI_visible": false
-        }
-      }
-    },
     "BT": {
       "tauFactor": 0.4,
       "UI_visible":false,
@@ -455,6 +429,12 @@
       "strats": {
         "BaP": {
           "stratFilterCondition": "true"
+        },
+        "BaPd": {
+          "stratFilterCondition": "Active || Very-Active"
+        },
+        "BaPdMS": {
+          "stratFilterCondition": "(Active || Very-Active) && rho <= 260"
         }
       }
     },

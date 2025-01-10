@@ -16,7 +16,6 @@ import ef from "../Theories/CTs/EF.js";
 import csr2 from "../Theories/CTs/CSR2.js";
 import fi from "../Theories/CTs/FI";
 import fp from "../Theories/CTs/FP.js";
-import rzOld from "../Theories/Unofficial-CTs/RZ/RZ.js";
 import rz from "../Theories/CTs/RZ.js";
 import bt from "../Theories/Unofficial-CTs/BT.js";
 import bap from "../Theories/Unofficial-CTs/BaP.js";
@@ -31,6 +30,7 @@ export const global = {
   simulating: false,
   forcedPubTime: Infinity,
   showA23: false,
+  showUnofficials: false,
   varBuy: <Array<[number, Array<varBuy>]>>[[0, [{ variable: "var", level: 0, cost: 0, timeStamp: 0 }]]],
   customVal: null,
 };
@@ -139,8 +139,6 @@ async function singleSim(data: Omit<parsedData, "simAllInputs">): Promise<simRes
       return await bt(sendData);
     case "RZ":
       return await rz(sendData);
-    case "RZold":
-      return await rzOld(sendData);
     case "BaP":
       return await bap(sendData);
     case "MF":
@@ -200,9 +198,10 @@ async function simAll(data: parsedData): Promise<Array<Array<string>>> {
   const sigma = (<Array<number>>data.modeInput)[0];
   const values = (<Array<number>>data.modeInput).slice(1, (<Array<number>>data.modeInput).length);
   const res: Array<Array<string>> = [];
-  for (let i = 0; i < values.length; i++) {
+  const totalSimmed = Math.min(values.length, global.showUnofficials ? Infinity : 15);
+  for (let i = 0; i < totalSimmed; i++) {
     if (values[i] === 0) continue;
-    output.innerText = `Simulating ${getTheoryFromIndex(i)}/${getTheoryFromIndex(values.length - 1)}`;
+    output.innerText = `Simulating ${getTheoryFromIndex(i)}/${getTheoryFromIndex(totalSimmed - 1)}`;
     await sleep();
     if (!global.simulating) break;
     const modes = [data.simAllInputs[0] ? "Best Semi-Idle" : "Best Idle", data.simAllInputs[1] ? "Best Overall" : "Best Active"];
