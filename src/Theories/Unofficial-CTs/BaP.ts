@@ -3,7 +3,7 @@ import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js"
 import Variable, { ExponentialCost } from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 
-export default async function bt(data: theoryData): Promise<simResult> {
+export default async function bap(data: theoryData): Promise<simResult> {
   const sim = new bapSim(data);
   const res = await sim.simulate();
   return res;
@@ -59,9 +59,9 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     let stage = 0;
     let a_max = 0;
     let q_max = 0;
-    const points = [10, 15, 20, 25, 30, 40, 65, 90, 115, 140, 180, 220, 260, 300, 400, 500, 600, 700, 850, 1000];
-    const a_points = [20, 30, 50, 100, 150, 250, 400, 600, 850];
-    const q_points = [25, 40, 75, 125, 200, 300, 500, 700];
+    const points = [10, 15, 20, 25, 30, 40, 50, 70, 90, 120, 150, 200, 250, 300, 400, 500, 600, 700, 800, 1000];
+    const a_points = [20, 30, 50, 80, 140, 240, 400, 600, 800];
+    const q_points = [25, 40, 60, 100, 180, 300, 500, 700];
     for (let i = 0; i < points.length; i++) {
       if (Math.max(this.lastPub, this.maxRho) >= points[i]) stage = i + 1;
     }
