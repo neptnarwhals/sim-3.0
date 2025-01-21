@@ -277,6 +277,7 @@ class efSim extends theoryClass<theory> implements specificTheoryProps {
 
     this.t += this.dt / 1.5;
     this.dt *= this.isEFAI && this.recursionValue[1] < 2 ? Math.min(1.3, this.ddt * 50) : this.ddt;
+    //this.dt *= this.ddt;
     if (this.maxRho < this.recovery.value) this.recovery.time = this.t;
 
     this.tauH = (this.maxRho - this.lastPub) / (this.t / 3600);

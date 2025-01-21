@@ -235,7 +235,8 @@ class t4Sim extends theoryClass<theory> implements specificTheoryProps {
     this.rho = add(this.rho, rhodot + l10(this.dt));
 
     this.t += this.dt / 1.5;
-    this.dt *= ["T4C3d66", "T4C366"].includes(this.strat) && this.recursionValue === Number.MAX_VALUE ? Math.min(1.3, this.ddt * 10) : this.ddt;
+    //this.dt *= ["T4C3d66", "T4C366"].includes(this.strat) && this.recursionValue === Number.MAX_VALUE ? Math.min(1.3, this.ddt * 10) : this.ddt;
+    this.dt *= this.ddt;
     if (this.maxRho < this.recovery.value) this.recovery.time = this.t;
 
     this.tauH = (this.maxRho - this.lastPub) / (this.t / 3600);
