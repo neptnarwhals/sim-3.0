@@ -14,7 +14,7 @@ module.exports = {
     path: path.resolve(__dirname, "./build"),
     filename: "bundle.js",
   },
-  watch: true,
+  watch: false,
   watchOptions: {
     ignored: "**/node_modules",
   },
