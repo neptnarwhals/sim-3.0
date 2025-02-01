@@ -26,6 +26,8 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   vz: number;
   vtot: number;
   resets: number;
+  stratExtra: string;
+  vMaxBuy: number;
 
   getBuyingConditions() {
     const autobuyall = new Array(9).fill(true);
@@ -35,7 +37,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       true,
       true,
       true,
-      ...new Array(4).fill(() => this.maxRho < this.lastPub)
+      ...new Array(4).fill(() => this.maxRho <= this.lastPub+this.vMaxBuy)
     ]
 
     const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
@@ -116,6 +118,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.vz = 10 ** (this.variables[7].value + this.variables[8].value - 18);
     this.vtot = Math.sqrt(this.vx * this.vx + 2 * this.vz * this.vz);
     this.resets++
+    this.stratExtra = ": "+(this.resets) + " resets ("+ parseFloat((this.t/3600).toFixed(2))+" hours & e"+parseFloat(this.maxRho.toFixed(2)) + " rho), v1="+this.variables[5].level+", v2="+this.variables[6].level
   }
 
   updateC(): void {
@@ -138,6 +141,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.vtot = 0;
     this.resets = 0;
     this.varNames = ["c1", "c2", "a1", "a2", "delta",  "v1", "v2", "v3", "v4"];
+    this.stratExtra = "";
     this.variables = [
       new Variable({ cost: new ExponentialCost(10, 2), stepwisePowerSum: { base:2, length:7 }, firstFreeCost: true }), // c1
       new Variable({ cost: new ExponentialCost(1e3, 100), varBase: 2 }), // c2
@@ -169,7 +173,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       this.ticks++;
     }
     this.pubMulti = 10 ** (this.getTotMult(this.pubRho) - this.totMult);
-    const result = createResult(this, "");
+    const result = createResult(this, this.stratExtra);
 
     while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT) this.boughtVars.pop();
     global.varBuy.push([result[7], this.boughtVars]);
