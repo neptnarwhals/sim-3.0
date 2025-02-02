@@ -442,7 +442,7 @@
             "tauFactor": 1,
             "UI_visible": false,
             "strats": {
-                "MF": {
+                "MF1": {
                     "stratFilterCondition": "true"
                 },
                 "MF2": {
