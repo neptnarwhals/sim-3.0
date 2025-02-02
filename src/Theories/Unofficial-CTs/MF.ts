@@ -49,11 +49,11 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   getBuyingConditions() {
     const autobuyall = new Array(9).fill(true);
     const idleStrat = [
-      () => (10**(this.variables[3].cost-this.variables[0].cost))>10,
+      () => (10**(Math.min(this.variables[1].cost, this.variables[3].cost)-this.variables[0].cost))>10,
       true,
-      () => (10**(this.variables[3].cost-this.variables[2].cost))>3,
+      () => (10**(Math.min(this.variables[1].cost, this.variables[3].cost)-this.variables[2].cost))>3,
       true,
-      () => (10**(this.variables[3].cost-this.variables[4].cost))>1.4,
+      () => (10**(Math.min(this.variables[1].cost, this.variables[3].cost)-this.variables[4].cost))>1.1,
       ...new Array(4).fill(() => this.maxRho <= this.lastPub+this.vMaxBuy)
     ]
 
