@@ -135,7 +135,9 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.vz = 10 ** (this.variables[7].value + this.variables[8].value - 18);
     this.vtot = Math.sqrt(this.vx * this.vx + 2 * this.vz * this.vz);
     this.resets++
-    this.stratExtra = ": "+(this.resets) + " resets ("+ parseFloat((this.t/3600).toFixed(2))+" hours & e"+parseFloat(this.maxRho.toFixed(2)) + " rho), "+"resetMulti= "+this.resetMulti+", v1="+this.variables[5].level+", v2="+this.variables[6].level
+    this.stratExtra = ": "+(this.resets) + " resets ("+ parseFloat((this.t/3600).toFixed(2)).toFixed(2)+" hours & "+(10**this.maxRho).toExponential(2).replace('+', '') + " rho), "+"resetMulti= "+this.resetMulti+", v1="+this.variables[5].level+", v2="+this.variables[6].level+", v3="+this.variables[7].level+", v4="+this.variables[8].level
+    if (this.resets>(this.lastPub/5))
+      console.log(this.strat + " " + this.stratExtra)
   }
 
   updateC(): void {
