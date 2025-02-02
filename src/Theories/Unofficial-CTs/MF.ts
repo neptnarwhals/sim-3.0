@@ -61,7 +61,24 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       MF1: idleStrat,
       MF2: idleStrat,
       MF3: idleStrat,
-      MF4: idleStrat
+      MF4: idleStrat,
+      MF5: idleStrat,
+      MF6: idleStrat,
+      MF7: idleStrat,
+      MF8: idleStrat,
+      MF9: idleStrat,
+      MF10: idleStrat,
+      MF11: idleStrat,
+      MF12: idleStrat,
+      MF13: idleStrat,
+      MF14: idleStrat,
+      MF15: idleStrat,
+      MF16: idleStrat,
+      MF17: idleStrat,
+      MF18: idleStrat,
+      MF19: idleStrat,
+      MF20: idleStrat,
+      MF21: idleStrat
     };
     const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
     return condition;
@@ -98,7 +115,24 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       MF1: globalOptimalRoute,
       MF2: globalOptimalRoute,
       MF3: globalOptimalRoute,
-      MF4: globalOptimalRoute
+      MF4: globalOptimalRoute,
+      MF5: globalOptimalRoute,
+      MF6: globalOptimalRoute,
+      MF7: globalOptimalRoute,
+      MF8: globalOptimalRoute,
+      MF9: globalOptimalRoute,
+      MF10: globalOptimalRoute,
+      MF11: globalOptimalRoute,
+      MF12: globalOptimalRoute,
+      MF13: globalOptimalRoute,
+      MF14: globalOptimalRoute,
+      MF15: globalOptimalRoute,
+      MF16: globalOptimalRoute,
+      MF17: globalOptimalRoute,
+      MF18: globalOptimalRoute,
+      MF19: globalOptimalRoute,
+      MF20: globalOptimalRoute,
+      MF21: globalOptimalRoute
     };
     return tree[this.strat];
   }
@@ -136,7 +170,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.vtot = Math.sqrt(this.vx * this.vx + 2 * this.vz * this.vz);
     this.resets++
     this.stratExtra = ": "+(this.resets) + " resets ("+ parseFloat((this.t/3600).toFixed(2)).toFixed(2)+" hours & "+(10**(this.maxRho % 1)).toFixed(2)+'e'+Math.floor(this.maxRho) + " rho), "+"resetMulti= "+this.resetMulti+", v1="+this.variables[5].level+", v2="+this.variables[6].level+", v3="+this.variables[7].level+", v4="+this.variables[8].level
-    console.log(this.strat + this.stratExtra)
+    // console.log(this.strat + this.stratExtra)
   }
 
   updateC(): void {
@@ -172,20 +206,69 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       new Variable({ cost: new ExponentialCost(1e50, 70), stepwisePowerSum: { default:true }}), // v3
       new Variable({ cost: new ExponentialCost(1e55, 1e6), varBase: 1.5}), // v4
     ];
-    // this.strat="MF"
-    switch (this.strat)
-    {
+    switch (this.strat) {
       case "MF1":
-        this.vMaxBuy = 1.5;
+        this.vMaxBuy = 0;
         break
       case "MF2":
-        this.vMaxBuy = 3;
+        this.vMaxBuy = 0.5;
         break
       case "MF3":
-        this.vMaxBuy = 4.5;
+        this.vMaxBuy = 1;
         break
       case "MF4":
+        this.vMaxBuy = 1.5;
+        break
+      case "MF5":
+        this.vMaxBuy = 2;
+        break
+      case "MF6":
+        this.vMaxBuy = 2.5;
+        break
+      case "MF7":
+        this.vMaxBuy = 3;
+        break
+      case "MF8":
+        this.vMaxBuy = 3.5;
+        break
+      case "MF9":
+        this.vMaxBuy = 4;
+        break
+      case "MF10":
+        this.vMaxBuy = 4.5;
+        break
+      case "MF11":
+        this.vMaxBuy = 5;
+        break
+      case "MF12":
+        this.vMaxBuy = 5.5;
+        break
+      case "MF13":
         this.vMaxBuy = 6;
+        break
+      case "MF14":
+        this.vMaxBuy = 6.5;
+        break
+      case "MF15":
+        this.vMaxBuy = 7;
+        break
+      case "MF16":
+        this.vMaxBuy = 7.5;
+        break
+      case "MF17":
+        this.vMaxBuy = 8;
+        break
+      case "MF18":
+        this.vMaxBuy = 8.5;
+        break
+      case "MF19":
+        this.vMaxBuy = 9;
+        break
+      case "MF20":
+        this.vMaxBuy = 9.5;
+        break
+      case "MF21":
+        this.vMaxBuy = 10;
         break
       default:
         this.vMaxBuy = 0;
