@@ -4,9 +4,25 @@ import Variable, { ExponentialCost } from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 
 export default async function mf(data: theoryData): Promise<simResult> {
-  const sim = new mfSim(data);
-  const res = await sim.simulate();
-  return res;
+  let resetMultiValues = [];
+  for (let i = 1; i <= 10; i += 0.1) {
+    resetMultiValues.push(parseFloat(i.toFixed(1)));
+  }
+  let highestRes: simResult | null = null;
+  let highestValue = -Infinity;
+  let bestResetMuti = 0;
+
+  for (const resetMulti of resetMultiValues) {
+    const sim = new mfSim(data, resetMulti);
+    const res = await sim.simulate();
+    
+    if (res[7] > highestValue) {
+      highestValue = res[7];
+      highestRes = res;
+      bestResetMuti=resetMulti;
+    }
+  }
+  return highestRes!;
 }
 
 type theory = "MF";
@@ -28,6 +44,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   resets: number;
   stratExtra: string;
   vMaxBuy: number;
+  resetMulti: number;
 
   getBuyingConditions() {
     const autobuyall = new Array(9).fill(true);
@@ -128,7 +145,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.c = xterm + omegaterm + vterm + l10(4.49e19)
   }
 
-  constructor(data: theoryData) {
+  constructor(data: theoryData, resetMulti: number) {
     super(data);
     this.pubUnlock = 8;
     this.totMult = data.rho < this.pubUnlock ? 0 : this.getTotMult(data.rho);
@@ -142,6 +159,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.resets = 0;
     this.varNames = ["c1", "c2", "a1", "a2", "delta",  "v1", "v2", "v3", "v4"];
     this.stratExtra = "";
+    this.resetMulti = resetMulti;
     this.variables = [
       new Variable({ cost: new ExponentialCost(10, 2), stepwisePowerSum: { base:2, length:7 }, firstFreeCost: true }), // c1
       new Variable({ cost: new ExponentialCost(1e3, 100), varBase: 2 }), // c2
@@ -200,24 +218,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
 
     const vvx = 10 ** (this.variables[5].value + this.variables[6].value - 20);
     let resetcond: boolean;
-    switch (this.strat)
-    {
-      case "MF":
-        resetcond = vvx/this.vx > 2.718 && this.maxRho < this.lastPub;
-        break
-      case "MF2":
-        resetcond = vvx/this.vx > 3.5 && this.maxRho < this.lastPub;
-        break
-      case "MF3":
-        resetcond = vvx/this.vx > 2.5 && this.maxRho < this.lastPub;
-        break
-      case "MF4":
-        resetcond = vvx/this.vx > 2 && this.maxRho < this.lastPub;
-        break
-      default:
-        resetcond = false;
-        break
-    }
+    resetcond = vvx/this.vx > this.resetMulti;
     if (resetcond)
       this.resetParticle()
 
