@@ -40,11 +40,11 @@ class mfSim extends theoryClass {
     getBuyingConditions() {
         const autobuyall = new Array(9).fill(true);
         const idleStrat = [
+            () => (Math.pow(10, (Math.min(this.variables[1].cost, this.variables[3].cost) - this.variables[0].cost))) > 10,
             true,
+            () => (Math.pow(10, (Math.min(this.variables[1].cost, this.variables[3].cost) - this.variables[2].cost))) > 3,
             true,
-            true,
-            true,
-            true,
+            () => (Math.pow(10, (Math.min(this.variables[1].cost, this.variables[3].cost) - this.variables[4].cost))) > 1.1,
             ...new Array(4).fill(() => this.maxRho <= this.lastPub + this.vMaxBuy)
         ];
         const conditions = {
@@ -122,7 +122,8 @@ class mfSim extends theoryClass {
         this.vz = Math.pow(10, (this.variables[7].value + this.variables[8].value - 18));
         this.vtot = Math.sqrt(this.vx * this.vx + 2 * this.vz * this.vz);
         this.resets++;
-        this.stratExtra = ": " + (this.resets) + " resets (" + parseFloat((this.t / 3600).toFixed(2)) + " hours & e" + parseFloat(this.maxRho.toFixed(2)) + " rho), " + "resetMulti= " + this.resetMulti + ", v1=" + this.variables[5].level + ", v2=" + this.variables[6].level;
+        this.stratExtra = ": " + (this.resets) + " resets (" + parseFloat((this.t / 3600).toFixed(2)).toFixed(2) + " hours & " + (Math.pow(10, (this.maxRho % 1))).toFixed(2) + 'e' + Math.floor(this.maxRho) + " rho), " + "resetMulti= " + this.resetMulti + ", v1=" + this.variables[5].level + ", v2=" + this.variables[6].level + ", v3=" + this.variables[7].level + ", v4=" + this.variables[8].level;
+        console.log(this.strat + this.stratExtra);
     }
     updateC() {
         const xterm = l10(1e15) * this.xexp();
