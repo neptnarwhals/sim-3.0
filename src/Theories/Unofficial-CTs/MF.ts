@@ -5,7 +5,7 @@ import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.j
 
 export default async function mf(data: theoryData): Promise<simResult> {
   let resetMultiValues = [];
-  for (let i = 1; i <= 10; i += 0.1) {
+  for (let i = 1.2; i <= 2.6; i += 0.1) {
     resetMultiValues.push(parseFloat(i.toFixed(1)));
   }
   let highestRes: simResult | null = null;
@@ -58,7 +58,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     ]
 
     const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
-      MF: idleStrat,
+      MF1: idleStrat,
       MF2: idleStrat,
       MF3: idleStrat,
       MF4: idleStrat
@@ -95,7 +95,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       [1, 1, 2, 2, 2, 1]
     ];
     const tree: { [key in stratType[theory]]: Array<Array<number>> } = {
-      MF: globalOptimalRoute,
+      MF1: globalOptimalRoute,
       MF2: globalOptimalRoute,
       MF3: globalOptimalRoute,
       MF4: globalOptimalRoute
@@ -171,6 +171,25 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       new Variable({ cost: new ExponentialCost(1e50, 70), stepwisePowerSum: { default:true }}), // v3
       new Variable({ cost: new ExponentialCost(1e55, 1e6), varBase: 1.5}), // v4
     ];
+    // this.strat="MF"
+    switch (this.strat)
+    {
+      case "MF1":
+        this.vMaxBuy = 1.5;
+        break
+      case "MF2":
+        this.vMaxBuy = 3;
+        break
+      case "MF3":
+        this.vMaxBuy = 4.5;
+        break
+      case "MF4":
+        this.vMaxBuy = 6;
+        break
+      default:
+        this.vMaxBuy = 0;
+        break
+    }
     this.conditions = this.getBuyingConditions();
     this.milestoneConditions = this.getMilestoneConditions();
     this.milestoneTree = this.getMilestoneTree();
