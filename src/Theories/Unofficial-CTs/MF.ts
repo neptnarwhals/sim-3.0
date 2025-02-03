@@ -335,7 +335,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       this.dynamicResetMulti = this.resetMulti;
     }
     if (resetcond && this.buyV) {
-      this.resetParticle()
+      this.resetParticle();
     }
 
     this.t += this.dt / 1.5;
@@ -350,18 +350,27 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     }
   }
   buyVariables() {
-    for (let i = this.variables.length - 1; i >= 0; i--)
+    for (let i = this.variables.length - 1; i >= 0; i--) {
       while (true) {
-        if (i>=5 && (100**this.rho>(10**this.variables[5].cost+10**this.variables[6].cost+10**this.variables[7].cost+10**this.variables[8].cost))) {
-          this.buyV = true
-        }
+        if ((!this.buyV) && (i >= 5 && ((10 ** this.rho) > (1 * (10 ** this.variables[5].cost + 10 ** this.variables[6].cost + 10 ** this.variables[7].cost + 10 ** this.variables[8].cost))))) {
+          this.buyV = true;
+        }  
+
         if (this.rho > this.variables[i].cost && this.conditions[i]() && this.milestoneConditions[i]()) {
           if (this.maxRho + 5 > this.lastPub) {
-            this.boughtVars.push({ variable: this.varNames[i], level: this.variables[i].level + 1, cost: this.variables[i].cost, timeStamp: this.t });
+            this.boughtVars.push({
+              variable: this.varNames[i],
+              level: this.variables[i].level + 1,
+              cost: this.variables[i].cost,
+              timeStamp: this.t
+            });
           }
           this.rho = subtract(this.rho, this.variables[i].cost);
           this.variables[i].buy();
-        } else break;
+        } else {
+          break;
+        }
       }
+    }
   }
 }
