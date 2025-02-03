@@ -45,6 +45,8 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   stratExtra: string;
   vMaxBuy: number;
   resetMulti: number;
+  dynamicResetMulti: number;
+  buyV: boolean;
 
   getBuyingConditions() {
     const autobuyall = new Array(9).fill(true);
@@ -54,7 +56,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       () => this.i/(i0*10 ** this.variables[3].value) < 0.5 || this.variables[2].cost+1<this.maxRho,
       true,
       () => this.variables[4].cost +l10(1.1) < Math.min(this.variables[1].cost, this.variables[3].cost),
-      ...new Array(4).fill(() => this.maxRho <= this.lastPub+this.vMaxBuy)
+      ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
     ]
 
     const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
@@ -169,8 +171,11 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.vz = 10 ** (this.variables[7].value + this.variables[8].value - 18);
     this.vtot = Math.sqrt(this.vx * this.vx + 2 * this.vz * this.vz);
     this.resets++
-    this.stratExtra = ": "+(this.resets) + " resets ("+ parseFloat((this.t/3600).toFixed(2)).toFixed(2)+" hours & "+(10**(this.maxRho % 1)).toFixed(2)+'e'+Math.floor(this.maxRho) + " rho), "+"resetMulti= "+this.resetMulti+", v1="+this.variables[5].level+", v2="+this.variables[6].level+", v3="+this.variables[7].level+", v4="+this.variables[8].level
-    // console.log(this.strat + this.stratExtra)
+    this.stratExtra = ": "+(this.resets) + " resets ("+ parseFloat((this.t/3600).toFixed(2)).toFixed(2)+" hours & "+(10**(this.maxRho % 1)).toFixed(2)+'e'+Math.floor(this.maxRho) + " rho), "+"resetMulti= "+this.dynamicResetMulti+", v1="+this.variables[5].level+", v2="+this.variables[6].level+", v3="+this.variables[7].level+", v4="+this.variables[8].level
+    console.log(this.strat + this.stratExtra)
+    if (this.rho>65) {
+      this.buyV = false
+    }
   }
 
   updateC(): void {
@@ -195,6 +200,8 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.varNames = ["c1", "c2", "a1", "a2", "delta",  "v1", "v2", "v3", "v4"];
     this.stratExtra = "";
     this.resetMulti = resetMulti;
+    this.dynamicResetMulti = 0;
+    this.buyV = true;
     this.variables = [
       new Variable({ cost: new ExponentialCost(10, 2), stepwisePowerSum: { base:2, length:7 }, firstFreeCost: true }), // c1
       new Variable({ cost: new ExponentialCost(1e3, 100), varBase: 2 }), // c2
@@ -322,8 +329,14 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     const vvx = 10 ** (this.variables[5].value + this.variables[6].value - 20);
     let resetcond: boolean;
     resetcond = vvx/this.vx > this.resetMulti;
-    if (resetcond)
+    if (this.maxRho + 3 < this.lastPub) {
+      this.dynamicResetMulti = this.resetMulti;
+    } else {
+      this.dynamicResetMulti = this.resetMulti;
+    }
+    if (resetcond && this.buyV) {
       this.resetParticle()
+    }
 
     this.t += this.dt / 1.5;
     this.dt *= this.ddt;
@@ -339,6 +352,9 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   buyVariables() {
     for (let i = this.variables.length - 1; i >= 0; i--)
       while (true) {
+        if (i>=5 && (100**this.rho>(10**this.variables[5].cost+10**this.variables[6].cost+10**this.variables[7].cost+10**this.variables[8].cost))) {
+          this.buyV = true
+        }
         if (this.rho > this.variables[i].cost && this.conditions[i]() && this.milestoneConditions[i]()) {
           if (this.maxRho + 5 > this.lastPub) {
             this.boughtVars.push({ variable: this.varNames[i], level: this.variables[i].level + 1, cost: this.variables[i].cost, timeStamp: this.t });
