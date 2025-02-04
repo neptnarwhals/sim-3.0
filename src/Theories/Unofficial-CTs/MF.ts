@@ -352,7 +352,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   buyVariables() {
     for (let i = this.variables.length - 1; i >= 0; i--) {
       while (true) {
-        if ((!this.buyV) && (i >= 5 && ((10 ** this.rho) > (1 * (10 ** this.variables[5].cost + 10 ** this.variables[6].cost + 10 ** this.variables[7].cost + 10 ** this.variables[8].cost))))) {
+        if ((!this.buyV) && (i >= 5 && (this.rho > (Math.max(this.variables[5].cost,this.variables[6].cost,this.variables[7].cost,this.variables[8].cost)+l10(2))))) {
           this.buyV = true;
         }  
 
