@@ -40,12 +40,12 @@ class mfSim extends theoryClass {
     getBuyingConditions() {
         const autobuyall = new Array(9).fill(true);
         const idleStrat = [
-            () => (Math.pow(10, (Math.min(this.variables[1].cost, this.variables[3].cost) - this.variables[0].cost))) > 10,
+            () => this.variables[0].cost + l10(10) < Math.min(this.variables[1].cost, this.variables[3].cost),
             true,
-            () => (Math.pow(10, (Math.min(this.variables[1].cost, this.variables[3].cost) - this.variables[2].cost))) > 3,
+            () => this.i / (i0 * Math.pow(10, this.variables[3].value)) < 0.5 || this.variables[2].cost + 1 < this.maxRho,
             true,
-            () => (Math.pow(10, (Math.min(this.variables[1].cost, this.variables[3].cost) - this.variables[4].cost))) > 1.1,
-            ...new Array(4).fill(() => this.maxRho <= this.lastPub + this.vMaxBuy)
+            () => this.variables[4].cost + l10(1.1) < Math.min(this.variables[1].cost, this.variables[3].cost),
+            ...new Array(4).fill(() => (this.maxRho <= this.lastPub + this.vMaxBuy && this.buyV))
         ];
         const conditions = {
             MF1: idleStrat,
@@ -156,8 +156,11 @@ class mfSim extends theoryClass {
         this.vz = Math.pow(10, (this.variables[7].value + this.variables[8].value - 18));
         this.vtot = Math.sqrt(this.vx * this.vx + 2 * this.vz * this.vz);
         this.resets++;
-        this.stratExtra = ": " + (this.resets) + " resets (" + parseFloat((this.t / 3600).toFixed(2)).toFixed(2) + " hours & " + (Math.pow(10, (this.maxRho % 1))).toFixed(2) + 'e' + Math.floor(this.maxRho) + " rho), " + "resetMulti= " + this.resetMulti + ", v1=" + this.variables[5].level + ", v2=" + this.variables[6].level + ", v3=" + this.variables[7].level + ", v4=" + this.variables[8].level;
-        // console.log(this.strat + this.stratExtra)
+        this.stratExtra = ": " + (this.resets) + " resets (" + parseFloat((this.t / 3600).toFixed(2)).toFixed(2) + " hours & " + (Math.pow(10, (this.maxRho % 1))).toFixed(2) + 'e' + Math.floor(this.maxRho) + " rho), " + "resetMulti= " + this.dynamicResetMulti + ", v1=" + this.variables[5].level + ", v2=" + this.variables[6].level + ", v3=" + this.variables[7].level + ", v4=" + this.variables[8].level;
+        console.log(this.strat + this.stratExtra);
+        if (this.rho > 65) {
+            this.buyV = false;
+        }
     }
     updateC() {
         const xterm = l10(1e15) * this.xexp();
@@ -180,6 +183,8 @@ class mfSim extends theoryClass {
         this.varNames = ["c1", "c2", "a1", "a2", "delta", "v1", "v2", "v3", "v4"];
         this.stratExtra = "";
         this.resetMulti = resetMulti;
+        this.dynamicResetMulti = 0;
+        this.buyV = true;
         this.variables = [
             new Variable({ cost: new ExponentialCost(10, 2), stepwisePowerSum: { base: 2, length: 7 }, firstFreeCost: true }),
             new Variable({ cost: new ExponentialCost(1e3, 100), varBase: 2 }),
@@ -297,8 +302,9 @@ class mfSim extends theoryClass {
         const vc1 = this.variables[0].value;
         const vc2 = this.variables[1].value;
         this.x += newdt * this.vx;
-        this.i += Math.max(0, va1 * 0.01 * (i0 - this.i / va2));
-        this.i = Math.min(this.i, va2 * i0);
+        let icap = va2 * i0;
+        this.i = icap - (icap - this.i) * (Math.pow(Math.E, (-this.dt * va1 / 10 / va2)));
+        this.i = Math.min(this.i, icap);
         const xterm = l10(this.x) * this.xexp();
         const omegaterm = (l10((q0 / m0) * mu0 * this.i) + this.variables[4].value) * this.omegaexp();
         const vterm = this.milestones[0] ? l10(this.vtot) * this.vexp() : 0;
@@ -307,8 +313,15 @@ class mfSim extends theoryClass {
         const vvx = Math.pow(10, (this.variables[5].value + this.variables[6].value - 20));
         let resetcond;
         resetcond = vvx / this.vx > this.resetMulti;
-        if (resetcond)
+        if (this.maxRho + 3 < this.lastPub) {
+            this.dynamicResetMulti = this.resetMulti;
+        }
+        else {
+            this.dynamicResetMulti = this.resetMulti;
+        }
+        if (resetcond && this.buyV) {
             this.resetParticle();
+        }
         this.t += this.dt / 1.5;
         this.dt *= this.ddt;
         if (this.maxRho < this.recovery.value)
@@ -321,17 +334,27 @@ class mfSim extends theoryClass {
         }
     }
     buyVariables() {
-        for (let i = this.variables.length - 1; i >= 0; i--)
+        for (let i = this.variables.length - 1; i >= 0; i--) {
             while (true) {
+                if ((!this.buyV) && (i >= 5 && (this.rho > (Math.max(this.variables[5].cost, this.variables[6].cost, this.variables[7].cost, this.variables[8].cost) + l10(2))))) {
+                    this.buyV = true;
+                }
                 if (this.rho > this.variables[i].cost && this.conditions[i]() && this.milestoneConditions[i]()) {
                     if (this.maxRho + 5 > this.lastPub) {
-                        this.boughtVars.push({ variable: this.varNames[i], level: this.variables[i].level + 1, cost: this.variables[i].cost, timeStamp: this.t });
+                        this.boughtVars.push({
+                            variable: this.varNames[i],
+                            level: this.variables[i].level + 1,
+                            cost: this.variables[i].cost,
+                            timeStamp: this.t
+                        });
                     }
                     this.rho = subtract(this.rho, this.variables[i].cost);
                     this.variables[i].buy();
                 }
-                else
+                else {
                     break;
+                }
             }
+        }
     }
 }
