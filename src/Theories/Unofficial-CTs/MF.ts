@@ -47,6 +47,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   resetMulti: number;
   dynamicResetMulti: number;
   buyV: boolean;
+  resetcond: boolean;
 
   getBuyingConditions() {
     const autobuyall = new Array(9).fill(true);
@@ -202,6 +203,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.resetMulti = resetMulti;
     this.dynamicResetMulti = 0;
     this.buyV = true;
+    this.resetcond = false;
     this.variables = [
       new Variable({ cost: new ExponentialCost(10, 2), stepwisePowerSum: { base:2, length:7 }, firstFreeCost: true }), // c1
       new Variable({ cost: new ExponentialCost(1e3, 100), varBase: 2 }), // c2
@@ -328,14 +330,13 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.rho = add(this.rho, rhodot + l10(this.dt));
 
     const vvx = 10 ** (this.variables[5].value + this.variables[6].value - 20);
-    let resetcond: boolean;
-    resetcond = vvx/this.vx > this.resetMulti;
     if (this.maxRho + 3 < this.lastPub) {
       this.dynamicResetMulti = this.resetMulti;
     } else {
       this.dynamicResetMulti = this.resetMulti;
     }
-    if (resetcond && this.buyV) {
+    this.resetcond = vvx/this.vx > this.dynamicResetMulti;
+    if (this.resetcond && this.buyV) {
       this.resetParticle();
     }
 
