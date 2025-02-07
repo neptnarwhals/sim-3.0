@@ -316,8 +316,9 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     const vc2 = this.variables[1].value;
 
     this.x += newdt * this.vx
-    this.i += Math.max(0, va1 * 0.01 * (i0 - this.i/va2))
-    this.i = Math.min(this.i, va2*i0)
+    let icap = va2*i0;
+    this.i = icap - (icap - this.i)*(Math.E ** (-this.dt*va1/10/va2))
+    this.i = Math.min(this.i, icap);
 
     const xterm = l10(this.x) * this.xexp()
     const omegaterm = (l10((q0/m0) * mu0 * this.i) + this.variables[4].value) * this.omegaexp()
