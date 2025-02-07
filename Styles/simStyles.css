@@ -95,6 +95,10 @@
   cursor: pointer;
   transform: scale(1.1);
 }
+.simAllInputs input[type="checkbox"] {
+  width: 0.8rem;
+  height: 0.8rem;
+}
 .saveDist {
   position: relative;
 }
