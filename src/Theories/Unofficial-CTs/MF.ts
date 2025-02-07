@@ -5,7 +5,7 @@ import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.j
 
 export default async function mf(data: theoryData): Promise<simResult> {
   let resetMultiValues = [];
-  for (let i = 1.2; i <= 2.6; i += 0.1) {
+  for (let i = 1.3; i <= 2.6; i += 0.1) {
     resetMultiValues.push(parseFloat(i.toFixed(1)));
   }
   let highestRes: simResult | null = null;
