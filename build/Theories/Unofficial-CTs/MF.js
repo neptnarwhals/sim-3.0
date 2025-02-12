@@ -14,7 +14,7 @@ import { theoryClass } from "../theory.js";
 export default function mf(data) {
     return __awaiter(this, void 0, void 0, function* () {
         let resetMultiValues = [];
-        for (let i = 1.2; i <= 2.6; i += 0.1) {
+        for (let i = 1.3; i <= 2.6; i += 0.1) {
             resetMultiValues.push(parseFloat(i.toFixed(1)));
         }
         let highestRes = null;
@@ -40,11 +40,11 @@ class mfSim extends theoryClass {
     getBuyingConditions() {
         const autobuyall = new Array(9).fill(true);
         const idleStrat = [
-            () => this.variables[0].cost + l10(10) < Math.min(this.variables[1].cost, this.variables[3].cost),
+            () => this.variables[0].cost + l10(10) < Math.min(this.variables[1].cost, this.variables[3].cost, this.variables[4].cost),
             true,
             () => this.i / (i0 * Math.pow(10, this.variables[3].value)) < 0.5 || this.variables[2].cost + 1 < this.maxRho,
             true,
-            () => this.variables[4].cost + l10(1.1) < Math.min(this.variables[1].cost, this.variables[3].cost),
+            () => this.variables[4].cost < Math.min(this.variables[1].cost, this.variables[3].cost),
             ...new Array(4).fill(() => (this.maxRho <= this.lastPub + this.vMaxBuy && this.buyV))
         ];
         const conditions = {
@@ -185,6 +185,7 @@ class mfSim extends theoryClass {
         this.resetMulti = resetMulti;
         this.dynamicResetMulti = 0;
         this.buyV = true;
+        this.resetcond = false;
         this.variables = [
             new Variable({ cost: new ExponentialCost(10, 2), stepwisePowerSum: { base: 2, length: 7 }, firstFreeCost: true }),
             new Variable({ cost: new ExponentialCost(1e3, 100), varBase: 2 }),
@@ -201,64 +202,64 @@ class mfSim extends theoryClass {
                 this.vMaxBuy = 0;
                 break;
             case "MF2":
-                this.vMaxBuy = 0.5;
-                break;
-            case "MF3":
                 this.vMaxBuy = 1;
                 break;
-            case "MF4":
-                this.vMaxBuy = 1.5;
-                break;
-            case "MF5":
+            case "MF3":
                 this.vMaxBuy = 2;
                 break;
-            case "MF6":
-                this.vMaxBuy = 2.5;
-                break;
-            case "MF7":
+            case "MF4":
                 this.vMaxBuy = 3;
                 break;
-            case "MF8":
-                this.vMaxBuy = 3.5;
-                break;
-            case "MF9":
+            case "MF5":
                 this.vMaxBuy = 4;
                 break;
-            case "MF10":
-                this.vMaxBuy = 4.5;
-                break;
-            case "MF11":
+            case "MF6":
                 this.vMaxBuy = 5;
                 break;
-            case "MF12":
-                this.vMaxBuy = 5.5;
-                break;
-            case "MF13":
+            case "MF7":
                 this.vMaxBuy = 6;
                 break;
-            case "MF14":
-                this.vMaxBuy = 6.5;
-                break;
-            case "MF15":
+            case "MF8":
                 this.vMaxBuy = 7;
                 break;
-            case "MF16":
-                this.vMaxBuy = 7.5;
-                break;
-            case "MF17":
+            case "MF9":
                 this.vMaxBuy = 8;
                 break;
-            case "MF18":
-                this.vMaxBuy = 8.5;
-                break;
-            case "MF19":
+            case "MF10":
                 this.vMaxBuy = 9;
                 break;
+            case "MF11":
+                this.vMaxBuy = 10;
+                break;
+            case "MF12":
+                this.vMaxBuy = 11;
+                break;
+            case "MF13":
+                this.vMaxBuy = 12;
+                break;
+            case "MF14":
+                this.vMaxBuy = 13;
+                break;
+            case "MF15":
+                this.vMaxBuy = 14;
+                break;
+            case "MF16":
+                this.vMaxBuy = 15;
+                break;
+            case "MF17":
+                this.vMaxBuy = 16;
+                break;
+            case "MF18":
+                this.vMaxBuy = 17;
+                break;
+            case "MF19":
+                this.vMaxBuy = 18;
+                break;
             case "MF20":
-                this.vMaxBuy = 9.5;
+                this.vMaxBuy = 19;
                 break;
             case "MF21":
-                this.vMaxBuy = 10;
+                this.vMaxBuy = 20;
                 break;
             default:
                 this.vMaxBuy = 0;
@@ -311,15 +312,14 @@ class mfSim extends theoryClass {
         const rhodot = this.totMult + this.c + vc1 + vc2 + xterm + omegaterm + vterm;
         this.rho = add(this.rho, rhodot + l10(this.dt));
         const vvx = Math.pow(10, (this.variables[5].value + this.variables[6].value - 20));
-        let resetcond;
-        resetcond = vvx / this.vx > this.resetMulti;
         if (this.maxRho + 3 < this.lastPub) {
             this.dynamicResetMulti = this.resetMulti;
         }
         else {
             this.dynamicResetMulti = this.resetMulti;
         }
-        if (resetcond && this.buyV) {
+        this.resetcond = vvx / this.vx > this.dynamicResetMulti;
+        if (this.resetcond && this.buyV) {
             this.resetParticle();
         }
         this.t += this.dt / 1.5;
