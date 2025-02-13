@@ -59,6 +59,9 @@ export default class Variable {
     this.level++;
     this.cost = this.data.cost.getCost(this.level - this.firstFreeCost);
   }
+  getCostForLevel(level: number) {
+    return this.data.cost.getCost(level - this.firstFreeCost);
+  }
   reCalculate() {
     if (this.stepwisePowerSum.base !== 0) {
       const intPart = Math.floor(this.level / this.stepwisePowerSum.length);
