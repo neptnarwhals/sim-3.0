@@ -380,7 +380,7 @@
         "FPdMS": {
           "stratFilterCondition": "Active || Very-Active"
         },
-        "FPhotabMS": {
+        "FPmodBurstC1MS": {
           "stratFilterCondition": "Active || Very-Active"
         }
       }
