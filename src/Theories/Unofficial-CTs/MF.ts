@@ -13,7 +13,7 @@ export default async function mf(data: theoryData): Promise<simResult> {
   let bestResetMuti = 0;
 
   for (const resetMulti of resetMultiValues) {
-    const sim = new mfSim(data, resetMulti);
+    const sim = new mfSimWrap(data, resetMulti);
     const res = await sim.simulate();
     
     if (res[7] > highestValue) {
@@ -48,15 +48,31 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   dynamicResetMulti: number;
   buyV: boolean;
   resetcond: boolean;
+  normalPubRho: number;
 
   getBuyingConditions() {
     const autobuyall = new Array(9).fill(true);
     const idleStrat = [
       () => this.variables[0].cost +l10(10) < Math.min(this.variables[1].cost, this.variables[3].cost, this.variables[4].cost),
-      true,
+      () => {
+        if(this.normalPubRho == -1) {
+            return true;
+        }
+        return this.variables[1].cost <= this.normalPubRho - l10(2);
+      },
       () => this.i/(i0*10 ** this.variables[3].value) < 0.5 || this.variables[2].cost+1<this.maxRho,
-      true,
-      () => this.variables[4].cost < Math.min(this.variables[1].cost, this.variables[3].cost),
+      () => {
+        if(this.normalPubRho == -1) {
+            return true;
+        }
+        return this.variables[3].cost <= this.normalPubRho - l10(2);
+      },
+      () => {
+        if(this.normalPubRho == -1) {
+            return this.variables[4].cost < Math.min(this.variables[1].cost, this.variables[3].cost);
+        }
+        return (this.variables[4].cost <= this.normalPubRho - l10(2)) && this.variables[4].cost < Math.min(this.variables[1].cost, this.variables[3].cost);
+      },
       ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
     ]
 
@@ -200,6 +216,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.resets = 0;
     this.varNames = ["c1", "c2", "a1", "a2", "delta",  "v1", "v2", "v3", "v4"];
     this.stratExtra = "";
+    this.normalPubRho = -1;
     this.resetMulti = resetMulti;
     this.dynamicResetMulti = 0;
     this.buyV = true;
@@ -374,5 +391,35 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
         }
       }
     }
+  }
+}
+
+class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
+  _originalData: theoryData;
+  resetMulti: number;
+
+  constructor(data: theoryData, resetMulti: number) {
+      super(data);
+      this._originalData = data;
+      this.resetMulti = resetMulti;
+  }
+  async simulate() {
+    let bestSim = new mfSim(this._originalData, this.resetMulti)
+    let bestSimRes = await bestSim.simulate();
+    let internalSim = new mfSim(this._originalData, this.resetMulti)
+    internalSim.normalPubRho = bestSim.pubRho;
+    let res = await internalSim.simulate();
+    if (bestSim.maxTauH < internalSim.maxTauH) {
+      bestSim = internalSim;
+      bestSimRes = res;
+    }
+    for (let key in bestSim) {
+      // @ts-ignore
+      if (bestSim.hasOwnProperty(key) && typeof bestSim[key] !== "function") {
+          // @ts-ignore
+          this[key] = bestSim[key];
+      }
+    }
+    return bestSimRes
   }
 }
