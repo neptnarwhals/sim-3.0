@@ -30,7 +30,6 @@
 body {
   background-color: var(--bg-clr-dark-1);
   font-family: var(--ff-primary);
-  font-weight: bolders;
   color: var(--font-clr);
   height: 100vh;
 }

@@ -68,7 +68,7 @@ class fpSim extends theoryClass<theory, milestones> implements specificTheoryPro
         () => this.variables[1].cost + Math.log10((this.variables[1].level % 100) + 1) < this.variables[2].cost,
         ...new Array(8).fill(true),
       ],
-      FPhotabMS: [
+      FPmodBurstC1MS: [
         true, // t - 0
         () => {
           let mod100 = this.variables[1].level % 100;
@@ -145,7 +145,7 @@ class fpSim extends theoryClass<theory, milestones> implements specificTheoryPro
     const tree: { [key in stratType[theory]]: Array<milestones> } = {
       FP: globalOptimalRoute,
       FPdMS: globalOptimalRoute,
-      FPhotabMS: globalOptimalRoute,
+      FPmodBurstC1MS: globalOptimalRoute,
     };
     return tree[this.strat];
   }
@@ -282,7 +282,7 @@ class fpSim extends theoryClass<theory, milestones> implements specificTheoryPro
       this.updateN_flag = false;
     }
 
-    if (["FPdMS", "FPhotabMS"].includes(this.strat) && this.lastPub > 700 && this.getS(this.variables[7].level) < 2) {
+    if (["FPdMS", "FPmodBurstC1MS"].includes(this.strat) && this.lastPub > 700 && this.getS(this.variables[7].level) < 2) {
       this.milestones.sterm = 1;
       if (this.ticks % 20 < 10 / this.getS(this.variables[7].level)) this.milestones.sterm = 0;
     }
