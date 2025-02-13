@@ -4,25 +4,7 @@ import Variable, { ExponentialCost } from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 
 export default async function mf(data: theoryData): Promise<simResult> {
-  let resetMultiValues = [];
-  for (let i = 1.3; i <= 2.6; i += 0.1) {
-    resetMultiValues.push(parseFloat(i.toFixed(1)));
-  }
-  let highestRes: simResult | null = null;
-  let highestValue = -Infinity;
-  let bestResetMuti = 0;
-
-  for (const resetMulti of resetMultiValues) {
-    const sim = new mfSimWrap(data, resetMulti);
-    const res = await sim.simulate();
-    
-    if (res[7] > highestValue) {
-      highestValue = res[7];
-      highestRes = res;
-      bestResetMuti=resetMulti;
-    }
-  }
-  return highestRes!;
+  return await ((new mfSimWrap(data)).simulate());
 }
 
 type theory = "MF";
@@ -396,30 +378,40 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
 
 class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
   _originalData: theoryData;
-  resetMulti: number;
 
-  constructor(data: theoryData, resetMulti: number) {
+  constructor(data: theoryData) {
       super(data);
       this._originalData = data;
-      this.resetMulti = resetMulti;
   }
   async simulate() {
-    let bestSim = new mfSim(this._originalData, this.resetMulti)
-    let bestSimRes = await bestSim.simulate();
-    let internalSim = new mfSim(this._originalData, this.resetMulti)
-    internalSim.normalPubRho = bestSim.pubRho;
-    let res = await internalSim.simulate();
-    if (bestSim.maxTauH < internalSim.maxTauH) {
-      bestSim = internalSim;
-      bestSimRes = res;
+    let resetMultiValues = [];
+    for (let i = 1.3; i <= 2.6; i += 0.1) {
+      resetMultiValues.push(parseFloat(i.toFixed(1)));
     }
-    for (let key in bestSim) {
-      // @ts-ignore
-      if (bestSim.hasOwnProperty(key) && typeof bestSim[key] !== "function") {
-          // @ts-ignore
-          this[key] = bestSim[key];
+    let finalSim = new mfSim(this._originalData, 1.5);
+    let finalSimRes = await finalSim.simulate();
+    for (const resetMulti of resetMultiValues) {
+      let bestSim = new mfSim(this._originalData, resetMulti);
+      let bestSimRes = await bestSim.simulate();
+      let internalSim = new mfSim(this._originalData, resetMulti)
+      internalSim.normalPubRho = bestSim.pubRho;
+      let res = await internalSim.simulate();
+      if (bestSim.maxTauH < internalSim.maxTauH) {
+        bestSim = internalSim;
+        bestSimRes = res;
+      }
+      if (finalSim.maxTauH < bestSim.maxTauH) {
+        finalSim = bestSim;
+        finalSimRes = bestSimRes;
       }
     }
-    return bestSimRes
+    for (let key in finalSim) {
+      // @ts-ignore
+      if (finalSim.hasOwnProperty(key) && typeof finalSim[key] !== "function") {
+          // @ts-ignore
+          this[key] = finalSim[key];
+      }
+    }
+    return finalSimRes
   }
 }
