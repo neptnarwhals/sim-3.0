@@ -26,7 +26,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   resets: number;
   stratExtra: string;
   vMaxBuy: number;
-  resetMulti: number;
+  resetCombination: number[];
   dynamicResetMulti: number;
   buyV: boolean;
   resetcond: boolean;
@@ -35,14 +35,28 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   getBuyingConditions() {
     const autobuyall = new Array(9).fill(true);
     const idleStrat = [
-      () => this.variables[0].cost +l10(10) < Math.min(this.variables[1].cost, this.variables[3].cost, this.variables[4].cost),
+      () => {
+        if(this.normalPubRho != -1 && Math.min(this.variables[1].cost, this.variables[3].cost, this.variables[4].cost) > this.normalPubRho - l10(2)) {
+            return this.variables[0].cost +l10(10) <= this.normalPubRho;
+        }
+        else {
+            return this.variables[0].cost +l10(9.9) <= Math.min(this.variables[1].cost, this.variables[3].cost, this.variables[4].cost);
+        }
+      },
       () => {
         if(this.normalPubRho == -1) {
             return true;
         }
         return this.variables[1].cost <= this.normalPubRho - l10(2);
       },
-      () => this.i/(i0*10 ** this.variables[3].value) < 0.5 || this.variables[2].cost+1<this.maxRho,
+      () => {
+        if(this.normalPubRho != -1 && Math.min(this.variables[1].cost, this.variables[3].cost, this.variables[4].cost) > this.normalPubRho - l10(2)) {
+            return this.variables[2].cost +l10(10) <= this.normalPubRho;
+        }
+        else {
+            return this.i/(i0*10 ** this.variables[3].value) < 0.5 || this.variables[2].cost+1<this.maxRho;
+        }
+      },
       () => {
         if(this.normalPubRho == -1) {
             return true;
@@ -172,6 +186,12 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.resets++
     this.stratExtra = ": "+(this.resets) + " resets ("+ parseFloat((this.t/3600).toFixed(2)).toFixed(2)+" hours & "+(10**(this.maxRho % 1)).toFixed(2)+'e'+Math.floor(this.maxRho) + " rho), "+"resetMulti= "+this.dynamicResetMulti+", v1="+this.variables[5].level+", v2="+this.variables[6].level+", v3="+this.variables[7].level+", v4="+this.variables[8].level
     console.log(this.strat + this.stratExtra)
+    const currentIndex = this.resetCombination.indexOf(this.dynamicResetMulti);
+    if (currentIndex + 1 < this.resetCombination.length) {
+        this.dynamicResetMulti = this.resetCombination[currentIndex + 1];
+    } else {
+        this.dynamicResetMulti = this.resetCombination[0];
+    }
     if (this.rho>65) {
       this.buyV = false
     }
@@ -184,7 +204,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.c = xterm + omegaterm + vterm + l10(4.49e19)
   }
 
-  constructor(data: theoryData, resetMulti: number) {
+  constructor(data: theoryData, resetCombination: number[]) {
     super(data);
     this.pubUnlock = 8;
     this.totMult = data.rho < this.pubUnlock ? 0 : this.getTotMult(data.rho);
@@ -199,8 +219,8 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.varNames = ["c1", "c2", "a1", "a2", "delta",  "v1", "v2", "v3", "v4"];
     this.stratExtra = "";
     this.normalPubRho = -1;
-    this.resetMulti = resetMulti;
-    this.dynamicResetMulti = 0;
+    this.resetCombination = resetCombination;
+    this.dynamicResetMulti = resetCombination[0];
     this.buyV = true;
     this.resetcond = false;
     this.variables = [
@@ -329,11 +349,6 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.rho = add(this.rho, rhodot + l10(this.dt));
 
     const vvx = 10 ** (this.variables[5].value + this.variables[6].value - 20);
-    if (this.maxRho + 3 < this.lastPub) {
-      this.dynamicResetMulti = this.resetMulti;
-    } else {
-      this.dynamicResetMulti = this.resetMulti;
-    }
     this.resetcond = vvx/this.vx > this.dynamicResetMulti;
     if (this.resetcond && this.buyV) {
       this.resetParticle();
@@ -388,21 +403,23 @@ class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
     for (let i = 1.3; i <= 2.6; i += 0.1) {
       resetMultiValues.push(parseFloat(i.toFixed(1)));
     }
-    let finalSim = new mfSim(this._originalData, 1.5);
+    let finalSim = new mfSim(this._originalData, getAllCombinations(1.5)[0]);
     let finalSimRes = await finalSim.simulate();
     for (const resetMulti of resetMultiValues) {
-      let bestSim = new mfSim(this._originalData, resetMulti);
-      let bestSimRes = await bestSim.simulate();
-      let internalSim = new mfSim(this._originalData, resetMulti)
-      internalSim.normalPubRho = bestSim.pubRho;
-      let res = await internalSim.simulate();
-      if (bestSim.maxTauH < internalSim.maxTauH) {
-        bestSim = internalSim;
-        bestSimRes = res;
-      }
-      if (finalSim.maxTauH < bestSim.maxTauH) {
-        finalSim = bestSim;
-        finalSimRes = bestSimRes;
+      for (const resetCombination of getAllCombinations(resetMulti)) {
+        let bestSim = new mfSim(this._originalData, resetCombination);
+        let bestSimRes = await bestSim.simulate();
+        let internalSim = new mfSim(this._originalData, resetCombination)
+        internalSim.normalPubRho = bestSim.pubRho;
+        let res = await internalSim.simulate();
+        if (bestSim.maxTauH < internalSim.maxTauH) {
+          bestSim = internalSim;
+          bestSimRes = res;
+        }
+        if (finalSim.maxTauH < bestSim.maxTauH) {
+          finalSim = bestSim;
+          finalSimRes = bestSimRes;
+        }
       }
     }
     for (let key in finalSim) {
@@ -414,4 +431,21 @@ class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
     }
     return finalSimRes
   }
+}
+
+function getAllCombinations(resetMulti: number) {
+  const values = [resetMulti, resetMulti + 0.3, resetMulti - 0.3].filter(val => val >= 1);
+  const combinations: number[][] = [];
+
+  function combine(prefix:number[], array:number[]) {
+      if (prefix.length > 0) {
+          combinations.push([...prefix]);
+      }
+      for (let i = 0; i < array.length; i++) {
+          combine([...prefix, array[i]], array.slice(i + 1));
+      }
+  }
+
+  combine([resetMulti], values.slice(1));
+  return combinations;
 }
