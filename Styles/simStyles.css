@@ -139,6 +139,11 @@ textarea::placeholder {
   overflow: hidden;
   position: relative;
 }
+
+.boughtVars table tr td.highlighted {
+  background-color: rgb(197, 100, 62);
+}
+
 .boughtVars table,
 .boughtVars tr,
 .boughtVars td,

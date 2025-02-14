@@ -144,6 +144,17 @@ function resetVarBuy() {
   }
   global.varBuy = [];
 }
+
+function highlightResetCells() {
+  const cells = document.querySelectorAll('.boughtVars tr td:nth-child(1)');
+  cells.forEach(cell => {
+    const htmlCell = cell as HTMLElement;
+    if (htmlCell.innerText.toLowerCase().includes('reset at')) {
+      htmlCell.classList.add('highlighted');
+    }
+  });
+}
+
 function openVarModal(arr: Array<varBuy>) {
   document.body.style.overflow = "hidden";
   (<HTMLDialogElement>qs(".boughtVars")).showModal();
@@ -165,6 +176,7 @@ function openVarModal(arr: Array<varBuy>) {
     tr.appendChild(td4);
     tbody.appendChild(tr);
   }
+  highlightResetCells();
 }
 function getCurrencySymbol(value: string | undefined): string {
   if (value === undefined || value === "rho") return "\u03C1";
