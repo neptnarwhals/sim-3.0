@@ -24,6 +24,14 @@ class mfSim extends theoryClass {
     getBuyingConditions() {
         const autobuyall = new Array(9).fill(true);
         const idleStrat = [
+            true,
+            true,
+            true,
+            true,
+            true,
+            ...new Array(4).fill(() => (this.maxRho <= this.lastPub + this.vMaxBuy && this.buyV))
+        ];
+        const activeStrat = [
             () => {
                 if (this.normalPubRho != -1 && Math.min(this.variables[1].cost, this.variables[3].cost, this.variables[4].cost) > this.normalPubRho - l10(2)) {
                     return this.variables[0].cost + l10(10) <= this.normalPubRho;
@@ -61,27 +69,8 @@ class mfSim extends theoryClass {
             ...new Array(4).fill(() => (this.maxRho <= this.lastPub + this.vMaxBuy && this.buyV))
         ];
         const conditions = {
-            MF1: idleStrat,
-            MF2: idleStrat,
-            MF3: idleStrat,
-            MF4: idleStrat,
-            MF5: idleStrat,
-            MF6: idleStrat,
-            MF7: idleStrat,
-            MF8: idleStrat,
-            MF9: idleStrat,
-            MF10: idleStrat,
-            MF11: idleStrat,
-            MF12: idleStrat,
-            MF13: idleStrat,
-            MF14: idleStrat,
-            MF15: idleStrat,
-            MF16: idleStrat,
-            MF17: idleStrat,
-            MF18: idleStrat,
-            MF19: idleStrat,
-            MF20: idleStrat,
-            MF21: idleStrat
+            MF: idleStrat,
+            MFd: activeStrat
         };
         const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
         return condition;
@@ -114,27 +103,8 @@ class mfSim extends theoryClass {
             [1, 1, 2, 2, 2, 1]
         ];
         const tree = {
-            MF1: globalOptimalRoute,
-            MF2: globalOptimalRoute,
-            MF3: globalOptimalRoute,
-            MF4: globalOptimalRoute,
-            MF5: globalOptimalRoute,
-            MF6: globalOptimalRoute,
-            MF7: globalOptimalRoute,
-            MF8: globalOptimalRoute,
-            MF9: globalOptimalRoute,
-            MF10: globalOptimalRoute,
-            MF11: globalOptimalRoute,
-            MF12: globalOptimalRoute,
-            MF13: globalOptimalRoute,
-            MF14: globalOptimalRoute,
-            MF15: globalOptimalRoute,
-            MF16: globalOptimalRoute,
-            MF17: globalOptimalRoute,
-            MF18: globalOptimalRoute,
-            MF19: globalOptimalRoute,
-            MF20: globalOptimalRoute,
-            MF21: globalOptimalRoute
+            MF: globalOptimalRoute,
+            MFd: globalOptimalRoute
         };
         return tree[this.strat];
     }
@@ -169,7 +139,7 @@ class mfSim extends theoryClass {
         this.vz = Math.pow(10, (this.variables[7].value + this.variables[8].value - 18));
         this.vtot = Math.sqrt(this.vx * this.vx + 2 * this.vz * this.vz);
         this.resets++;
-        this.stratExtra = ": " + (this.resets) + " resets (" + parseFloat((this.t / 3600).toFixed(2)).toFixed(2) + " hours & " + (Math.pow(10, (this.maxRho % 1))).toFixed(2) + 'e' + Math.floor(this.maxRho) + " rho), " + "resetMulti= " + this.dynamicResetMulti + ", v1=" + this.variables[5].level + ", v2=" + this.variables[6].level + ", v3=" + this.variables[7].level + ", v4=" + this.variables[8].level;
+        this.stratExtra = "";
         if (this.resets > 1) {
             this.boughtVars.push({
                 variable: 'Reset at V=' + this.variables[5].level + "," + this.variables[6].level + "," + this.variables[7].level + "," + this.variables[8].level,
@@ -178,7 +148,7 @@ class mfSim extends theoryClass {
                 timeStamp: this.t
             });
         }
-        // console.log(this.strat + this.stratExtra)
+        // console.log(this.strat + " vMaxBuy="+this.vMaxBuy+": "+(this.resets) + " resets ("+ parseFloat((this.t/3600).toFixed(2)).toFixed(2)+" hours & "+(10**(this.maxRho % 1)).toFixed(2)+'e'+Math.floor(this.maxRho) + " rho), "+"resetMulti= "+this.dynamicResetMulti+", v1="+this.variables[5].level+", v2="+this.variables[6].level+", v3="+this.variables[7].level+", v4="+this.variables[8].level)
         const currentIndex = this.resetCombination.indexOf(this.dynamicResetMulti);
         if (currentIndex + 1 < this.resetCombination.length) {
             this.dynamicResetMulti = this.resetCombination[currentIndex + 1];
@@ -196,7 +166,7 @@ class mfSim extends theoryClass {
         const vterm = this.milestones[0] ? l10(3e19) * 1.3 + l10(1e6) * (this.vexp() - 1.3) : 0;
         this.c = xterm + omegaterm + vterm + l10(4.49e19);
     }
-    constructor(data, resetCombination) {
+    constructor(data, resetCombination, vMaxBuy) {
         super(data);
         this.pubUnlock = 8;
         this.totMult = data.rho < this.pubUnlock ? 0 : this.getTotMult(data.rho);
@@ -212,6 +182,7 @@ class mfSim extends theoryClass {
         this.stratExtra = "";
         this.normalPubRho = -1;
         this.resetCombination = resetCombination;
+        this.vMaxBuy = vMaxBuy;
         this.dynamicResetMulti = resetCombination[0];
         this.buyV = true;
         this.resetcond = false;
@@ -226,74 +197,6 @@ class mfSim extends theoryClass {
             new Variable({ cost: new ExponentialCost(1e50, 70), stepwisePowerSum: { default: true } }),
             new Variable({ cost: new ExponentialCost(1e55, 1e6), varBase: 1.5 }), // v4
         ];
-        switch (this.strat) {
-            case "MF1":
-                this.vMaxBuy = 0;
-                break;
-            case "MF2":
-                this.vMaxBuy = 1;
-                break;
-            case "MF3":
-                this.vMaxBuy = 2;
-                break;
-            case "MF4":
-                this.vMaxBuy = 3;
-                break;
-            case "MF5":
-                this.vMaxBuy = 4;
-                break;
-            case "MF6":
-                this.vMaxBuy = 5;
-                break;
-            case "MF7":
-                this.vMaxBuy = 6;
-                break;
-            case "MF8":
-                this.vMaxBuy = 7;
-                break;
-            case "MF9":
-                this.vMaxBuy = 8;
-                break;
-            case "MF10":
-                this.vMaxBuy = 9;
-                break;
-            case "MF11":
-                this.vMaxBuy = 10;
-                break;
-            case "MF12":
-                this.vMaxBuy = 11;
-                break;
-            case "MF13":
-                this.vMaxBuy = 12;
-                break;
-            case "MF14":
-                this.vMaxBuy = 13;
-                break;
-            case "MF15":
-                this.vMaxBuy = 14;
-                break;
-            case "MF16":
-                this.vMaxBuy = 15;
-                break;
-            case "MF17":
-                this.vMaxBuy = 16;
-                break;
-            case "MF18":
-                this.vMaxBuy = 17;
-                break;
-            case "MF19":
-                this.vMaxBuy = 18;
-                break;
-            case "MF20":
-                this.vMaxBuy = 19;
-                break;
-            case "MF21":
-                this.vMaxBuy = 20;
-                break;
-            default:
-                this.vMaxBuy = 0;
-                break;
-        }
         this.conditions = this.getBuyingConditions();
         this.milestoneConditions = this.getMilestoneConditions();
         this.milestoneTree = this.getMilestoneTree();
@@ -392,29 +295,32 @@ class mfSimWrap extends theoryClass {
             for (let i = 1.3; i <= 2.6; i += 0.1) {
                 resetMultiValues.push(parseFloat(i.toFixed(1)));
             }
+            const vMaxBuys = Array.from({ length: 21 }, (_, index) => index);
             let finalSim;
             let finalSimRes;
-            for (const resetMulti of resetMultiValues) {
-                for (const resetCombination of getAllCombinations(resetMulti)) {
-                    let bestSim = new mfSim(this._originalData, resetCombination);
-                    let bestSimRes = yield bestSim.simulate();
-                    // Unnecessary additional cosating attempt
-                    // let internalSim = new mfSim(this._originalData, resetCombination)
-                    // internalSim.normalPubRho = bestSim.pubRho;
-                    // let res = await internalSim.simulate();
-                    // if (bestSim.maxTauH < internalSim.maxTauH) {
-                    //   bestSim = internalSim;
-                    //   bestSimRes = res;
-                    // }
-                    if (typeof finalSim !== 'undefined') {
-                        if (finalSim.maxTauH < bestSim.maxTauH) {
+            for (const vMaxBuy of vMaxBuys) {
+                for (const resetMulti of resetMultiValues) {
+                    for (const resetCombination of getAllCombinations(resetMulti)) {
+                        let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy);
+                        let bestSimRes = yield bestSim.simulate();
+                        // Unnecessary additional cosating attempt
+                        // let internalSim = new mfSim(this._originalData, resetCombination)
+                        // internalSim.normalPubRho = bestSim.pubRho;
+                        // let res = await internalSim.simulate();
+                        // if (bestSim.maxTauH < internalSim.maxTauH) {
+                        //   bestSim = internalSim;
+                        //   bestSimRes = res;
+                        // }
+                        if (typeof finalSim !== 'undefined') {
+                            if (finalSim.maxTauH < bestSim.maxTauH) {
+                                finalSim = bestSim;
+                                finalSimRes = bestSimRes;
+                            }
+                        }
+                        else {
                             finalSim = bestSim;
                             finalSimRes = bestSimRes;
                         }
-                    }
-                    else {
-                        finalSim = bestSim;
-                        finalSimRes = bestSimRes;
                     }
                 }
             }
