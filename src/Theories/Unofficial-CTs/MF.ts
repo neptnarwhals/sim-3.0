@@ -349,6 +349,7 @@ class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
       this._originalData = data;
   }
   async simulate() {
+    let official = false;
     let resetMultiValues = [];
     for (let i = 1.3; i <= 2.6; i += 0.1) {
       resetMultiValues.push(parseFloat(i.toFixed(1)));
@@ -360,7 +361,7 @@ class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
     for (const vMaxBuy of vMaxBuys) {
       for (const resetMulti of resetMultiValues) {
         for (const resetCombination of getAllCombinations(resetMulti)) {
-          let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy, false); // last variable is for switching on/off official version
+          let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy, official); // last variable is for switching on/off official version
           let bestSimRes = await bestSim.simulate();
           // Unnecessary additional cosating attempt
           // let internalSim = new mfSim(this._originalData, resetCombination)

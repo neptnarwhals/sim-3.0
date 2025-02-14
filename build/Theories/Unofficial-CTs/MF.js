@@ -329,6 +329,7 @@ class mfSimWrap extends theoryClass {
     }
     simulate() {
         return __awaiter(this, void 0, void 0, function* () {
+            let official = false;
             let resetMultiValues = [];
             for (let i = 1.3; i <= 2.6; i += 0.1) {
                 resetMultiValues.push(parseFloat(i.toFixed(1)));
@@ -339,7 +340,7 @@ class mfSimWrap extends theoryClass {
             for (const vMaxBuy of vMaxBuys) {
                 for (const resetMulti of resetMultiValues) {
                     for (const resetCombination of getAllCombinations(resetMulti)) {
-                        let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy, false); // last variable is for switching on/off official version
+                        let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy, official); // last variable is for switching on/off official version
                         let bestSimRes = yield bestSim.simulate();
                         // Unnecessary additional cosating attempt
                         // let internalSim = new mfSim(this._originalData, resetCombination)
