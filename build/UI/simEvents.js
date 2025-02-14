@@ -148,6 +148,15 @@ function resetVarBuy() {
     }
     global.varBuy = [];
 }
+function highlightResetCells() {
+    const cells = document.querySelectorAll('.boughtVars tr td:nth-child(1)');
+    cells.forEach(cell => {
+        const htmlCell = cell;
+        if (htmlCell.innerText.toLowerCase().includes('reset at')) {
+            htmlCell.classList.add('highlighted');
+        }
+    });
+}
 function openVarModal(arr) {
     document.body.style.overflow = "hidden";
     qs(".boughtVars").showModal();
@@ -170,6 +179,7 @@ function openVarModal(arr) {
         tr.appendChild(td4);
         tbody.appendChild(tr);
     }
+    highlightResetCells();
 }
 function getCurrencySymbol(value) {
     if (value === undefined || value === "rho")
