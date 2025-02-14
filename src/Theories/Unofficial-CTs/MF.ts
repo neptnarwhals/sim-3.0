@@ -173,7 +173,15 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.vtot = Math.sqrt(this.vx * this.vx + 2 * this.vz * this.vz);
     this.resets++
     this.stratExtra = ": "+(this.resets) + " resets ("+ parseFloat((this.t/3600).toFixed(2)).toFixed(2)+" hours & "+(10**(this.maxRho % 1)).toFixed(2)+'e'+Math.floor(this.maxRho) + " rho), "+"resetMulti= "+this.dynamicResetMulti+", v1="+this.variables[5].level+", v2="+this.variables[6].level+", v3="+this.variables[7].level+", v4="+this.variables[8].level
-    console.log(this.strat + this.stratExtra)
+    if (this.resets>1) {
+      this.boughtVars.push({
+        variable: 'Reset at V='+this.variables[5].level+","+this.variables[6].level+","+this.variables[7].level+","+this.variables[8].level,
+        level: this.resets-1,
+        cost: this.maxRho,
+        timeStamp: this.t
+      });
+    }
+    // console.log(this.strat + this.stratExtra)
     if (this.rho>65) {
       this.buyV = false
     }
@@ -359,7 +367,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
         }  
 
         if (this.rho > this.variables[i].cost && this.conditions[i]() && this.milestoneConditions[i]()) {
-          if (this.maxRho + 5 > this.lastPub) {
+          if (this.maxRho + 18 > this.lastPub) {
             this.boughtVars.push({
               variable: this.varNames[i],
               level: this.variables[i].level + 1,
