@@ -367,7 +367,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
         }  
 
         if (this.rho > this.variables[i].cost && this.conditions[i]() && this.milestoneConditions[i]()) {
-          if (this.maxRho + 18 > this.lastPub) {
+          if (this.maxRho + 10 > this.lastPub) {
             this.boughtVars.push({
               variable: this.varNames[i],
               level: this.variables[i].level + 1,
