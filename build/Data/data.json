@@ -368,6 +368,18 @@
                 },
                 "FIdPermaSwap": {
                     "stratFilterCondition": "(Active || Very-Active) && rho >= 1000"
+                },
+                "FIMS": {
+                    "stratFilterCondition": "(Active || Very-Active || rho <= 30) && rho < 1150"
+                },
+                "FIMSd": {
+                    "stratFilterCondition": "(Active || Very-Active) && rho < 1150"
+                },
+                "FIMSPermaSwap": {
+                    "stratFilterCondition": "(Active || Very-Active) && rho >= 1000 && rho < 1150"
+                },
+                "FIMSdPermaSwap": {
+                    "stratFilterCondition": "(Active || Very-Active) && rho >= 1000 && rho < 1150"
                 }
             }
         },

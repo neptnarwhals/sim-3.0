@@ -36,6 +36,11 @@ class fiSim extends theoryClass {
             FId: activeStrat,
             FIPermaSwap: new Array(6).fill(true),
             FIdPermaSwap: activeStrat,
+            FIMS: new Array(6).fill(true),
+            // ["tdot", "q1", "q2", "k", "m", "n"]
+            FIMSd: activeStrat,
+            FIMSPermaSwap: new Array(6).fill(true),
+            FIMSdPermaSwap: activeStrat
         };
         return conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
     }
@@ -122,12 +127,49 @@ class fiSim extends theoryClass {
             }
             this.maxLambda = lambda_base;
         }
-        let mterm = Math.min(avaliable[1], points);
-        points -= mterm;
-        let nterm = Math.min(avaliable[2], points);
-        points -= nterm;
-        let q1exp = Math.min(avaliable[0], points);
-        points -= q1exp;
+        let qf, q1m23, q1exp, mterm, nterm;
+        q1m23 = this.variables[1].level % 23;
+        qf = q1m23 < 5 ? 4 : q1m23 < 10 ? 3 : q1m23 < 20 ? 2.5 : 2;
+        if (this.strat.includes("MS") && points > 0 && points < 5 && this.msstate > 0) {
+            if (this.msstate == 1) // start q build
+             {
+                q1exp = Math.min(avaliable[0], points);
+                points -= q1exp;
+                mterm = Math.min(avaliable[1], points);
+                points -= mterm;
+                nterm = Math.min(avaliable[2], points);
+                points -= nterm;
+                this.msstate = 2;
+                this.msq = this.q;
+            }
+            else if (this.msstate == 2 && this.msq + l10(qf) < this.q) // end q build
+             {
+                mterm = Math.min(avaliable[1], points);
+                points -= mterm;
+                nterm = Math.min(avaliable[2], points);
+                points -= nterm;
+                q1exp = Math.min(avaliable[0], points);
+                points -= q1exp;
+                this.msstate = 0;
+            }
+            else { // continue q build
+                q1exp = Math.min(avaliable[0], points);
+                points -= q1exp;
+                mterm = Math.min(avaliable[1], points);
+                points -= mterm;
+                nterm = Math.min(avaliable[2], points);
+                points -= nterm;
+            }
+        }
+        else // no MS
+         {
+            mterm = Math.min(avaliable[1], points);
+            points -= mterm;
+            nterm = Math.min(avaliable[2], points);
+            points -= nterm;
+            q1exp = Math.min(avaliable[0], points);
+            points -= q1exp;
+        }
         this.milestones = [q1exp, mterm, nterm, fx, lambda_base];
     }
     fact(num) {
@@ -200,6 +242,8 @@ class fiSim extends theoryClass {
         this.tval = 0;
         this.maxFx = 0;
         this.maxLambda = 0;
+        this.msstate = 0;
+        this.msq = 0;
         //initialize variables
         this.varNames = ["tdot", "q1", "q2", "k", "m", "n"];
         this.variables = [
@@ -247,12 +291,14 @@ class fiSim extends theoryClass {
         this.tval += ((this.variables[0].value + 1) / 5) * this.dt;
         this.q = add(this.q, vq1 + this.variables[2].value + l10(this.dt));
         this.r = add(this.r, vden + l10(this.dt));
+        const vm = this.milestones[1] ? this.variables[4].value : 0;
+        const vn = this.milestones[2] ? this.variables[5].value : 0;
         let rhodot = l10(this.tval) +
             (Math.max(this.maxRho, this.lastPub) >= 10 ? this.norm_int(this.q - (this.milestones[3] < 3 ? l10(Math.PI) : 0)) : this.q - l10(Math.PI)) *
                 (1 / Math.PI) +
             this.r +
-            this.variables[4].value +
-            this.variables[5].value;
+            vm +
+            vn;
         this.rho = add(this.rho, this.totMult + rhodot + l10(this.dt));
         this.t += this.dt / 1.5;
         this.dt *= this.ddt;
@@ -272,6 +318,8 @@ class fiSim extends theoryClass {
                     if (this.maxRho + 5 > this.lastPub) {
                         this.boughtVars.push({ variable: this.varNames[i], level: this.variables[i].level + 1, cost: this.variables[i].cost, timeStamp: this.t });
                     }
+                    if (i == 2 && this.msstate == 0)
+                        this.msstate = 1;
                     this.rho = subtract(this.rho, this.variables[i].cost);
                     this.variables[i].buy();
                 }
