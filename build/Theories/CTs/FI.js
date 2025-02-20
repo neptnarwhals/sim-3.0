@@ -30,17 +30,27 @@ class fiSim extends theoryClass {
             //n mod 11 - 5
             () => this.variables[5].cost + Math.log10((this.variables[5].level % 11) + 1) < this.variables[4].cost //n - 5
         ];
+        let activeStrat2 = [
+            true,
+            //q1 mod 23
+            () => this.variables[1].cost + Math.log10((this.variables[1].level % 23) + 1) < Math.min(this.variables[2].cost, this.variables[3].cost),
+            true,
+            true,
+            true,
+            //n mod 11 - 5
+            () => this.variables[5].cost + Math.log10((this.variables[5].level % 11) + 1) < Math.min(this.variables[2].cost, this.variables[3].cost, this.variables[4].cost) //n - 5
+        ];
         const conditions = {
             FI: new Array(6).fill(true),
             // ["tdot", "q1", "q2", "k", "m", "n"]
-            FId: activeStrat,
+            FId: activeStrat2,
             FIPermaSwap: new Array(6).fill(true),
-            FIdPermaSwap: activeStrat,
+            FIdPermaSwap: activeStrat2,
             FIMS: new Array(6).fill(true),
             // ["tdot", "q1", "q2", "k", "m", "n"]
-            FIMSd: activeStrat,
+            FIMSd: activeStrat2,
             FIMSPermaSwap: new Array(6).fill(true),
-            FIMSdPermaSwap: activeStrat
+            FIMSdPermaSwap: activeStrat2
         };
         return conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
     }
