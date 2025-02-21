@@ -51,57 +51,70 @@
     "T3": {
       "tauFactor": 1,
       "strats": {
-        "T3": {
-          "stratFilterCondition": "false"
-        },
-        "T3C11C12C21": {
-          "stratFilterCondition": "(Idle || Semi-Idle) && rho < 150"
-        },
-        "T3noC11C13C21C33": {
-          "stratFilterCondition": "Idle && rho >= 175 && rho < 300"
-        },
-        "T3noC13C32C33": {
-          "stratFilterCondition": "(Idle || Semi-Idle) && rho >= 100 && rho < 175"
-        },
-        "T3noC13C33": {
-          "stratFilterCondition": "Idle && rho >= 175 && rho < 300"
-        },
-        "T3noP1C13C33": {
-          "stratFilterCondition": "Idle && rho > 260"
-        },
-        "T3Snax": {
-          "stratFilterCondition": "Semi-Idle && rho >= 175"
-        },
-        "T3Snax2": {
-          "stratFilterCondition": "Active && rho > 275"
-        },
-        "T3C11C12C21d": {
-          "stratFilterCondition": "(Active || Very-Active) && rho < 150"
-        },
-        "T3noC11C13C21C33d": {
-          "stratFilterCondition": "(Active || Very-Active) && rho >= 150 && rho < 350",
-          "forcedCondition": "rho >= 125"
-        },
-        "T3noC11C13C33d": {
-          "stratFilterCondition": "(Active || Very-Active) && rho >= 150 && rho < 350"
-        },
-        "T3noC13C32C33d": {
-          "stratFilterCondition": "(Active || Very-Active) && rho >= 150 && rho < 175"
-        },
-        "T3noC13C33d": {
-          "stratFilterCondition": "(Active || Very-Active) && rho >= 150 && rho < 225"
-        },
-        "T3P2C23d": {
-          "stratFilterCondition": "Active && rho > 250 ",
+        "T3Play2": {
+          "stratFilterCondition": "Very-Active && rho > 250 ",
           "forcedCondition": "rho >= 125"
         },
         "T3Play": {
           "stratFilterCondition": "Very-Active && rho > 200 && rho < 375",
           "forcedCondition": "rho >= 125"
         },
-        "T3Play2": {
-          "stratFilterCondition": "Very-Active && rho > 250 ",
+        "T3Snax": {
+          "stratFilterCondition": "Semi-Idle && rho >= 175"
+        },
+        "T3SnaxdC12": {
+          "stratFilterCondition": "Active && rho >= 175"
+        },
+        "T3Snax2": {
+          "stratFilterCondition": "Active && rho > 275 && rho < 500"
+        },
+        "T3P2C23d": {
+          "stratFilterCondition": "Active && rho > 250 ",
           "forcedCondition": "rho >= 125"
+        },
+        "T3P2C23C33d": {
+          "stratFilterCondition": "Active && rho > 650 ",
+          "forcedCondition": "rho >= 125"
+        },
+        "T3P2C23": {
+          "stratFilterCondition": "(Idle || Semi-Idle) && rho > 260"
+        },
+        "T3P2C23C33": {
+          "stratFilterCondition": "(Idle || Semi-Idle) && rho > 400"
+        },
+        "T3noC11C13C21C33d": {
+          "stratFilterCondition": "(Active || Very-Active) && rho >= 150 && rho < 350",
+          "forcedCondition": "rho >= 125"
+        },
+        "T3noC11C13C21C33": {
+          "stratFilterCondition": "Idle && rho >= 175 && rho < 300"
+        },
+        "T3noC13C33d": {
+          "stratFilterCondition": "(Active || Very-Active) && rho >= 150 && rho < 225"
+        },
+        "T3noC13C33": {
+          "stratFilterCondition": "Idle && rho >= 175 && rho < 300"
+        },
+        "T3noC11C13C33d": {
+          "stratFilterCondition": "(Active || Very-Active) && rho >= 150 && rho < 350"
+        },
+        "T3noC11C13C33": {
+          "stratFilterCondition": "(Idle || Semi-Idle) && rho >= 150 && rho < 350"
+        },
+        "T3noC13C32C33d": {
+          "stratFilterCondition": "(Active || Very-Active) && rho >= 150 && rho < 175"
+        },
+        "T3noC13C32C33": {
+          "stratFilterCondition": "(Idle || Semi-Idle) && rho >= 100 && rho < 175"
+        },
+        "T3C11C12C21d": {
+          "stratFilterCondition": "(Active || Very-Active) && rho < 150"
+        },
+        "T3C11C12C21": {
+          "stratFilterCondition": "(Idle || Semi-Idle) && rho < 150"
+        },
+        "T3": {
+          "stratFilterCondition": "false"
         }
       }
     },
@@ -370,10 +383,10 @@
           "stratFilterCondition":"(Active || Very-Active) && rho >= 1000"
         },
         "FIMS":{
-          "stratFilterCondition":"(Active || Very-Active || rho <= 30) && rho < 1150"
+          "stratFilterCondition":"(Active || Very-Active || rho <= 30) && rho < 950"
         },
         "FIMSd": {
-          "stratFilterCondition":"(Active || Very-Active) && rho < 1150"
+          "stratFilterCondition":"(Active || Very-Active) && rho < 950"
         },
         "FIMSPermaSwap":{
           "stratFilterCondition":"(Active || Very-Active) && rho >= 1000 && rho < 1150"
