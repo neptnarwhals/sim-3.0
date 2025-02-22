@@ -20,16 +20,6 @@ class t4Sim extends theoryClass<theory> implements specificTheoryProps {
 
   getBuyingConditions() {
     const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
-      T4: new Array(8).fill(true),
-      T4C12: [true, true, ...new Array(6).fill(false)],
-      T4C3: [false, false, true, ...new Array(3).fill(false), true, true],
-      T4C4: [...new Array(3).fill(false), true, false, false, true, true],
-      T4C5: [...new Array(4).fill(false), true, false, true, true],
-      T4C56: [...new Array(4).fill(false), true, true, true, true],
-      T4C12d: [() => this.variables[0].cost + 1 < this.variables[1].cost, true, false, false, false, false, false, false],
-      T4C123d: [() => this.variables[0].cost + 1 < Math.min(this.variables[1].cost), true, true, false, false, false, () => this.variables[6].cost + 1 < this.variables[7].cost, true],
-      T4C456dC12rcvMS: [() => this.variables[0].cost + 1 < this.variables[1].cost && this.maxRho < this.lastPub, () => this.maxRho < this.lastPub, false, true, true, true, true, true],
-      T4C356dC12rcv: [() => this.variables[0].cost + 1 < this.variables[1].cost && this.maxRho < this.lastPub, () => this.maxRho < this.lastPub, true, false, true, true, true, true],
       T4C3d66: [
         false,
         false,
@@ -48,6 +38,18 @@ class t4Sim extends theoryClass<theory> implements specificTheoryProps {
         () => this.variables[6].cost + l10(10 + (this.variables[6].level % 10)) + 1 < (this.recursionValue ?? Infinity),
         () => this.variables[7].cost + 0.5 < (this.recursionValue ?? Infinity),
       ],
+      T4C3: [false, false, true, ...new Array(3).fill(false), true, true],
+      T4C3dC12rcv: [() => this.variables[0].cost + 1 < this.variables[1].cost && this.maxRho < this.lastPub, () => this.maxRho < this.lastPub, true, false, false, false, () => this.variables[6].cost + 1 < this.variables[7].cost, true],
+      T4C356dC12rcv: [() => this.variables[0].cost + 1 < this.variables[1].cost && this.maxRho < this.lastPub, () => this.maxRho < this.lastPub, true, false, true, true, () => this.variables[6].cost + 1 < this.variables[7].cost, true],
+      T4C456dC12rcvMS: [() => this.variables[0].cost + 1 < this.variables[1].cost && this.maxRho < this.lastPub, () => this.maxRho < this.lastPub, false, true, true, true, () => this.variables[6].cost + 1 < this.variables[7].cost, true],
+      T4C123d: [() => this.variables[0].cost + 1 < this.variables[1].cost, true, true, false, false, false, () => this.variables[6].cost + 1 < this.variables[7].cost, true],
+      T4C123: [true, true, true, false, false, false, true, true],
+      T4C12d: [() => this.variables[0].cost + 1 < this.variables[1].cost, true, false, false, false, false, false, false],
+      T4C12: [true, true, ...new Array(6).fill(false)],
+      T4C56: [...new Array(4).fill(false), true, true, true, true],
+      T4C4: [...new Array(3).fill(false), true, false, false, true, true],
+      T4C5: [...new Array(4).fill(false), true, false, true, true],
+      T4: new Array(8).fill(true),
     };
     const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
     return condition;
@@ -58,22 +60,7 @@ class t4Sim extends theoryClass<theory> implements specificTheoryProps {
   }
   getMilestoneTree() {
     const tree: { [key in stratType[theory]]: Array<Array<number>> } = {
-      T4: [
-        [0, 0, 0],
-        [1, 0, 0],
-        [2, 0, 0],
-        [3, 0, 0],
-        [3, 0, 1],
-        [3, 0, 2],
-        [3, 0, 3],
-        [3, 1, 3],
-      ],
-
-      T4C12: [
-        [0, 0, 0],
-        [0, 1, 0],
-      ],
-      T4C3: [
+      T4C3d66: [
         [0, 0, 0],
         [0, 0, 1],
         [0, 0, 2],
@@ -84,6 +71,62 @@ class t4Sim extends theoryClass<theory> implements specificTheoryProps {
         [0, 0, 1],
         [0, 0, 2],
         [0, 0, 3],
+      ],
+      T4C3: [
+        [0, 0, 0],
+        [0, 0, 1],
+        [0, 0, 2],
+        [0, 0, 3],
+      ],
+      T4C3dC12rcv: [
+        [0, 0, 0],
+        [0, 1, 0],
+        [0, 1, 1],
+        [0, 1, 2],
+        [0, 1, 3]
+      ],
+      T4C356dC12rcv: [
+        [0, 0, 0],
+        [0, 1, 0],
+        [0, 1, 1],
+        [0, 1, 2],
+        [0, 1, 3],
+        [1, 1, 3],
+        [2, 1, 3],
+        [3, 1, 3],
+      ],
+      T4C456dC12rcvMS: [[0, 0, 0]],
+      T4C123d: [
+        [0, 0, 0],
+        [0, 1, 0],
+        [0, 1, 1],
+        [0, 1, 2],
+        [0, 1, 3],
+      ],
+      T4C123: [
+        [0, 0, 0],
+        [0, 1, 0],
+        [0, 1, 1],
+        [0, 1, 2],
+        [0, 1, 3],
+      ],
+      T4C12d: [
+        [0, 0, 0],
+        [0, 1, 0],
+      ],
+      T4C12: [
+        [0, 0, 0],
+        [0, 1, 0],
+      ],
+      T4C56: [
+        [0, 0, 0],
+        [1, 0, 0],
+        [2, 0, 0],
+        [3, 0, 0],
+        [3, 0, 1],
+        [3, 0, 2],
+        [3, 0, 3],
+        [3, 0, 3],
       ],
       T4C4: [
         [0, 0, 0],
@@ -100,7 +143,7 @@ class t4Sim extends theoryClass<theory> implements specificTheoryProps {
         [2, 0, 2],
         [2, 0, 3],
       ],
-      T4C56: [
+      T4: [
         [0, 0, 0],
         [1, 0, 0],
         [2, 0, 0],
@@ -108,35 +151,7 @@ class t4Sim extends theoryClass<theory> implements specificTheoryProps {
         [3, 0, 1],
         [3, 0, 2],
         [3, 0, 3],
-        [3, 0, 3],
-      ],
-      T4C12d: [
-        [0, 0, 0],
-        [0, 1, 0],
-      ],
-      T4C123d: [
-        [0, 0, 0],
-        [0, 1, 0],
-        [0, 1, 1],
-        [0, 1, 2],
-        [0, 1, 3],
-      ],
-      T4C456dC12rcvMS: [[0, 0, 0]],
-      T4C356dC12rcv: [
-        [0, 0, 0],
-        [0, 1, 0],
-        [0, 1, 1],
-        [0, 1, 2],
-        [0, 1, 3],
-        [1, 1, 3],
-        [2, 1, 3],
         [3, 1, 3],
-      ],
-      T4C3d66: [
-        [0, 0, 0],
-        [0, 0, 1],
-        [0, 0, 2],
-        [0, 0, 3],
       ],
     };
     return tree[this.strat];
