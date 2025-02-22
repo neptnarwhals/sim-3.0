@@ -83,7 +83,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
 
     const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
       MF: idleStrat,
-      MFd: activeStrat
+      MFd4: activeStrat
     };
     const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
     return condition;
@@ -118,7 +118,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     ];
     const tree: { [key in stratType[theory]]: Array<Array<number>> } = {
       MF: globalOptimalRoute,
-      MFd: globalOptimalRoute
+      MFd4: globalOptimalRoute
     };
     return tree[this.strat];
   }
@@ -215,7 +215,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.vz = 0;
     this.vtot = 0;
     this.resets = 0;
-    this.varNames = ["c1", "c2", "a1", "a2", "delta",  "v1", "v2", "v3", "v4"];
+    this.varNames = ["c1", "c2", "a1", "a2", "δ",  "v1", "v2", "v3", "v4"];
     this.stratExtra = "";
     this.normalPubRho = -1;
     this.resetCombination = resetCombination;
