@@ -189,11 +189,15 @@ class fpSim extends theoryClass<theory, milestones> implements specificTheoryPro
     }
     return n - temp;
   }
+  V(n: number): number {
+    if (n === 0) return 0;
+    const log2N = Math.log2(n);
+    if (log2N % 1 === 0) return 2 ** (2 * log2N);
+    const i = n - 2 ** Math.floor(log2N);
+    return 2 ** (2 * Math.floor(log2N)) + 3 * this.V(i);
+  }
   U(n: number) {
-    const p = n - (n % 100);
-    let temp = this.prevN > p ? this.U_n : un[Math.floor(n / 100)];
-    for (let i = this.prevN > p ? this.prevN + 1 : p + 1; i <= n; i++) temp += this.u(i);
-    return temp;
+    return (4/3)*this.V(n) - (1/3);
   }
   S(n: number) {
     if (n === 0) return 0;

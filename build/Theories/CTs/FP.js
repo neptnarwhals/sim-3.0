@@ -177,12 +177,17 @@ class fpSim extends theoryClass {
         }
         return n - temp;
     }
+    V(n) {
+        if (n === 0)
+            return 0;
+        const log2N = Math.log2(n);
+        if (log2N % 1 === 0)
+            return Math.pow(2, (2 * log2N));
+        const i = n - Math.pow(2, Math.floor(log2N));
+        return Math.pow(2, (2 * Math.floor(log2N))) + 3 * this.V(i);
+    }
     U(n) {
-        const p = n - (n % 100);
-        let temp = this.prevN > p ? this.U_n : un[Math.floor(n / 100)];
-        for (let i = this.prevN > p ? this.prevN + 1 : p + 1; i <= n; i++)
-            temp += this.u(i);
-        return temp;
+        return (4 / 3) * this.V(n) - (1 / 3);
     }
     S(n) {
         if (n === 0)

@@ -89,22 +89,10 @@ class csr2Sim extends theoryClass {
         }
     }
     updateError(n) {
-        if (n < 6) {
-            const preComputed = [
-                0,
-                l10(2.060660172040101),
-                l10(12.010407635829813),
-                l10(70.00178562229294),
-                l10(408.0003059755347),
-                l10(2378.000049517553),
-            ];
-            this.error = preComputed[n];
-            return;
-        }
-        const root2 = Math.SQRT2;
-        const vdn = (Math.pow((-(root2 - 1)), n) * (n % 2 ? -1 : 1) + Math.pow((1 + root2), n)) / 2 / root2;
-        const vp = Math.pow((root2 + 1), n) * (n % 2 ? -1 : 1);
-        this.error = l10(Math.abs(vdn)) + l10(Math.abs(vp));
+        const root8 = Math.sqrt(8);
+        const root8p3 = root8 + 3;
+        this.error = (n % 2 == 0 ? subtract(n * l10(root8p3), 0) : add(n * l10(root8p3), 0)) - l10(root8);
+        console.log(`${n} ${this.error}`);
     }
     searchCoast(rhodot) {
         if (this.curMult > 0.7) {
