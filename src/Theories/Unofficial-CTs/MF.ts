@@ -284,7 +284,9 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.x += newdt * this.vx
     let icap = va2*i0;
     if (this.official) {
-      this.i = icap - (icap - this.i)*(Math.E ** (-newdt*va1/(400*va2)))
+      let scale = 1 - Math.E ** (-newdt*va1/(400*va2));
+      if (scale < 1e-13) scale = newdt*va1/400/va2;
+      this.i = this.i + scale*(icap - this.i)
     }
     else {
       this.i = icap - (icap - this.i)*(Math.E ** (-this.dt*va1/10/va2))
@@ -349,7 +351,7 @@ class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
       this._originalData = data;
   }
   async simulate() {
-    let official = false;
+    let official = true;
     let resetMultiValues = [];
     for (let i = 1.3; i <= 2.6; i += 0.1) {
       resetMultiValues.push(parseFloat(i.toFixed(1)));

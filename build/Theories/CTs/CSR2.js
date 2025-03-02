@@ -92,7 +92,6 @@ class csr2Sim extends theoryClass {
         const root8 = Math.sqrt(8);
         const root8p3 = root8 + 3;
         this.error = (n % 2 == 0 ? subtract(n * l10(root8p3), 0) : add(n * l10(root8p3), 0)) - l10(root8);
-        console.log(`${n} ${this.error}`);
     }
     searchCoast(rhodot) {
         if (this.curMult > 0.7) {

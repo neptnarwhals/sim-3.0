@@ -443,6 +443,17 @@
         }
       }
     },
+    "MF": {
+      "tauFactor": 1,
+      "strats": {
+        "MF": {
+          "stratFilterCondition": "Idle || Semi-Idle"
+        },
+        "MFd4": {
+          "stratFilterCondition": "Active || Very-Active"
+        }
+      }
+    },
     "BT": {
       "tauFactor": 0.4,
       "UI_visible":false,
@@ -467,17 +478,6 @@
         },
         "BaPdMS": {
           "stratFilterCondition": "(Active || Very-Active) && rho <= 260"
-        }
-      }
-    },
-    "MF": {
-      "tauFactor": 1,
-      "strats": {
-        "MF": {
-          "stratFilterCondition": "Idle || Semi-Idle"
-        },
-        "MFd4": {
-          "stratFilterCondition": "Active || Very-Active"
         }
       }
     }

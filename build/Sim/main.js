@@ -26,9 +26,9 @@ import csr2 from "../Theories/CTs/CSR2.js";
 import fi from "../Theories/CTs/FI";
 import fp from "../Theories/CTs/FP.js";
 import rz from "../Theories/CTs/RZ.js";
+import mf from "../Theories/Unofficial-CTs/MF.js";
 import bt from "../Theories/Unofficial-CTs/BT.js";
 import bap from "../Theories/Unofficial-CTs/BaP.js";
-import mf from "../Theories/Unofficial-CTs/MF.js";
 const output = qs(".output");
 export const global = {
     dt: 1.5,
@@ -122,14 +122,14 @@ function singleSim(data) {
                 return yield fp(sendData);
             case "FI":
                 return yield fi(sendData);
-            case "BT":
-                return yield bt(sendData);
             case "RZ":
                 return yield rz(sendData);
-            case "BaP":
-                return yield bap(sendData);
             case "MF":
                 return yield mf(sendData);
+            case "BT":
+                return yield bt(sendData);
+            case "BaP":
+                return yield bap(sendData);
         }
     });
 }
@@ -194,7 +194,7 @@ function simAll(data) {
         const sigma = data.modeInput[0];
         const values = data.modeInput.slice(1, data.modeInput.length);
         const res = [];
-        const totalSimmed = Math.min(values.length, global.showUnofficials ? Infinity : 15);
+        const totalSimmed = Math.min(values.length, global.showUnofficials ? Infinity : 16);
         for (let i = 0; i < totalSimmed; i++) {
             if (values[i] === 0)
                 continue;

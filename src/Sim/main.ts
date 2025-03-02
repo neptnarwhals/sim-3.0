@@ -17,9 +17,9 @@ import csr2 from "../Theories/CTs/CSR2.js";
 import fi from "../Theories/CTs/FI";
 import fp from "../Theories/CTs/FP.js";
 import rz from "../Theories/CTs/RZ.js";
+import mf from "../Theories/Unofficial-CTs/MF.js";
 import bt from "../Theories/Unofficial-CTs/BT.js";
 import bap from "../Theories/Unofficial-CTs/BaP.js";
-import mf from "../Theories/Unofficial-CTs/MF.js";
 
 const output = qs(".output");
 
@@ -135,14 +135,14 @@ async function singleSim(data: Omit<parsedData, "simAllInputs">): Promise<simRes
       return await fp(sendData);
     case "FI":
       return await fi(sendData);
-    case "BT":
-      return await bt(sendData);
     case "RZ":
       return await rz(sendData);
-    case "BaP":
-      return await bap(sendData);
     case "MF":
       return await mf(sendData);
+    case "BT":
+      return await bt(sendData);
+    case "BaP":
+      return await bap(sendData);
   }
 }
 
@@ -198,7 +198,7 @@ async function simAll(data: parsedData): Promise<Array<Array<string>>> {
   const sigma = (<Array<number>>data.modeInput)[0];
   const values = (<Array<number>>data.modeInput).slice(1, (<Array<number>>data.modeInput).length);
   const res: Array<Array<string>> = [];
-  const totalSimmed = Math.min(values.length, global.showUnofficials ? Infinity : 15);
+  const totalSimmed = Math.min(values.length, global.showUnofficials ? Infinity : 16);
   for (let i = 0; i < totalSimmed; i++) {
     if (values[i] === 0) continue;
     output.innerText = `Simulating ${getTheoryFromIndex(i)}/${getTheoryFromIndex(totalSimmed - 1)}`;
