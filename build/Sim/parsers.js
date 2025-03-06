@@ -140,6 +140,8 @@ export function reverseMulti(theory, value, sigma) {
             return (value - Math.log10(2)) / 0.2102;
         case "MF":
             return value / 0.17;
+        case "BaP":
+            return (value - Math.log10(5)) / 0.132075 * 2.5;
     }
     throw `Failed parsing multiplier. Please contact the author of the sim.`;
 }

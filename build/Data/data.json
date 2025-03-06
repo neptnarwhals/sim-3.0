@@ -454,21 +454,8 @@
                 }
             }
         },
-        "BT": {
-            "tauFactor": 0.4,
-            "UI_visible": false,
-            "strats": {
-                "BT": {
-                    "stratFilterCondition": "Idle || Semi-Idle"
-                },
-                "BTd": {
-                    "stratFilterCondition": "Active || Very-Active"
-                }
-            }
-        },
         "BaP": {
             "tauFactor": 0.4,
-            "UI_visible": false,
             "strats": {
                 "BaP": {
                     "stratFilterCondition": "true"
@@ -478,6 +465,18 @@
                 },
                 "BaPdMS": {
                     "stratFilterCondition": "(Active || Very-Active) && rho <= 260"
+                }
+            }
+        },
+        "BT": {
+            "tauFactor": 0.4,
+            "UI_visible": false,
+            "strats": {
+                "BT": {
+                    "stratFilterCondition": "Idle || Semi-Idle"
+                },
+                "BTd": {
+                    "stratFilterCondition": "Active || Very-Active"
                 }
             }
         }

@@ -85,7 +85,7 @@ export function modeUpdate(): void {
   if (mode.value === "All") {
     simAllInputs.style.display = "grid";
     modeInputDescription.style.display = "none";
-    modeInput.style.height = "3rem";
+    modeInput.style.height = "4rem";
     modeInput.style.width = "20rem";
   }
   modeInput.placeholder = data.modeInputPlaceholder[findIndex(data.modes, mode.value)];
