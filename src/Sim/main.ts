@@ -17,8 +17,8 @@ import csr2 from "../Theories/CTs/CSR2.js";
 import fi from "../Theories/CTs/FI";
 import fp from "../Theories/CTs/FP.js";
 import rz from "../Theories/CTs/RZ.js";
-import mf from "../Theories/Unofficial-CTs/MF.js";
-import bap from "../Theories/Unofficial-CTs/BaP.js";
+import mf from "../Theories/CTs/MF.js";
+import bap from "../Theories/CTs/BaP.js";
 import bt from "../Theories/Unofficial-CTs/BT.js";
 
 const output = qs(".output");

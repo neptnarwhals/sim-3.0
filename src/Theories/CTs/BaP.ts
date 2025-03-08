@@ -2,6 +2,7 @@ import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
 import Variable, { ExponentialCost } from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
+import pubtable from "./helpers/BaPpubtable.json" assert { type: "json" };
 
 export default async function bap(data: theoryData): Promise<simResult> {
   const sim = new bapSim(data);
@@ -11,12 +12,21 @@ export default async function bap(data: theoryData): Promise<simResult> {
 
 type theory = "BaP";
 
+interface pubTable {
+  [key: string]: {
+    next: number;
+    time: number;
+  };
+}
+
 class bapSim extends theoryClass<theory> implements specificTheoryProps {
   rho: number;
   pubUnlock: number;
   q: Array<number>;
   r: number;
   t_var: number;
+
+  forcedPubRho: number;
 
   getBuyingConditions() {
     const idlestrat = new Array(12).fill(true)
@@ -158,6 +168,7 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     this.q = new Array(9).fill(-1e60)
     this.r = -1e60
     this.t_var = 0
+    this.forcedPubRho = -1;
     this.varNames = ["tdot", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "n"];
     this.variables = [
       new Variable({ cost: new ExponentialCost(1e6, 1e6), stepwisePowerSum: { default: true }}), //tdot
@@ -179,6 +190,13 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
   }
   async simulate() {
     let pubCondition = false;
+    if (this.lastPub < 1480)
+    {
+      let newpubtable: pubTable = pubtable.bapdata;
+      let pubseek = this.lastPub < 100 ? Math.round(this.lastPub * 4) / 4 : Math.round(this.lastPub);
+      this.forcedPubRho = newpubtable[pubseek.toString()].next;
+      if (this.forcedPubRho === undefined) this.forcedPubRho = -1;
+    }
     while (!pubCondition) {
       if (!global.simulating) break;
       if ((this.ticks + 1) % 500000 === 0) await sleep();
@@ -187,7 +205,14 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
       this.updateMilestones();
       this.curMult = 10 ** (this.getTotMult(this.maxRho) - this.totMult);
       this.buyVariables();
-      pubCondition = (global.forcedPubTime !== Infinity ? this.t > global.forcedPubTime : this.t > this.pubT * 2 || this.pubRho > this.cap[0]) && this.pubRho > this.pubUnlock;
+      if (this.forcedPubRho != -1)
+      {
+        pubCondition = this.pubRho >= this.forcedPubRho && this.pubRho > this.pubUnlock && (this.pubRho <= 1500 || this.t > this.pubT * 2);
+      }
+      else
+      {
+        pubCondition = (global.forcedPubTime !== Infinity ? this.t > global.forcedPubTime : this.t > this.pubT * 2 || this.pubRho > this.cap[0]) && this.pubRho > this.pubUnlock;
+      }
       this.ticks++;
     }
     this.pubMulti = 10 ** (this.getTotMult(this.pubRho) - this.totMult);
@@ -232,10 +257,14 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     if (this.maxRho < this.recovery.value) this.recovery.time = this.t;
 
     this.tauH = (this.maxRho - this.lastPub) / (this.t / 3600);
-    if (this.maxTauH < this.tauH || this.maxRho >= this.cap[0] - this.cap[1] || this.pubRho < this.pubUnlock || global.forcedPubTime !== Infinity) {
+    if (this.maxTauH < this.tauH || this.maxRho >= this.cap[0] - this.cap[1] || this.pubRho < this.pubUnlock || global.forcedPubTime !== Infinity || (this.forcedPubRho != -1 && this.pubRho <= this.forcedPubRho)) {
       this.maxTauH = this.tauH;
       this.pubT = this.t;
       this.pubRho = this.maxRho;
+      if (this.maxTauH < this.tauH && this.maxRho >= 1500)
+      {
+        this.forcedPubRho = -1;
+      }
     }
   }
   buyVariables() {
