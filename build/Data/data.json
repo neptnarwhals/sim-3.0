@@ -449,7 +449,7 @@
                 "MF": {
                     "stratFilterCondition": "Idle || Semi-Idle"
                 },
-                "MFd4": {
+                "MFd": {
                     "stratFilterCondition": "Active || Very-Active"
                 }
             }
