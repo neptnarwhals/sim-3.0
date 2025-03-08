@@ -70,7 +70,7 @@ class mfSim extends theoryClass {
         ];
         const conditions = {
             MF: idleStrat,
-            MFd4: activeStrat
+            MFd: activeStrat
         };
         const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
         return condition;
@@ -104,7 +104,7 @@ class mfSim extends theoryClass {
         ];
         const tree = {
             MF: globalOptimalRoute,
-            MFd4: globalOptimalRoute
+            MFd: globalOptimalRoute
         };
         return tree[this.strat];
     }
