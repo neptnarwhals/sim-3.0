@@ -258,13 +258,13 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
 
     this.tauH = (this.maxRho - this.lastPub) / (this.t / 3600);
     if (this.maxTauH < this.tauH || this.maxRho >= this.cap[0] - this.cap[1] || this.pubRho < this.pubUnlock || global.forcedPubTime !== Infinity || (this.forcedPubRho != -1 && this.pubRho <= this.forcedPubRho)) {
-      this.maxTauH = this.tauH;
-      this.pubT = this.t;
-      this.pubRho = this.maxRho;
       if (this.maxTauH < this.tauH && this.maxRho >= 1500)
       {
         this.forcedPubRho = -1;
       }
+      this.maxTauH = this.tauH;
+      this.pubT = this.t;
+      this.pubRho = this.maxRho;
     }
   }
   buyVariables() {

@@ -228,10 +228,10 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     [
       new Variable({ cost: new ExponentialCost(10, 2), stepwisePowerSum: { base:2, length:7 }, firstFreeCost: true }), // c1
       new Variable({ cost: new ExponentialCost(1e3, 50), varBase: 2 }), // c2
-      new Variable({ cost: new ExponentialCost(1e3, 25), stepwisePowerSum: { base:2, length:5 }, value: 1 }), // a1
+      new Variable({ cost: new ExponentialCost(1e3, 25), stepwisePowerSum: { base:2, length:5 }, value: l10(3) }), // a1
       new Variable({ cost: new ExponentialCost(1e4, 100), varBase: 1.25}), // a2
       new Variable({ cost: new ExponentialCost(1e50, 300), varBase: 1.1}), // delta
-      new Variable({ cost: new ExponentialCost(80, 80), stepwisePowerSum: { default:true }, value: 1 }), // v1
+      new Variable({ cost: new ExponentialCost(80, 80), stepwisePowerSum: { default:true }, value: 0 }), // v1
       new Variable({ cost: new ExponentialCost(1e4, 10**4.5), varBase: 1.3}), // v2
       new Variable({ cost: new ExponentialCost(1e50, 70), stepwisePowerSum: { default:true }}), // v3
       new Variable({ cost: new ExponentialCost(1e52, 1e6), varBase: 1.5}), // v4

@@ -211,10 +211,10 @@ class mfSim extends theoryClass {
             [
                 new Variable({ cost: new ExponentialCost(10, 2), stepwisePowerSum: { base: 2, length: 7 }, firstFreeCost: true }),
                 new Variable({ cost: new ExponentialCost(1e3, 50), varBase: 2 }),
-                new Variable({ cost: new ExponentialCost(1e3, 25), stepwisePowerSum: { base: 2, length: 5 }, value: 1 }),
+                new Variable({ cost: new ExponentialCost(1e3, 25), stepwisePowerSum: { base: 2, length: 5 }, value: l10(3) }),
                 new Variable({ cost: new ExponentialCost(1e4, 100), varBase: 1.25 }),
                 new Variable({ cost: new ExponentialCost(1e50, 300), varBase: 1.1 }),
-                new Variable({ cost: new ExponentialCost(80, 80), stepwisePowerSum: { default: true }, value: 1 }),
+                new Variable({ cost: new ExponentialCost(80, 80), stepwisePowerSum: { default: true }, value: 0 }),
                 new Variable({ cost: new ExponentialCost(1e4, Math.pow(10, 4.5)), varBase: 1.3 }),
                 new Variable({ cost: new ExponentialCost(1e50, 70), stepwisePowerSum: { default: true } }),
                 new Variable({ cost: new ExponentialCost(1e52, 1e6), varBase: 1.5 }), // v4
