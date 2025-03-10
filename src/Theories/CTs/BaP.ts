@@ -39,6 +39,7 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
       BaP: idlestrat,
       BaPd: activestrat,
+      BaPAI: [],
       BaPdMS: activestrat,
     };
     const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
@@ -88,7 +89,7 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     const qpriority = [1, 2, 4, 3, 5];
     let priority = apriority;
 
-    if (this.strat == "BaPdMS")
+    if (this.strat == "BaPdMS" || this.strat == "BaPAI")
     {
       const tm300 = this.t % 300;
       if (tm300 < 100) priority = qpriority;
@@ -268,15 +269,85 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     }
   }
   buyVariables() {
-    for (let i = this.variables.length - 1; i >= 0; i--)
+    if (this.strat != "BaPAI")
+    {
+      for (let i = this.variables.length - 1; i >= 0; i--)
+        while (true) {
+          if (this.rho > this.variables[i].cost && this.conditions[i]() && this.milestoneConditions[i]()) {
+            if (this.maxRho + 5 > this.lastPub) {
+              this.boughtVars.push({ variable: this.varNames[i], level: this.variables[i].level + 1, cost: this.variables[i].cost, timeStamp: this.t });
+            }
+            this.rho = subtract(this.rho, this.variables[i].cost);
+            this.variables[i].buy();
+          } else break;
+        }
+    }
+    else{
       while (true) {
-        if (this.rho > this.variables[i].cost && this.conditions[i]() && this.milestoneConditions[i]()) {
-          if (this.maxRho + 5 > this.lastPub) {
-            this.boughtVars.push({ variable: this.varNames[i], level: this.variables[i].level + 1, cost: this.variables[i].cost, timeStamp: this.t });
+        const rawCost = this.variables.map((item) => item.cost);
+        let nextshiny = Infinity;
+        if (this.forcedPubRho != -1)
+        {
+          nextshiny = this.forcedPubRho;
+        }
+        if (nextshiny > 10 && this.milestones[0] === 0)
+        {
+          nextshiny = 10;
+        }
+        if (nextshiny > 15 && this.milestones[1] === 0)
+        {
+          nextshiny = 15;
+        }
+        if (nextshiny > 1000 && this.milestones[4] === 0)
+        {
+          nextshiny = 1000;
+        }
+
+        const minlayercost = Math.min(...rawCost.slice(2, this.milestones[4] + 3));
+        const nextm64levels = 64 - ((this.variables[1].level - 1) % 64);
+        const p = 2**0.25;
+        const nextm64cost = rawCost[1] + l10(nextm64levels) + l10((p**nextm64levels)/(p-1));
+        const coast64 = nextm64cost < minlayercost + 1 && this.milestones[0] > 0;
+        const weights = this.maxRho > nextshiny - l10(25) ? new Array(12).fill(Infinity) : coast64 ? [
+          0, //t
+          0, //c1
+          l10(4), //c2
+          l10(4), //c3
+          l10(4), //c4
+          l10(4), //c5
+          l10(4), //c6
+          l10(4), //c7
+          l10(4), //c8
+          l10(4), //c9
+          l10(4), //c10
+          0 //n
+        ] : [
+          0, //t
+          this.milestones[0] > 0 ? l10(this.variables[1].level % 64) : this.variables[1].level < 65 ? l10(2) : Infinity, //c1
+          0, //c2
+          0, //c3
+          0, //c4
+          0, //c5
+          0, //c6
+          0, //c7
+          0, //c8
+          0, //c9
+          0, //c10
+          0 //n
+        ];
+        let minCost = [Number.MAX_VALUE, -1];
+        for (let i = this.variables.length - 1; i >= 0; i--)
+          if (rawCost[i] + weights[i] < minCost[0] && this.milestoneConditions[i]()) {
+            minCost = [rawCost[i] + weights[i], i];
           }
-          this.rho = subtract(this.rho, this.variables[i].cost);
-          this.variables[i].buy();
+        if (minCost[1] !== -1 && rawCost[minCost[1]] < this.rho) {
+          this.rho = subtract(this.rho, this.variables[minCost[1]].cost);
+          if (this.maxRho + 5 > this.lastPub) {
+            this.boughtVars.push({ variable: this.varNames[minCost[1]], level: this.variables[minCost[1]].level + 1, cost: this.variables[minCost[1]].cost, timeStamp: this.t });
+          }
+          this.variables[minCost[1]].buy();
         } else break;
       }
+    }
   }
 }
