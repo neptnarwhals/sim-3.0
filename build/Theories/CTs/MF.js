@@ -113,7 +113,7 @@ class mfSim extends theoryClass {
     }
     updateMilestones() {
         let stage = 0;
-        const points = [25, 50, 175, 225, 275, 325, 425, 475, 525];
+        const points = [20, 50, 175, 225, 275, 325, 425, 475, 525];
         for (let i = 0; i < points.length; i++) {
             if (Math.max(this.lastPub, this.maxRho) >= points[i])
                 stage = i + 1;
