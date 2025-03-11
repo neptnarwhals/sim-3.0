@@ -306,8 +306,8 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
         const minlayercost = Math.min(...rawCost.slice(2, this.milestones[4] + 3));
         const nextm64levels = 64 - ((this.variables[1].level - 1) % 64);
         const p = 2**0.25;
-        const nextm64cost = rawCost[1] + l10(nextm64levels) + l10((p**nextm64levels)/(p-1));
-        const coast64 = nextm64cost < minlayercost + 1 && this.milestones[0] > 0;
+        const nextm64cost = rawCost[1] + l10((p**nextm64levels-1)/(p-1));
+        const coast64 = nextm64cost < minlayercost + l10(2) && this.milestones[0] > 0;
         const weights = this.maxRho > nextshiny - l10(25) ? new Array(12).fill(Infinity) : coast64 ? [
           0, //t
           0, //c1
