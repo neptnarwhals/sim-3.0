@@ -464,7 +464,7 @@
           "stratFilterCondition": "Active || Very-Active"
         },
         "BaPAI": {
-          "stratFilterCondition": "Active || Very-Active"
+          "stratFilterCondition": "Very-Active"
         },
         "BaPdMS": {
           "stratFilterCondition": "(Active || Very-Active) && rho <= 260"
