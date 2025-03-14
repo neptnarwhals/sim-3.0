@@ -159,7 +159,24 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
         }
         return a;
     }
-}
+  }
+
+  getNextCoast(){
+    let nextCoast = Infinity;
+    const rho = Math.max(this.maxRho, this.lastPub);
+    if (this.forcedPubRho != -1)
+    {
+      nextCoast = this.forcedPubRho;
+    }
+    const coastPoints = [10, 15, 20, 25, 30, 40, 50, 60, 70, 80, 100, 140, 150, 180, 200, 240, 300, 400, 500, 600, 700, 1000];
+    for (const point of coastPoints){
+      if (nextCoast > point && rho < point)
+      {
+        nextCoast = point;
+      }
+    }
+    return nextCoast;
+  }
 
   constructor(data: theoryData) {
     super(data);
@@ -285,30 +302,14 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     else{
       while (true) {
         const rawCost = this.variables.map((item) => item.cost);
-        let nextshiny = Infinity;
-        if (this.forcedPubRho != -1)
-        {
-          nextshiny = this.forcedPubRho;
-        }
-        if (nextshiny > 10 && this.milestones[0] === 0)
-        {
-          nextshiny = 10;
-        }
-        if (nextshiny > 15 && this.milestones[1] === 0)
-        {
-          nextshiny = 15;
-        }
-        if (nextshiny > 1000 && this.milestones[4] === 0)
-        {
-          nextshiny = 1000;
-        }
+        let nextCoast = this.getNextCoast();
 
         const minlayercost = Math.min(...rawCost.slice(2, this.milestones[4] + 3));
         const nextm64levels = 64 - ((this.variables[1].level - 1) % 64);
         const p = 2**0.25;
         const nextm64cost = rawCost[1] + l10((p**nextm64levels-1)/(p-1));
         const coast64 = nextm64cost < minlayercost + l10(2) && this.milestones[0] > 0;
-        const weights = this.maxRho > nextshiny - l10(25) ? new Array(12).fill(Infinity) : coast64 ? [
+        const weights = this.maxRho > nextCoast - l10(25) ? new Array(12).fill(Infinity) : coast64 ? [
           0, //t
           0, //c1
           l10(4), //c2
