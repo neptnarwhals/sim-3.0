@@ -30,6 +30,7 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
 
   getBuyingConditions() {
     const idlestrat = new Array(12).fill(true)
+    const semiidlestrat = new Array(12).fill(() => this.maxRho < this.getNextCoast() - l10(25));
     const activestrat = [
       true,
       () => this.variables[1].cost + l10(0.5 * this.variables[0].level % 64) < this.variables[2].cost && (this.milestones[0] > 0 || this.variables[1].level < 65),
@@ -38,8 +39,11 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
 
     const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
       BaP: idlestrat,
-      BaPd: activestrat,
+      BaPcoast: semiidlestrat,
       BaPAI: [],
+      BaPAIMS: [],
+      BaPAIMS2: [],
+      BaPd: activestrat,
       BaPdMS: activestrat,
     };
     const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
@@ -89,7 +93,7 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     const qpriority = [1, 2, 4, 3, 5];
     let priority = apriority;
 
-    if (this.strat == "BaPdMS" || this.strat == "BaPAI")
+    if (this.strat == "BaPdMS" || this.strat == "BaPAIMS")
     {
       const tm300 = this.t % 300;
       if (tm300 < 100) priority = qpriority;
@@ -102,6 +106,11 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
             this.milestones[priority[i] - 1]++;
             milestoneCount--;
         }
+    }
+
+    if (this.maxRho < 940)
+    {
+      this.milestones[4] = 0;
     }
   }
 
@@ -286,7 +295,7 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     }
   }
   buyVariables() {
-    if (this.strat != "BaPAI")
+    if (!this.strat.includes("AI"))
     {
       for (let i = this.variables.length - 1; i >= 0; i--)
         while (true) {
@@ -309,31 +318,19 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
         const p = 2**0.25;
         const nextm64cost = rawCost[1] + l10((p**nextm64levels-1)/(p-1));
         const coast64 = nextm64cost < minlayercost + l10(2) && this.milestones[0] > 0;
-        const weights = this.maxRho > nextCoast - l10(25) ? new Array(12).fill(Infinity) : coast64 ? [
+        const coastn = this.maxRho > rawCost[11] - l10(25) && this.variables[11].level < 20 && this.milestones[4] > 0 && false;
+        const weights = this.maxRho > nextCoast - l10(25) ? new Array(12).fill(Infinity) :  coastn ? [
+          ...new Array(11).fill(Infinity),
+          0 //n
+        ] : coast64 ? [
           0, //t
           0, //c1
-          l10(4), //c2
-          l10(4), //c3
-          l10(4), //c4
-          l10(4), //c5
-          l10(4), //c6
-          l10(4), //c7
-          l10(4), //c8
-          l10(4), //c9
-          l10(4), //c10
+          ...new Array(9).fill(l10(4)), //c2-c10
           0 //n
         ] : [
           0, //t
           this.milestones[0] > 0 ? l10(this.variables[1].level % 64) : this.variables[1].level < 65 ? l10(2) : Infinity, //c1
-          0, //c2
-          0, //c3
-          0, //c4
-          0, //c5
-          0, //c6
-          0, //c7
-          0, //c8
-          0, //c9
-          0, //c10
+          ...new Array(9).fill(0), //c2-c10
           0 //n
         ];
         let minCost = [Number.MAX_VALUE, -1];

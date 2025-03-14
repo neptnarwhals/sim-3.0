@@ -458,16 +458,26 @@
             "tauFactor": 0.4,
             "strats": {
                 "BaP": {
-                    "stratFilterCondition": "true"
+                    "stratFilterCondition": "Idle || Semi-Idle"
                 },
-                "BaPd": {
-                    "stratFilterCondition": "Active || Very-Active"
+                "BaPcoast": {
+                    "stratFilterCondition": "Semi-Idle && rho < 1500"
                 },
                 "BaPAI": {
-                    "stratFilterCondition": "Very-Active"
+                    "stratFilterCondition": "Active || Very-Active"
+                },
+                "BaPAIMS": {
+                    "stratFilterCondition": "(Active || Very-Active) && rho < 250"
+                },
+                "BaPAIMS2": {
+                    "UI_visible": false,
+                    "stratFilterCondition": "(Active || Very-Active) && rho < 250 && false"
+                },
+                "BaPd": {
+                    "stratFilterCondition": "false"
                 },
                 "BaPdMS": {
-                    "stratFilterCondition": "(Active || Very-Active) && rho <= 260"
+                    "stratFilterCondition": "false"
                 }
             }
         },

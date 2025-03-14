@@ -22,6 +22,7 @@ export default function bap(data) {
 class bapSim extends theoryClass {
     getBuyingConditions() {
         const idlestrat = new Array(12).fill(true);
+        const semiidlestrat = new Array(12).fill(() => this.maxRho < this.getNextCoast() - l10(25));
         const activestrat = [
             true,
             () => this.variables[1].cost + l10(0.5 * this.variables[0].level % 64) < this.variables[2].cost && (this.milestones[0] > 0 || this.variables[1].level < 65),
@@ -29,8 +30,11 @@ class bapSim extends theoryClass {
         ];
         const conditions = {
             BaP: idlestrat,
-            BaPd: activestrat,
+            BaPcoast: semiidlestrat,
             BaPAI: [],
+            BaPAIMS: [],
+            BaPAIMS2: [],
+            BaPd: activestrat,
             BaPdMS: activestrat,
         };
         const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
@@ -80,7 +84,7 @@ class bapSim extends theoryClass {
         const apriority = [1, 2, 3, 4, 5];
         const qpriority = [1, 2, 4, 3, 5];
         let priority = apriority;
-        if (this.strat == "BaPdMS" || this.strat == "BaPAI") {
+        if (this.strat == "BaPdMS" || this.strat == "BaPAIMS") {
             const tm300 = this.t % 300;
             if (tm300 < 100)
                 priority = qpriority;
@@ -93,6 +97,9 @@ class bapSim extends theoryClass {
                 this.milestones[priority[i] - 1]++;
                 milestoneCount--;
             }
+        }
+        if (this.maxRho < 940) {
+            this.milestones[4] = 0;
         }
     }
     getRdot(c1, r_ms) {
@@ -259,7 +266,7 @@ class bapSim extends theoryClass {
         }
     }
     buyVariables() {
-        if (this.strat != "BaPAI") {
+        if (!this.strat.includes("AI")) {
             for (let i = this.variables.length - 1; i >= 0; i--)
                 while (true) {
                     if (this.rho > this.variables[i].cost && this.conditions[i]() && this.milestoneConditions[i]()) {
@@ -282,31 +289,19 @@ class bapSim extends theoryClass {
                 const p = Math.pow(2, 0.25);
                 const nextm64cost = rawCost[1] + l10((Math.pow(p, nextm64levels) - 1) / (p - 1));
                 const coast64 = nextm64cost < minlayercost + l10(2) && this.milestones[0] > 0;
-                const weights = this.maxRho > nextCoast - l10(25) ? new Array(12).fill(Infinity) : coast64 ? [
+                const coastn = this.maxRho > rawCost[11] - l10(25) && this.variables[11].level < 20 && this.milestones[4] > 0 && false;
+                const weights = this.maxRho > nextCoast - l10(25) ? new Array(12).fill(Infinity) : coastn ? [
+                    ...new Array(11).fill(Infinity),
+                    0 //n
+                ] : coast64 ? [
                     0,
                     0,
-                    l10(4),
-                    l10(4),
-                    l10(4),
-                    l10(4),
-                    l10(4),
-                    l10(4),
-                    l10(4),
-                    l10(4),
-                    l10(4),
+                    ...new Array(9).fill(l10(4)),
                     0 //n
                 ] : [
                     0,
                     this.milestones[0] > 0 ? l10(this.variables[1].level % 64) : this.variables[1].level < 65 ? l10(2) : Infinity,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
-                    0,
+                    ...new Array(9).fill(0),
                     0 //n
                 ];
                 let minCost = [Number.MAX_VALUE, -1];
