@@ -223,20 +223,35 @@ async function simAll(data: parsedData): Promise<Array<Array<string>>> {
   return res;
 }
 function createSimAllOutput(arr: Array<simResult>): Array<string> {
+
+  //   return [
+  //     data.theory,
+  //     data.sigma,
+  //     logToExp(data.lastPub, 2),
+  //     logToExp(data.pubRho, 2),
+  //     logToExp((data.pubRho - data.lastPub) * jsonData.theories[data.theory].tauFactor, 2),
+  //     formatNumber(data.pubMulti),
+  //     data.strat + stratExtra,
+  //     data.maxTauH === 0 ? 0 : Number(formatNumber(data.maxTauH * jsonData.theories[data.theory].tauFactor)),
+  //     convertTime(Math.max(0, data.pubT - data.recovery.time)),
+  //     [data.pubRho, data.recovery.recoveryTime ? data.recovery.time : Math.max(0, data.pubT - data.recovery.time)],
+  //   ];
   return [
-    arr[0][0],
-    arr[0][2],
-    arr[1][7],
-    arr[0][7],
-    formatNumber(arr[1][7] / arr[0][7], 4),
-    arr[1][5],
-    arr[0][5],
-    arr[1][6],
-    arr[0][6],
-    arr[1][8],
-    arr[0][8],
-    arr[1][4],
-    arr[0][4],
+    arr[0][0], // Theory name
+    arr[0][2], // Input
+    formatNumber(arr[1][7] / arr[0][7], 4), // Ratio
+    arr[1][7], // Active tau/h
+    arr[0][7], // Passive tau/h
+    arr[1][5], // Multi Active
+    arr[0][5], // Multi Idle
+    arr[1][6], // Strat Active
+    arr[0][6], // Strat Idle
+    arr[1][8], // Time Active
+    arr[0][8], // Time Idle
+    arr[1][4], // dTau Active
+    arr[0][4], // dTau Idle
+    arr[1][3], // Pub Rho Active
+    arr[0][3], // Pub Rho Passive
   ].map((v) => v.toString());
 }
 async function getBestStrat(data: Omit<parsedData, "simAllInputs">): Promise<simResult> {

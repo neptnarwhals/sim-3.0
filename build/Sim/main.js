@@ -222,12 +222,24 @@ function simAll(data) {
     });
 }
 function createSimAllOutput(arr) {
+    //   return [
+    //     data.theory,
+    //     data.sigma,
+    //     logToExp(data.lastPub, 2),
+    //     logToExp(data.pubRho, 2),
+    //     logToExp((data.pubRho - data.lastPub) * jsonData.theories[data.theory].tauFactor, 2),
+    //     formatNumber(data.pubMulti),
+    //     data.strat + stratExtra,
+    //     data.maxTauH === 0 ? 0 : Number(formatNumber(data.maxTauH * jsonData.theories[data.theory].tauFactor)),
+    //     convertTime(Math.max(0, data.pubT - data.recovery.time)),
+    //     [data.pubRho, data.recovery.recoveryTime ? data.recovery.time : Math.max(0, data.pubT - data.recovery.time)],
+    //   ];
     return [
         arr[0][0],
         arr[0][2],
+        formatNumber(arr[1][7] / arr[0][7], 4),
         arr[1][7],
         arr[0][7],
-        formatNumber(arr[1][7] / arr[0][7], 4),
         arr[1][5],
         arr[0][5],
         arr[1][6],
@@ -236,6 +248,8 @@ function createSimAllOutput(arr) {
         arr[0][8],
         arr[1][4],
         arr[0][4],
+        arr[1][3],
+        arr[0][3], // Pub Rho Passive
     ].map((v) => v.toString());
 }
 function getBestStrat(data) {

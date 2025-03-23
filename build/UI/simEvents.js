@@ -39,10 +39,11 @@ const showUnofficials = qs(".unofficials");
 const theories = Object.keys(jsondata.theories);
 let prevMode = "All";
 const tau = `<span style="font-size:0.9rem; font-style:italics">&tau;</span>`;
+const rho = `<span style="font-size:0.9rem; font-style:italics">&rho;</span>`;
 const tableHeaders = {
     current: "All",
     single: `<th style="padding-inline: 0.5rem !important">Theory</th><th><span style="font-size:0.9rem;">&sigma;</span><sub>t</sub></th><th>Last Pub</th><th>Max Rho</th><th>&Delta;${tau}</th><th>Multi</th><th>Strat</th><th>${tau}/h</th><th>Pub Time</th>`,
-    all: `<th>&emsp;</th><th>Input</th><th>${tau}/h Active</th><th>${tau}/h Idle</th><th>Ratio</th><th>Multi Active</th><th>Multi Idle</th><th>Strat Active</th><th>Strat Idle</th><th>Time Active</th><th>Time Idle</th><th>&Delta;${tau} Active</th><th>&Delta;${tau} Idle</th>`,
+    all: `<th>&emsp;</th><th>Input</th><th>Ratio</th><th>${tau}/h</th><th>Multi</th><th>Strat</th><th>Time</th><th>&Delta;${tau}</th><th>Pub ${rho}</th>`,
 };
 thead.innerHTML = tableHeaders.all;
 table.classList.add("big");
@@ -121,16 +122,49 @@ function updateTable(arr) {
     }
     if ((tbody.children.length > 1 && (arr.length > 1 || tbody.children[tbody.children.length - 1].children[0].innerHTML === "")) || mode.value === "All")
         clearTable();
-    for (let i = 0; i < arr.length; i++) {
-        const row = ce("tr");
-        for (let j = 0; j < thead.children[0].children.length; j++) {
-            const cell = ce("td");
-            cell.innerHTML = String(arr[i][j]);
-            row.appendChild(cell);
+    if (mode.value == "All") {
+        for (let i = 0; i < arr.length; i++) {
+            const rowActive = ce("tr");
+            const rowPassive = ce("tr");
+            // Theory name cell:
+            const theoryName = ce("td");
+            theoryName.innerHTML = String(arr[i][0]);
+            theoryName.setAttribute("rowspan", "2");
+            rowActive.appendChild(theoryName);
+            // Input cell:
+            const inputValue = ce("td");
+            inputValue.innerHTML = String(arr[i][1]);
+            inputValue.setAttribute("rowspan", "2");
+            rowActive.appendChild(inputValue);
+            // Ratio cell:
+            const ratio = ce("td");
+            ratio.innerHTML = String(arr[i][2]);
+            ratio.setAttribute("rowspan", "2");
+            rowActive.appendChild(ratio);
+            for (let j = 3; j < arr[i].length; j += 2) {
+                const cellActive = ce("td");
+                cellActive.innerHTML = String(arr[i][j]);
+                rowActive.appendChild(cellActive);
+                const cellPassive = ce("td");
+                cellPassive.innerHTML = String(arr[i][j + 1]);
+                rowPassive.appendChild(cellPassive);
+            }
+            tbody.appendChild(rowActive);
+            tbody.appendChild(rowPassive);
         }
-        tbody.appendChild(row);
     }
-    resetVarBuy();
+    else {
+        for (let i = 0; i < arr.length; i++) {
+            const row = ce("tr");
+            for (let j = 0; j < thead.children[0].children.length; j++) {
+                const cell = ce("td");
+                cell.innerHTML = String(arr[i][j]);
+                row.appendChild(cell);
+            }
+            tbody.appendChild(row);
+        }
+        resetVarBuy();
+    }
 }
 function resetVarBuy() {
     tbody = qs(".simTable > tbody");
