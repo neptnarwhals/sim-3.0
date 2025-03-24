@@ -1,7 +1,5 @@
 import { add } from "./helpers.js";
 import { parseValue, FirstFreeCost } from "./cost";
-import { LinearValue } from "./value";
-let placeholderValueCompute = new LinearValue(10);
 export default class Variable {
     constructor(data) {
         this.data = data;
@@ -9,7 +7,7 @@ export default class Variable {
         this.cost = 0;
         this.value = 0;
         this.isZero = false;
-        this.valueScaling = placeholderValueCompute;
+        this.valueScaling = this.data.valueScaling;
         this.init();
     }
     init() {
@@ -24,7 +22,6 @@ export default class Variable {
         else {
             this.isZero = false;
         }
-        this.valueScaling = this.data.valueScaling;
         if (this.data.cost instanceof FirstFreeCost && this.level == 0) {
             this.buy();
         }
