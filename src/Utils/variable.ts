@@ -7,10 +7,6 @@ interface variableData {
   cost: BaseCost;
   varBase?: number;
   value?: number | string;
-  stepwisePowerSum?: {
-    length?: number;
-    base?: number;
-  };
   valueScaling?: BaseValue;
 }
 

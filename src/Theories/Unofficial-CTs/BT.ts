@@ -1,6 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -85,7 +85,7 @@ class btSim extends theoryClass<theory> implements specificTheoryProps {
     this.varNames = ["tai", "rao", "tay"];
     this.variables = [
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(15, 2)), valueScaling: new StepwisePowerSumValue() }),
-      new Variable({ cost: new ExponentialCost(5, 10), varBase: 2 }),
+      new Variable({ cost: new ExponentialCost(5, 10), valueScaling: new LinearValue(2) }),
       new Variable({ cost: new ExponentialCost(1e10, 10), varBase: 10 })
     ];
     this.conditions = this.getBuyingConditions();

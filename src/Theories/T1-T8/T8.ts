@@ -1,6 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -205,8 +205,8 @@ class t8Sim extends theoryClass<theory> implements specificTheoryProps {
     this.varNames = ["c1", "c2", "c3", "c4", "c5"];
     this.variables = [
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.5172)), valueScaling: new StepwisePowerSumValue() }),
-      new Variable({ cost: new ExponentialCost(20, 64), varBase: 2 }),
-      new Variable({ cost: new ExponentialCost(1e2, 1.15 * Math.log2(3), true), varBase: 3 }),
+      new Variable({ cost: new ExponentialCost(20, 64), valueScaling: new LinearValue(2) }),
+      new Variable({ cost: new ExponentialCost(1e2, 1.15 * Math.log2(3), true), valueScaling: new LinearValue(3) }),
       new Variable({ cost: new ExponentialCost(1e2, 1.15 * Math.log2(5), true), varBase: 5 }),
       new Variable({ cost: new ExponentialCost(1e2, 1.15 * Math.log2(7), true), varBase: 7 }),
     ];

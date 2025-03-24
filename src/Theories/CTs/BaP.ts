@@ -1,6 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import pubtable from "./helpers/BaPpubtable.json" assert { type: "json" };
@@ -202,8 +202,8 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     this.variables = [
       new Variable({ cost: new ExponentialCost(1e6, 1e6), valueScaling: new StepwisePowerSumValue()}), //tdot
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(0.0625, 0.25, true)), valueScaling: new StepwisePowerSumValue(65536, 64) }), //c1
-      new Variable({ cost: new ExponentialCost(16, 4, true), varBase: 2 }), // c2
-      new Variable({ cost: new ExponentialCost(19683, 19683), varBase: 3 }), // c3
+      new Variable({ cost: new ExponentialCost(16, 4, true), valueScaling: new LinearValue(2) }), // c2
+      new Variable({ cost: new ExponentialCost(19683, 19683), valueScaling: new LinearValue(3) }), // c3
       new Variable({ cost: new ExponentialCost(4**16, 32, true), varBase: 4 }), // c4
       new Variable({ cost: new ExponentialCost(5**25, 25*Math.log2(5), true), varBase: 5 }), // c5
       new Variable({ cost: new ExponentialCost(6**36, 36*Math.log2(6), true), varBase: 6 }), // c6

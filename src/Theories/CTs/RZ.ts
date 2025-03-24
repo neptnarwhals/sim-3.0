@@ -1,6 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
-import { StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import { c1Exp, getBlackholeSpeed, getb, lookups, resolution, zeta, ComplexValue } from "./helpers/RZ.js";
@@ -299,7 +299,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             }),
             new Variable({
                 cost: new ExponentialCost(1500, Math.pow(2, 0.699 * 4)),
-                varBase: 2,
+                valueScaling: new LinearValue(2),
             }),
             new Variable({
                 cost: new CompositeCost(
@@ -333,11 +333,11 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             // const getw2 = (level) => BigNumber.TWO.pow(level);
             new Variable({
                 cost: new ExponentialCost(1e5, 10),
-                varBase: 2,
+                valueScaling: new LinearValue(2),
             }),
             new Variable({
                 cost: new ExponentialCost("3.16227766017e600", '1e30'),
-                varBase: 2,
+                valueScaling: new LinearValue(2),
             }),
             // new Variable({
             //     cost: new ExponentialCost("1e600", "1e300"),

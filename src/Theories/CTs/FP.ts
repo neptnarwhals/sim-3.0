@@ -1,6 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import { CompositeCost, ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -230,7 +230,7 @@ class fpSim extends theoryClass<theory, milestones> implements specificTheoryPro
     this.variables = [
       new Variable({ cost: new ExponentialCost(1e4, 1e4) }),
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.4)), valueScaling: new StepwisePowerSumValue(150, 100)}),
-      new Variable({ cost: new CompositeCost(15, new ExponentialCost(1e15, 40), new ExponentialCost(1e37, 16.42)), varBase: 2 }),
+      new Variable({ cost: new CompositeCost(15, new ExponentialCost(1e15, 40), new ExponentialCost(1e37, 16.42)), valueScaling: new LinearValue(2) }),
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(1e35, 12)), valueScaling: new StepwisePowerSumValue(10, 10)}),
       new Variable({ cost: new ExponentialCost(1e76, 1e3) }),
       new Variable({
