@@ -24,19 +24,19 @@ export function getTheoryFromIndex(index: number) {
   return Object.keys(jsonData.theories)[index] as theoryType;
 }
 
-export function log10(num: string) {
+export function parseLog10String(num: string): number {
   const split = String(num).split("e");
   const result = Number(split[1]) + Math.log10(Math.max(1, Number(split[0])));
   return Number(result);
 }
 
-export function logToExp(num: number, dec = 3) {
+export function logToExp(num: number, dec = 3): string {
   const wholePart: number = Math.floor(num);
   const fractionalPart: number = num - wholePart;
   const frac1: number = round(10 ** fractionalPart, dec);
   return (frac1 >= 10 ? frac1 / 10 : frac1) + "e" + (frac1 >= 10 ? wholePart + 1 : wholePart);
 }
-export function convertTime(secs: number) {
+export function convertTime(secs: number): string {
   const mins = Math.floor((secs / 60) % 60);
   const hrs = Math.floor((secs / 3600) % 24);
   const days = Math.floor((secs / 86400) % 365);
@@ -51,11 +51,11 @@ export function convertTime(secs: number) {
   if (years === 0) result += (mins < 10 ? "0" : "") + mins + "m";
   return result;
 }
-export function formatNumber(value: number, precision = 6) {
+export function formatNumber(value: number, precision = 6): string {
   return value.toPrecision(precision).replace(/[+]/, "");
 }
 
-export function round(number: number, decimals: number) {
+export function round(number: number, decimals: number): number {
   return Math.round(number * 10 ** decimals) / 10 ** decimals;
 }
 

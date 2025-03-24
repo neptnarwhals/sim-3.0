@@ -21,7 +21,7 @@ export function getIndexFromTheory(theory) {
 export function getTheoryFromIndex(index) {
     return Object.keys(jsonData.theories)[index];
 }
-export function log10(num) {
+export function parseLog10String(num) {
     const split = String(num).split("e");
     const result = Number(split[1]) + Math.log10(Math.max(1, Number(split[0])));
     return Number(result);

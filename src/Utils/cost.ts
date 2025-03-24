@@ -1,9 +1,9 @@
-import { log10 } from "./helpers";
+import { parseLog10String } from "./helpers";
 
 export function parseValue(val: string) {
     if (val === "Infinity") throw "Variable value reached Infinity";
     if (val === "0") return -Infinity;
-    if (/[e]/.test(val)) return log10(val);
+    if (/[e]/.test(val)) return parseLog10String(val);
     return Math.log10(Number(val));
 }
 

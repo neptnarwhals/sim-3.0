@@ -1,4 +1,4 @@
-import { getTheoryFromIndex, log10 } from "../Utils/helpers.js";
+import { getTheoryFromIndex, parseLog10String } from "../Utils/helpers.js";
 import jsonData from "../Data/data.json" assert { type: "json" };
 import { qs, qsa } from "../Utils/helpers.js";
 export function parseData(data) {
@@ -97,7 +97,7 @@ export function isValidCurrency(val) {
 }
 export function parseValue(val) {
     if (/[e]/.test(val))
-        return log10(val);
+        return parseLog10String(val);
     return parseFloat(val);
 }
 function isInt(str) {
