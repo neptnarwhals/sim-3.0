@@ -114,8 +114,15 @@ export default class Variable {
     this.level++;
     this.cost = this.data.cost.getCost(this.level);
   }
-  getCostForLevel(level: number) {
+  getCostForLevel(level: number): number {
     return this.data.cost.getCost(level);
+  }
+  getCostForLevels(from: number, to: number): number {
+    let totalCost = this.getCostForLevel(from);
+    for (let i = from + 1; i <= to; i++) {
+      totalCost = add(totalCost, this.getCostForLevel(i));
+    }
+    return totalCost;
   }
   reCalculate() {
     this.value = this.valueCompute.recomputeValue(this.level);

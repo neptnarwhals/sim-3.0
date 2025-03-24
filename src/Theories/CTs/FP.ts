@@ -75,10 +75,10 @@ class fpSim extends theoryClass<theory, milestones> implements specificTheoryPro
           let mod100 = this.variables[1].level % 100;
           if(mod100 > 85) {
             let levelMinusMod = this.variables[1].level - mod100;
-            let totalCost = 0;
-            for(let i = mod100 + 1; i <= 101; i++) {
-              totalCost = add(totalCost, this.variables[1].getCostForLevel(levelMinusMod + i));
-            }
+            let totalCost = this.variables[1].getCostForLevels(
+                levelMinusMod + mod100 + 1,
+                levelMinusMod + 101
+            )
             if(totalCost < this.variables[2].cost + 0.1 && (this.milestones.sterm == 0 || totalCost < this.variables[7].cost)) {
               return true;
             }
