@@ -1,8 +1,9 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import Variable, { ExponentialCost } from "../../Utils/variable.js";
+import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import pubtable from "./helpers/BaPpubtable.json" assert { type: "json" };
+import { ExponentialCost } from '../../Utils/cost.js';
 
 export default async function bap(data: theoryData): Promise<simResult> {
   const sim = new bapSim(data);

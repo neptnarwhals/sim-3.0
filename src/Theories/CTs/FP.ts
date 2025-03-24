@@ -1,7 +1,8 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import Variable, { CompositeCost, ExponentialCost } from "../../Utils/variable.js";
+import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
+import { CompositeCost, ExponentialCost } from '../../Utils/cost.js';
 
 export default async function fp(data: theoryData): Promise<simResult> {
   const sim = new fpSim(data);
@@ -76,7 +77,7 @@ class fpSim extends theoryClass<theory, milestones> implements specificTheoryPro
             let levelMinusMod = this.variables[1].level - mod100;
             let totalCost = 0;
             for(let i = mod100 + 1; i <= 101; i++) {
-              totalCost = add(totalCost, this.variables[1].data.cost.getCost(levelMinusMod + i));
+              totalCost = add(totalCost, this.variables[1].getCostForLevel(levelMinusMod + i));
             }
             if(totalCost < this.variables[2].cost + 0.1 && (this.milestones.sterm == 0 || totalCost < this.variables[7].cost)) {
               return true;

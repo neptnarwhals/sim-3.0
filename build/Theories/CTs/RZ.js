@@ -9,10 +9,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
-import Variable, { ExponentialCost, StepwiseCost, CompositeCost, ConstantCost } from "../../Utils/variable.js";
+import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { c1Exp, getb, lookups, resolution, zeta } from "./helpers/RZ.js";
 import goodzeros from "./helpers/RZgoodzeros.json" assert { type: "json" };
+import { ExponentialCost, StepwiseCost, CompositeCost, ConstantCost } from '../../Utils/cost.js';
 export default function rz(data) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield ((new rzSimWrap(data)).simulate());

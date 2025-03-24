@@ -1,9 +1,11 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
-import Variable, { ExponentialCost, StepwiseCost, CompositeCost, ConstantCost } from "../../Utils/variable.js";
+import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import { c1Exp, getBlackholeSpeed, getb, lookups, resolution, zeta, ComplexValue } from "./helpers/RZ.js";
 import goodzeros from "./helpers/RZgoodzeros.json" assert { type: "json" };
+
+import { ExponentialCost, StepwiseCost, CompositeCost, ConstantCost } from '../../Utils/cost.js';
 
 export default async function rz(data: theoryData) {
     return await ((new rzSimWrap(data)).simulate());

@@ -1,7 +1,8 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import Variable, { ExponentialCost } from "../../Utils/variable.js";
+import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
+import { ExponentialCost } from '../../Utils/cost.js';
 
 export default async function fi(data: theoryData): Promise<simResult> {
   const sim = new fiSim(data);

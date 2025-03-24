@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import Variable, { ExponentialCost } from "../../Utils/variable.js";
+import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
+import { ExponentialCost } from '../../Utils/cost.js';
 export default function wsp(data) {
     return __awaiter(this, void 0, void 0, function* () {
         const sim = new wspSim(data);
