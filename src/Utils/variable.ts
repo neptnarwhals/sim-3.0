@@ -96,7 +96,7 @@ export default class Variable {
         ? new StepwisePowerSumValue(varBase, stepwisePowerSum.base, stepwisePowerSum.length)
         : new LinearValue(varBase);
 
-    if(this.data.cost instanceof FirstFreeCost) {
+    if(this.data.cost instanceof FirstFreeCost && this.level == 0) {
       this.buy();
     }
   }
