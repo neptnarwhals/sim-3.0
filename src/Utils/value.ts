@@ -12,7 +12,7 @@ export abstract class BaseValue {
 export class StepwisePowerSumValue extends BaseValue {
     base: number;
     length: number;
-    constructor(varBase: number = 10, base: number = 2, length: number = 10) {
+    constructor(base: number = 2, length: number = 10, varBase: number = 10) {
         super(varBase);
         this.base = base;
         this.length = length;

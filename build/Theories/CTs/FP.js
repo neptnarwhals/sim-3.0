@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { CompositeCost, ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -219,13 +220,13 @@ class fpSim extends theoryClass {
         this.varNames = ["tdot", "c1", "c2", "q1", "q2", "r1", "n1", "s"];
         this.variables = [
             new Variable({ cost: new ExponentialCost(1e4, 1e4) }),
-            new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.4)), stepwisePowerSum: { base: 150, length: 100 } }),
+            new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.4)), valueScaling: new StepwisePowerSumValue(150, 100) }),
             new Variable({ cost: new CompositeCost(15, new ExponentialCost(1e15, 40), new ExponentialCost(1e37, 16.42)), varBase: 2 }),
-            new Variable({ cost: new FirstFreeCost(new ExponentialCost(1e35, 12)), stepwisePowerSum: { base: 10, length: 10 } }),
+            new Variable({ cost: new FirstFreeCost(new ExponentialCost(1e35, 12)), valueScaling: new StepwisePowerSumValue(10, 10) }),
             new Variable({ cost: new ExponentialCost(1e76, 1e3) }),
             new Variable({
                 cost: new FirstFreeCost(new CompositeCost(285, new ExponentialCost(1e80, 25), new ExponentialCost("1e480", 150))),
-                stepwisePowerSum: { base: 2, length: 5 }
+                valueScaling: new StepwisePowerSumValue(2, 5)
             }),
             new Variable({ cost: new ExponentialCost(1e4, 3e6) }),
             new Variable({ cost: new ExponentialCost("1e730", 1e30) }),

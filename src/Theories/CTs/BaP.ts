@@ -1,5 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import pubtable from "./helpers/BaPpubtable.json" assert { type: "json" };
@@ -199,8 +200,8 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     this.forcedPubRho = -1;
     this.varNames = ["tdot", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "n"];
     this.variables = [
-      new Variable({ cost: new ExponentialCost(1e6, 1e6), stepwisePowerSum: { default: true }}), //tdot
-      new Variable({ cost: new FirstFreeCost(new ExponentialCost(0.0625, 0.25, true)), stepwisePowerSum: { base:65536, length:64 } }), //c1
+      new Variable({ cost: new ExponentialCost(1e6, 1e6), valueScaling: new StepwisePowerSumValue()}), //tdot
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(0.0625, 0.25, true)), valueScaling: new StepwisePowerSumValue(65536, 64) }), //c1
       new Variable({ cost: new ExponentialCost(16, 4, true), varBase: 2 }), // c2
       new Variable({ cost: new ExponentialCost(19683, 19683), varBase: 3 }), // c3
       new Variable({ cost: new ExponentialCost(4**16, 32, true), varBase: 4 }), // c4
@@ -210,7 +211,7 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
       new Variable({ cost: new ExponentialCost(8**64, 64*Math.log2(8), true), varBase: 8 }), // c8
       new Variable({ cost: new ExponentialCost(9**81, 81*Math.log2(9), true), varBase: 9 }), // c9
       new Variable({ cost: new ExponentialCost(10**100, 100*Math.log2(10), true), varBase: 10 }), // c10
-      new Variable({ cost: new ExponentialCost(10**40, 60*Math.log2(10), true), stepwisePowerSum: { base: 6, length:16 }, value:1 }), // n
+      new Variable({ cost: new ExponentialCost(10**40, 60*Math.log2(10), true), valueScaling: new StepwisePowerSumValue(6, 16), value:1 }), // n
     ];
     this.conditions = this.getBuyingConditions();
     this.milestoneConditions = this.getMilestoneConditions();

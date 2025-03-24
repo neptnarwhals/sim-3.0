@@ -1,5 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -187,14 +188,14 @@ class efSim extends theoryClass<theory> implements specificTheoryProps {
     this.varNames = ["t", "q1", "q2", "b1", "b2", "c1", "c2", "a1", "a2", "a3"];
     this.variables = [
       new Variable({ cost: new ExponentialCost(1e6, 1e6) }),
-      new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.61328)), stepwisePowerSum: { default: true } }),
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.61328)), valueScaling: new StepwisePowerSumValue() }),
       new Variable({ cost: new ExponentialCost(5, 60), varBase: 2 }),
-      new Variable({ cost: new FirstFreeCost(new ExponentialCost(20, 200)), stepwisePowerSum: { default: true } }),
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(20, 200)), valueScaling: new StepwisePowerSumValue() }),
       new Variable({ cost: new ExponentialCost(100, 2), varBase: 1.1 }),
-      new Variable({ cost: new FirstFreeCost(new ExponentialCost(20, 200)), stepwisePowerSum: { default: true } }),
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(20, 200)), valueScaling: new StepwisePowerSumValue() }),
       new Variable({ cost: new ExponentialCost(100, 2), varBase: 1.1 }),
-      new Variable({ cost: new FirstFreeCost(new ExponentialCost(2000, 2.2, true)), stepwisePowerSum: { default: true } }),
-      new Variable({ cost: new ExponentialCost(500, 2.2, true), value: 1, stepwisePowerSum: { base: 40, length: 10 } }),
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(2000, 2.2, true)), valueScaling: new StepwisePowerSumValue() }),
+      new Variable({ cost: new ExponentialCost(500, 2.2, true), value: 1, valueScaling: new StepwisePowerSumValue(40, 10) }),
       new Variable({ cost: new ExponentialCost(500, 2.2, true), varBase: 2 }),
     ];
     this.recursionValue = <Array<number>>data.recursionValue ?? [Infinity, 0];

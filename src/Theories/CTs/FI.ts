@@ -1,5 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -293,11 +294,11 @@ class fiSim extends theoryClass<theory> implements specificTheoryProps {
     this.varNames = ["tdot", "q1", "q2", "k", "m", "n"];
     this.variables = [
       new Variable({ cost: new ExponentialCost(1e25, 1e50) }),
-      new Variable({ cost: new FirstFreeCost(new ExponentialCost(5, 14.6)), stepwisePowerSum: { base: 50, length: 23 } }),
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(5, 14.6)), valueScaling: new StepwisePowerSumValue(50, 23) }),
       new Variable({ cost: new ExponentialCost(1e7, 5e3), varBase: 2 }),
       new Variable({ cost: new ExponentialCost(1e2, 10) }),
       new Variable({ cost: new ExponentialCost(1e4, 4.44), varBase: 1.5 }),
-      new Variable({ cost: new ExponentialCost(1e69, 11), stepwisePowerSum: { base: 3, length: 11 } }),
+      new Variable({ cost: new ExponentialCost(1e69, 11), valueScaling: new StepwisePowerSumValue(3, 11) }),
     ];
     this.conditions = this.getBuyingConditions();
     this.milestoneConditions = this.getMilestoneConditions();

@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -178,14 +179,14 @@ class t2Sim extends theoryClass {
         //initialize variables
         this.varNames = ["q1", "q2", "q3", "q4", "r1", "r2", "r3", "r4"];
         this.variables = [
-            new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), stepwisePowerSum: { default: true } }),
-            new Variable({ cost: new ExponentialCost(5000, 2), stepwisePowerSum: { default: true } }),
-            new Variable({ cost: new ExponentialCost(3e25, 3), stepwisePowerSum: { default: true } }),
-            new Variable({ cost: new ExponentialCost(8e50, 4), stepwisePowerSum: { default: true } }),
-            new Variable({ cost: new ExponentialCost(2e6, 2), stepwisePowerSum: { default: true } }),
-            new Variable({ cost: new ExponentialCost(3e9, 2), stepwisePowerSum: { default: true } }),
-            new Variable({ cost: new ExponentialCost(4e25, 3), stepwisePowerSum: { default: true } }),
-            new Variable({ cost: new ExponentialCost(5e50, 4), stepwisePowerSum: { default: true } }),
+            new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), valueScaling: new StepwisePowerSumValue() }),
+            new Variable({ cost: new ExponentialCost(5000, 2), valueScaling: new StepwisePowerSumValue() }),
+            new Variable({ cost: new ExponentialCost(3e25, 3), valueScaling: new StepwisePowerSumValue() }),
+            new Variable({ cost: new ExponentialCost(8e50, 4), valueScaling: new StepwisePowerSumValue() }),
+            new Variable({ cost: new ExponentialCost(2e6, 2), valueScaling: new StepwisePowerSumValue() }),
+            new Variable({ cost: new ExponentialCost(3e9, 2), valueScaling: new StepwisePowerSumValue() }),
+            new Variable({ cost: new ExponentialCost(4e25, 3), valueScaling: new StepwisePowerSumValue() }),
+            new Variable({ cost: new ExponentialCost(5e50, 4), valueScaling: new StepwisePowerSumValue() }),
         ];
         //milestones  [qterm, rterm, q1exp, r1exp]
         this.milestones = [0, 0, 0, 0];

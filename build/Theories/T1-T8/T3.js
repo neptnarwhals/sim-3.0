@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -280,9 +281,9 @@ class t3Sim extends theoryClass {
         this.currencies = [0, 0, 0];
         this.varNames = ["b1", "b2", "b3", "c11", "c12", "c13", "c21", "c22", "c23", "c31", "c32", "c33"];
         this.variables = [
-            new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.18099)), stepwisePowerSum: { default: true } }),
-            new Variable({ cost: new ExponentialCost(10, 1.308), stepwisePowerSum: { default: true } }),
-            new Variable({ cost: new ExponentialCost(3000, 1.675), stepwisePowerSum: { default: true } }),
+            new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.18099)), valueScaling: new StepwisePowerSumValue() }),
+            new Variable({ cost: new ExponentialCost(10, 1.308), valueScaling: new StepwisePowerSumValue() }),
+            new Variable({ cost: new ExponentialCost(3000, 1.675), valueScaling: new StepwisePowerSumValue() }),
             new Variable({ cost: new ExponentialCost(20, 6.3496), varBase: 2 }),
             new Variable({ cost: new ExponentialCost(10, 2.74), varBase: 2 }),
             new Variable({ cost: new ExponentialCost(1000, 1.965), varBase: 2 }),

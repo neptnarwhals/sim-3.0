@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, logToExp, sleep } from "../../Utils/helpers.js";
+import { StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -85,9 +86,9 @@ class t5Sim extends theoryClass {
         this.q = 0;
         //initialize variables
         this.variables = [
-            new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.61328)), stepwisePowerSum: { default: true } }),
+            new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.61328)), valueScaling: new StepwisePowerSumValue() }),
             new Variable({ cost: new ExponentialCost(15, 64), varBase: 2 }),
-            new Variable({ cost: new ExponentialCost(1e6, 1.18099), value: 1, stepwisePowerSum: { default: true } }),
+            new Variable({ cost: new ExponentialCost(1e6, 1.18099), value: 1, valueScaling: new StepwisePowerSumValue() }),
             new Variable({ cost: new ExponentialCost(75, 4.53725), varBase: 2 }),
             new Variable({ cost: new ExponentialCost(1e3, 8.85507e7), varBase: 2 }),
         ];

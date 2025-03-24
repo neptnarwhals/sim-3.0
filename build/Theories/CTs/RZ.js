@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
+import { StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { c1Exp, getb, lookups, resolution, zeta } from "./helpers/RZ.js";
@@ -264,10 +265,7 @@ class rzSim extends theoryClass {
                 cost: new FirstFreeCost(new ExponentialCost(225, Math.pow(2, 0.699))),
                 // const c1Cost = new FirstFreeCost(new ExponentialCost(225, 0.699));
                 // const getc1 = (level) => Utils.getStepwisePowerSum(level, 2, 8, 0);
-                stepwisePowerSum: {
-                    base: 2,
-                    length: 8,
-                },
+                valueScaling: new StepwisePowerSumValue(2, 8),
             }),
             new Variable({
                 cost: new ExponentialCost(1500, Math.pow(2, 0.699 * 4)),
@@ -283,10 +281,7 @@ class rzSim extends theoryClass {
             new Variable({
                 cost: new StepwiseCost(6, new ExponentialCost(12000, Math.pow(100, 1 / 3))),
                 value: 1,
-                stepwisePowerSum: {
-                    base: 2,
-                    length: 8,
-                },
+                valueScaling: new StepwisePowerSumValue(2, 8),
             }),
             // const w2Cost = new ExponentialCost(1e5, Math.log2(10));
             // const getw2 = (level) => BigNumber.TWO.pow(level);

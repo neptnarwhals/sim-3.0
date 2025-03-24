@@ -1,5 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -196,13 +197,13 @@ class t4Sim extends theoryClass<theory> implements specificTheoryProps {
     this.curMult = 0;
     //initialize variables
     this.variables = [
-      new Variable({ cost: new FirstFreeCost(new ExponentialCost(5, 1.305)), stepwisePowerSum: { default: true } }),
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(5, 1.305)), valueScaling: new StepwisePowerSumValue() }),
       new Variable({ cost: new ExponentialCost(20, 3.75), varBase: 2 }),
       new Variable({ cost: new ExponentialCost(2000, 2.468), varBase: 2 }),
       new Variable({ cost: new ExponentialCost(1e4, 4.85), varBase: 3 }),
       new Variable({ cost: new ExponentialCost(1e8, 12.5), varBase: 5 }),
       new Variable({ cost: new ExponentialCost(1e10, 58), varBase: 10 }),
-      new Variable({ cost: new ExponentialCost(1e3, 100), stepwisePowerSum: { default: true } }),
+      new Variable({ cost: new ExponentialCost(1e3, 100), valueScaling: new StepwisePowerSumValue() }),
       new Variable({ cost: new ExponentialCost(1e4, 1000), varBase: 2 }),
     ];
     this.variableSum = 0;
