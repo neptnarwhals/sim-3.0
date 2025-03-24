@@ -9,7 +9,7 @@ export default class Variable {
         this.cost = 0;
         this.value = 0;
         this.isZero = false;
-        this.valueCompute = placeholderValueCompute;
+        this.valueScaling = placeholderValueCompute;
         this.init();
     }
     init() {
@@ -24,21 +24,13 @@ export default class Variable {
         else {
             this.isZero = false;
         }
-        if (this.data.valueScaling) {
-            // If custom class is passed, we will use that.
-            this.valueCompute = this.data.valueScaling;
-        }
-        else {
-            // Otherwise, we will create the default classes to handle this.
-            let varBase = this.data.varBase ? this.data.varBase : 10;
-            this.valueCompute = new LinearValue(varBase);
-        }
+        this.valueScaling = this.data.valueScaling;
         if (this.data.cost instanceof FirstFreeCost && this.level == 0) {
             this.buy();
         }
     }
     buy() {
-        this.value = this.valueCompute.computeNewValue(this.value, this.level, this.isZero);
+        this.value = this.valueScaling.computeNewValue(this.value, this.level, this.isZero);
         this.isZero = false;
         this.level++;
         this.cost = this.data.cost.getCost(this.level);
@@ -54,7 +46,7 @@ export default class Variable {
         return totalCost;
     }
     reCalculate() {
-        this.value = this.valueCompute.recomputeValue(this.level);
+        this.value = this.valueScaling.recomputeValue(this.level);
     }
     reset() {
         this.init();
