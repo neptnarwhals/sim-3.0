@@ -70,9 +70,43 @@ class mfSim extends theoryClass {
             },
             ...new Array(4).fill(() => (this.maxRho <= this.lastPub + this.vMaxBuy && this.buyV))
         ];
+        let self = this;
+        function tailActiveGen(i, offset) {
+            return function () {
+                if (self.maxRho <= self.lastPub + offset) {
+                    if (idleStrat[i] == true) {
+                        return true;
+                    }
+                    return idleStrat[i]();
+                }
+                else {
+                    if (activeStrat[i] == true) {
+                        return true;
+                    }
+                    return activeStrat[i]();
+                }
+            };
+        }
+        function makeMFdPostRecovery(offset) {
+            let tailActive = [];
+            for (let i = 0; i < 9; i++) {
+                tailActive.push(tailActiveGen(i, offset));
+            }
+            return tailActive;
+        }
         const conditions = {
             MF: idleStrat,
-            MFd: activeStrat
+            MFd: activeStrat,
+            MFdPostRecovery0: makeMFdPostRecovery(0),
+            MFdPostRecovery1: makeMFdPostRecovery(1),
+            MFdPostRecovery2: makeMFdPostRecovery(2),
+            MFdPostRecovery3: makeMFdPostRecovery(3),
+            MFdPostRecovery4: makeMFdPostRecovery(4),
+            MFdPostRecovery5: makeMFdPostRecovery(5),
+            MFdPostRecovery6: makeMFdPostRecovery(6),
+            MFdPostRecovery7: makeMFdPostRecovery(7),
+            MFdPostRecovery8: makeMFdPostRecovery(8),
+            MFdPostRecovery9: makeMFdPostRecovery(9),
         };
         const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
         return condition;
@@ -106,7 +140,17 @@ class mfSim extends theoryClass {
         ];
         const tree = {
             MF: globalOptimalRoute,
-            MFd: globalOptimalRoute
+            MFd: globalOptimalRoute,
+            MFdPostRecovery0: globalOptimalRoute,
+            MFdPostRecovery1: globalOptimalRoute,
+            MFdPostRecovery2: globalOptimalRoute,
+            MFdPostRecovery3: globalOptimalRoute,
+            MFdPostRecovery4: globalOptimalRoute,
+            MFdPostRecovery5: globalOptimalRoute,
+            MFdPostRecovery6: globalOptimalRoute,
+            MFdPostRecovery7: globalOptimalRoute,
+            MFdPostRecovery8: globalOptimalRoute,
+            MFdPostRecovery9: globalOptimalRoute,
         };
         return tree[this.strat];
     }

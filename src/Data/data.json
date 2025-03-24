@@ -451,6 +451,36 @@
         },
         "MFd": {
           "stratFilterCondition": "Active || Very-Active"
+        },
+        "MFdPostRecovery0": {
+          "stratFilterCondition": "false"
+        },
+        "MFdPostRecovery1": {
+          "stratFilterCondition": "false"
+        },
+        "MFdPostRecovery2": {
+          "stratFilterCondition": "false"
+        },
+        "MFdPostRecovery3": {
+          "stratFilterCondition": "false"
+        },
+        "MFdPostRecovery4": {
+          "stratFilterCondition": "false"
+        },
+        "MFdPostRecovery5": {
+          "stratFilterCondition": "false"
+        },
+        "MFdPostRecovery6": {
+          "stratFilterCondition": "false"
+        },
+        "MFdPostRecovery7": {
+          "stratFilterCondition": "false"
+        },
+        "MFdPostRecovery8": {
+          "stratFilterCondition": "false"
+        },
+        "MFdPostRecovery9": {
+          "stratFilterCondition": "false"
         }
       }
     },
