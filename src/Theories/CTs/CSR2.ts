@@ -143,7 +143,7 @@ class csr2Sim extends theoryClass<theory> implements specificTheoryProps {
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 5)), valueScaling: new StepwisePowerSumValue() }),
       new Variable({ cost: new ExponentialCost(15, 128), valueScaling: new LinearValue(2) }),
       new Variable({ cost: new ExponentialCost(1e6, 16), value: 1, valueScaling: new StepwisePowerSumValue() }),
-      new Variable({ cost: new ExponentialCost(50, 2 ** (Math.log2(256) * 3.346)) }),
+      new Variable({ cost: new ExponentialCost(50, 2 ** (Math.log2(256) * 3.346)), valueScaling: new LinearValue(10) }),
       new Variable({ cost: new ExponentialCost(1e3, 10 ** 5.65), valueScaling: new LinearValue(2) }),
     ];
     this.recursionValue = <Array<number>>data.recursionValue ?? [Infinity, 0];

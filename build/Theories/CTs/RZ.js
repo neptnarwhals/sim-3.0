@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue, LinearRegularValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
-import { c1Exp, getb, lookups, resolution, zeta } from "./helpers/RZ.js";
+import { c1Exp, lookups, resolution, zeta } from "./helpers/RZ.js";
 import goodzeros from "./helpers/RZgoodzeros.json" assert { type: "json" };
 import { ExponentialCost, StepwiseCost, CompositeCost, ConstantCost, FirstFreeCost } from '../../Utils/cost.js';
 export default function rz(data) {
@@ -272,7 +272,7 @@ class rzSim extends theoryClass {
                 valueScaling: new LinearValue(2),
             }),
             new Variable({
-                cost: new CompositeCost(1, new ConstantCost("1e15"), new CompositeCost(1, new ConstantCost("1e45"), new CompositeCost(1, new ConstantCost("1e360"), new CompositeCost(1, new ConstantCost("1e810"), new CompositeCost(1, new ConstantCost("1e1050"), new ConstantCost("e1200"))))))
+                cost: new CompositeCost(1, new ConstantCost("1e15"), new CompositeCost(1, new ConstantCost("1e45"), new CompositeCost(1, new ConstantCost("1e360"), new CompositeCost(1, new ConstantCost("1e810"), new CompositeCost(1, new ConstantCost("1e1050"), new ConstantCost("e1200")))))), valueScaling: new LinearRegularValue(0.5)
                 // cost: new ExponentialCost(1e21, 1e79),
                 // power: use outside method
             }),
@@ -376,7 +376,7 @@ class rzSim extends theoryClass {
         const w3Term = this.milestones[2] ? this.variables[5].value : 0;
         const c1Term = this.variables[0].value * c1Exp[this.milestones[0]];
         const c2Term = this.variables[1].value;
-        const bTerm = getb(this.variables[2].level);
+        const bTerm = this.variables[2].value;
         if (!this.bhFoundZero) {
             const z = zeta(this.t_var, this.ticks, this.offGrid, lookups.zetaLookup);
             if (this.milestones[1]) {

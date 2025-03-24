@@ -1,9 +1,9 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue, LinearRegularValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
-import { c1Exp, getBlackholeSpeed, getb, lookups, resolution, zeta, ComplexValue } from "./helpers/RZ.js";
+import { c1Exp, getBlackholeSpeed, lookups, resolution, zeta, ComplexValue } from "./helpers/RZ.js";
 import goodzeros from "./helpers/RZgoodzeros.json" assert { type: "json" };
 
 import { ExponentialCost, StepwiseCost, CompositeCost, ConstantCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -318,7 +318,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
 
                         )
                     )
-                )
+                ), valueScaling: new LinearRegularValue(0.5)
                 // cost: new ExponentialCost(1e21, 1e79),
                 // power: use outside method
             }),
@@ -419,7 +419,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         const w3Term = this.milestones[2] ? this.variables[5].value : 0;
         const c1Term = this.variables[0].value * c1Exp[this.milestones[0]];
         const c2Term = this.variables[1].value;
-        const bTerm = getb(this.variables[2].level);
+        const bTerm = this.variables[2].value;
 
         if (!this.bhFoundZero){
             const z = zeta(this.t_var, this.ticks, this.offGrid, lookups.zetaLookup);

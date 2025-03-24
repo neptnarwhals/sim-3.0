@@ -203,8 +203,8 @@ class t4Sim extends theoryClass {
             new Variable({ cost: new ExponentialCost(20, 3.75), valueScaling: new LinearValue(2) }),
             new Variable({ cost: new ExponentialCost(2000, 2.468), valueScaling: new LinearValue(2) }),
             new Variable({ cost: new ExponentialCost(1e4, 4.85), valueScaling: new LinearValue(3) }),
-            new Variable({ cost: new ExponentialCost(1e8, 12.5), varBase: 5 }),
-            new Variable({ cost: new ExponentialCost(1e10, 58), varBase: 10 }),
+            new Variable({ cost: new ExponentialCost(1e8, 12.5), valueScaling: new LinearValue(5) }),
+            new Variable({ cost: new ExponentialCost(1e10, 58), valueScaling: new LinearValue(10) }),
             new Variable({ cost: new ExponentialCost(1e3, 100), valueScaling: new StepwisePowerSumValue() }),
             new Variable({ cost: new ExponentialCost(1e4, 1000), valueScaling: new LinearValue(2) }),
         ];

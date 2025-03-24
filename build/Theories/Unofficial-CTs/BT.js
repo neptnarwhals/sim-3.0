@@ -90,7 +90,7 @@ class btSim extends theoryClass {
         this.variables = [
             new Variable({ cost: new FirstFreeCost(new ExponentialCost(15, 2)), valueScaling: new StepwisePowerSumValue() }),
             new Variable({ cost: new ExponentialCost(5, 10), valueScaling: new LinearValue(2) }),
-            new Variable({ cost: new ExponentialCost(1e10, 10), varBase: 10 })
+            new Variable({ cost: new ExponentialCost(1e10, 10), valueScaling: new LinearValue(10) })
         ];
         this.conditions = this.getBuyingConditions();
         this.milestoneConditions = this.getMilestoneConditions();

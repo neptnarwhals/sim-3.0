@@ -293,11 +293,11 @@ class fiSim extends theoryClass<theory> implements specificTheoryProps {
     //initialize variables
     this.varNames = ["tdot", "q1", "q2", "k", "m", "n"];
     this.variables = [
-      new Variable({ cost: new ExponentialCost(1e25, 1e50) }),
+      new Variable({ cost: new ExponentialCost(1e25, 1e50), valueScaling: new LinearValue(10) }),
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(5, 14.6)), valueScaling: new StepwisePowerSumValue(50, 23) }),
       new Variable({ cost: new ExponentialCost(1e7, 5e3), valueScaling: new LinearValue(2) }),
-      new Variable({ cost: new ExponentialCost(1e2, 10) }),
-      new Variable({ cost: new ExponentialCost(1e4, 4.44), varBase: 1.5 }),
+      new Variable({ cost: new ExponentialCost(1e2, 10), valueScaling: new LinearValue(10) }),
+      new Variable({ cost: new ExponentialCost(1e4, 4.44), valueScaling: new LinearValue(1.5) }),
       new Variable({ cost: new ExponentialCost(1e69, 11), valueScaling: new StepwisePowerSumValue(3, 11) }),
     ];
     this.conditions = this.getBuyingConditions();

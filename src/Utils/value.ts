@@ -37,3 +37,12 @@ export class LinearValue extends BaseValue {
         return Math.log10(this.varBase) * level;
     }
 }
+
+export class LinearRegularValue extends BaseValue {
+    computeNewValue(prevValue: number, currentLevel: number, isZero: boolean): number {
+        return this.varBase * (currentLevel + 1);
+    }
+    recomputeValue(level: number): number {
+        return this.varBase * level;
+    }
+}

@@ -207,8 +207,8 @@ class t8Sim extends theoryClass<theory> implements specificTheoryProps {
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.5172)), valueScaling: new StepwisePowerSumValue() }),
       new Variable({ cost: new ExponentialCost(20, 64), valueScaling: new LinearValue(2) }),
       new Variable({ cost: new ExponentialCost(1e2, 1.15 * Math.log2(3), true), valueScaling: new LinearValue(3) }),
-      new Variable({ cost: new ExponentialCost(1e2, 1.15 * Math.log2(5), true), varBase: 5 }),
-      new Variable({ cost: new ExponentialCost(1e2, 1.15 * Math.log2(7), true), varBase: 7 }),
+      new Variable({ cost: new ExponentialCost(1e2, 1.15 * Math.log2(5), true), valueScaling: new LinearValue(5) }),
+      new Variable({ cost: new ExponentialCost(1e2, 1.15 * Math.log2(7), true), valueScaling: new LinearValue(7) }),
     ];
     //attractor stuff
     this.bounds = [

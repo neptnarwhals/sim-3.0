@@ -29,3 +29,11 @@ export class LinearValue extends BaseValue {
         return Math.log10(this.varBase) * level;
     }
 }
+export class LinearRegularValue extends BaseValue {
+    computeNewValue(prevValue, currentLevel, isZero) {
+        return this.varBase * (currentLevel + 1);
+    }
+    recomputeValue(level) {
+        return this.varBase * level;
+    }
+}

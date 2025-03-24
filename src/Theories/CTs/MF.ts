@@ -231,23 +231,23 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), valueScaling: new StepwisePowerSumValue(2, 7) }), // c1
       new Variable({ cost: new ExponentialCost(1e3, 50), valueScaling: new LinearValue(2) }), // c2
       new Variable({ cost: new ExponentialCost(1e3, 25), valueScaling: new StepwisePowerSumValue(2, 5), value: l10(3) }), // a1
-      new Variable({ cost: new ExponentialCost(1e4, 100), varBase: 1.25}), // a2
-      new Variable({ cost: new ExponentialCost(1e50, 300), varBase: 1.1}), // delta
+      new Variable({ cost: new ExponentialCost(1e4, 100), valueScaling: new LinearValue(1.25) }), // a2
+      new Variable({ cost: new ExponentialCost(1e50, 300), valueScaling: new LinearValue(1.1) }), // delta
       new Variable({ cost: new ExponentialCost(80, 80), valueScaling: new StepwisePowerSumValue(), value: 0 }), // v1
-      new Variable({ cost: new ExponentialCost(1e4, 10**4.5), varBase: 1.3}), // v2
+      new Variable({ cost: new ExponentialCost(1e4, 10**4.5), valueScaling: new LinearValue(1.3) }), // v2
       new Variable({ cost: new ExponentialCost(1e50, 70), valueScaling: new StepwisePowerSumValue() }), // v3
-      new Variable({ cost: new ExponentialCost(1e52, 1e6), varBase: 1.5}), // v4
+      new Variable({ cost: new ExponentialCost(1e52, 1e6), valueScaling: new LinearValue(1.5) }), // v4
     ] :
     [
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), valueScaling: new StepwisePowerSumValue(2, 7) }), // c1
-      new Variable({ cost: new ExponentialCost(1e3, 100), varBase: 2 }), // c2
+      new Variable({ cost: new ExponentialCost(1e3, 100), valueScaling: new LinearValue(2) }), // c2
       new Variable({ cost: new ExponentialCost(1e3, 25), valueScaling: new StepwisePowerSumValue(2, 5), value: 1 }), // a1
-      new Variable({ cost: new ExponentialCost(1e4, 55), varBase: 1.25}), // a2
-      new Variable({ cost: new ExponentialCost(1e50, 300), varBase: 1.1}), // delta
+      new Variable({ cost: new ExponentialCost(1e4, 55), valueScaling: new LinearValue(1.25) }), // a2
+      new Variable({ cost: new ExponentialCost(1e50, 300), valueScaling: new LinearValue(1.1) }), // delta
       new Variable({ cost: new ExponentialCost(80, 80), valueScaling: new StepwisePowerSumValue(), value: 1 }), // v1
-      new Variable({ cost: new ExponentialCost(1e4, 10**4.5), varBase: 1.3}), // v2
+      new Variable({ cost: new ExponentialCost(1e4, 10**4.5), valueScaling: new LinearValue(1.3) }), // v2
       new Variable({ cost: new ExponentialCost(1e50, 70), valueScaling: new StepwisePowerSumValue() }), // v3
-      new Variable({ cost: new ExponentialCost(1e55, 1e6), varBase: 1.5}), // v4
+      new Variable({ cost: new ExponentialCost(1e55, 1e6), valueScaling: new LinearValue(1.5) }), // v4
     ];
     this.conditions = this.getBuyingConditions();
     this.milestoneConditions = this.getMilestoneConditions();

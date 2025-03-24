@@ -219,17 +219,17 @@ class fpSim extends theoryClass {
         this.t_var = 0;
         this.varNames = ["tdot", "c1", "c2", "q1", "q2", "r1", "n1", "s"];
         this.variables = [
-            new Variable({ cost: new ExponentialCost(1e4, 1e4) }),
+            new Variable({ cost: new ExponentialCost(1e4, 1e4), valueScaling: new LinearValue(10) }),
             new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.4)), valueScaling: new StepwisePowerSumValue(150, 100) }),
             new Variable({ cost: new CompositeCost(15, new ExponentialCost(1e15, 40), new ExponentialCost(1e37, 16.42)), valueScaling: new LinearValue(2) }),
             new Variable({ cost: new FirstFreeCost(new ExponentialCost(1e35, 12)), valueScaling: new StepwisePowerSumValue(10, 10) }),
-            new Variable({ cost: new ExponentialCost(1e76, 1e3) }),
+            new Variable({ cost: new ExponentialCost(1e76, 1e3), valueScaling: new LinearValue(10) }),
             new Variable({
                 cost: new FirstFreeCost(new CompositeCost(285, new ExponentialCost(1e80, 25), new ExponentialCost("1e480", 150))),
                 valueScaling: new StepwisePowerSumValue(2, 5)
             }),
-            new Variable({ cost: new ExponentialCost(1e4, 3e6) }),
-            new Variable({ cost: new ExponentialCost("1e730", 1e30) }),
+            new Variable({ cost: new ExponentialCost(1e4, 3e6), valueScaling: new LinearValue(10) }),
+            new Variable({ cost: new ExponentialCost("1e730", 1e30), valueScaling: new LinearValue(10) }),
         ];
         this.T_n = 1;
         this.U_n = 1;

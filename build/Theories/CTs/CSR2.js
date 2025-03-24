@@ -142,7 +142,7 @@ class csr2Sim extends theoryClass {
             new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 5)), valueScaling: new StepwisePowerSumValue() }),
             new Variable({ cost: new ExponentialCost(15, 128), valueScaling: new LinearValue(2) }),
             new Variable({ cost: new ExponentialCost(1e6, 16), value: 1, valueScaling: new StepwisePowerSumValue() }),
-            new Variable({ cost: new ExponentialCost(50, Math.pow(2, (Math.log2(256) * 3.346))) }),
+            new Variable({ cost: new ExponentialCost(50, Math.pow(2, (Math.log2(256) * 3.346))), valueScaling: new LinearValue(10) }),
             new Variable({ cost: new ExponentialCost(1e3, Math.pow(10, 5.65)), valueScaling: new LinearValue(2) }),
         ];
         this.recursionValue = (_a = data.recursionValue) !== null && _a !== void 0 ? _a : [Infinity, 0];

@@ -369,7 +369,6 @@ export let zeta = (T, ticks, offGrid, cache) => {
 // Mechanics to review:
 export const resolution = 4;
 export const getBlackholeSpeed = (z) => Math.min(Math.pow(z, 2) + 0.004, 1 / resolution);
-export const getb = (level) => 0.5 * level;
 export const c1Exp = [1, 1.14, 1.21, 1.25];
 export const lookups = {
     zetaLookup: [],
