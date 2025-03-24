@@ -78,12 +78,9 @@ export function subtract(value1: number, value2: number) {
   return wholePart1 + Math.log10(fractionalPart1 - fractionalPart2 / 10 ** (wholePart1 - wholePart2));
 }
 
-export function l10(val: number) {
-  return Math.log10(val);
-}
-export function l2(val: number) {
-  return Math.log2(val);
-}
+export let l10 = Math.log10;
+export let l2 = Math.log2;
+
 //written by propfeds
 export function binarySearch(arr: Array<number>, target: number) {
   let l = 0;

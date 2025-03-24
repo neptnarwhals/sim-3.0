@@ -73,12 +73,8 @@ export function subtract(value1, value2) {
     const fractionalPart2 = Math.pow(10, (min - wholePart2));
     return wholePart1 + Math.log10(fractionalPart1 - fractionalPart2 / Math.pow(10, (wholePart1 - wholePart2)));
 }
-export function l10(val) {
-    return Math.log10(val);
-}
-export function l2(val) {
-    return Math.log2(val);
-}
+export let l10 = Math.log10;
+export let l2 = Math.log2;
 //written by propfeds
 export function binarySearch(arr, target) {
     let l = 0;
