@@ -1,6 +1,6 @@
 import { add, subtract } from "./helpers.js";
 import { parseValue, FirstFreeCost } from "./cost";
-class BaseValue {
+export class BaseValue {
     constructor(varBase = 10) {
         this.varBase = varBase;
     }
@@ -64,11 +64,18 @@ export default class Variable {
         else {
             this.isZero = false;
         }
-        let varBase = this.data.varBase ? this.data.varBase : 10;
-        let stepwisePowerSum = this.prepareStepwiseSum();
-        this.valueCompute = stepwisePowerSum
-            ? new StepwisePowerSumValue(varBase, stepwisePowerSum.base, stepwisePowerSum.length)
-            : new LinearValue(varBase);
+        if (this.data.customValueCompute) {
+            // If custom class is passed, we will use that.
+            this.valueCompute = this.data.customValueCompute;
+        }
+        else {
+            // Otherwise, we will create the default classes to handle this.
+            let varBase = this.data.varBase ? this.data.varBase : 10;
+            let stepwisePowerSum = this.prepareStepwiseSum();
+            this.valueCompute = stepwisePowerSum
+                ? new StepwisePowerSumValue(varBase, stepwisePowerSum.base, stepwisePowerSum.length)
+                : new LinearValue(varBase);
+        }
         if (this.data.cost instanceof FirstFreeCost && this.level == 0) {
             this.buy();
         }
