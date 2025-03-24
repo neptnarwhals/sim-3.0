@@ -5,7 +5,7 @@ export class BaseValue {
     }
 }
 export class StepwisePowerSumValue extends BaseValue {
-    constructor(base = 2, length = 10, varBase = 10) {
+    constructor(base = 2, length = 10, varBase = -Infinity) {
         super(varBase);
         this.base = base;
         this.length = length;
@@ -18,7 +18,13 @@ export class StepwisePowerSumValue extends BaseValue {
         const intPart = Math.floor(level / this.length);
         const modPart = level - intPart * this.length;
         const d = this.length / (this.base - 1);
-        return subtract(Math.log10(d + modPart) + Math.log10(this.base) * intPart, Math.log10(d));
+        const subPart = subtract(Math.log10(d + modPart) + Math.log10(this.base) * intPart, Math.log10(d));
+        if (this.varBase !== -Infinity) {
+            return add(this.varBase, subPart);
+        }
+        else {
+            return subPart;
+        }
     }
 }
 export class ExponentialValue extends BaseValue {
