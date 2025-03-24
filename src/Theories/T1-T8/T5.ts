@@ -1,6 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, logToExp, sleep } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
+import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -80,10 +80,10 @@ class t5Sim extends theoryClass<theory> implements specificTheoryProps {
     //initialize variables
     this.variables = [
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.61328)), valueScaling: new StepwisePowerSumValue() }),
-      new Variable({ cost: new ExponentialCost(15, 64), valueScaling: new LinearValue(2) }),
+      new Variable({ cost: new ExponentialCost(15, 64), valueScaling: new ExponentialValue(2) }),
       new Variable({ cost: new ExponentialCost(1e6, 1.18099), value: 1, valueScaling: new StepwisePowerSumValue() }),
-      new Variable({ cost: new ExponentialCost(75, 4.53725), valueScaling: new LinearValue(2) }),
-      new Variable({ cost: new ExponentialCost(1e3, 8.85507e7), valueScaling: new LinearValue(2) }),
+      new Variable({ cost: new ExponentialCost(75, 4.53725), valueScaling: new ExponentialValue(2) }),
+      new Variable({ cost: new ExponentialCost(1e3, 8.85507e7), valueScaling: new ExponentialValue(2) }),
     ];
     this.c2worth = true;
     this.varNames = ["q1", "q2", "c1", "c2", "c3"];

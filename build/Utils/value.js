@@ -21,7 +21,7 @@ export class StepwisePowerSumValue extends BaseValue {
         return subtract(Math.log10(d + modPart) + Math.log10(this.base) * intPart, Math.log10(d));
     }
 }
-export class LinearValue extends BaseValue {
+export class ExponentialValue extends BaseValue {
     computeNewValue(prevValue, currentLevel, isZero) {
         return Math.log10(this.varBase) * (currentLevel + 1);
     }
@@ -29,7 +29,7 @@ export class LinearValue extends BaseValue {
         return Math.log10(this.varBase) * level;
     }
 }
-export class LinearRegularValue extends BaseValue {
+export class LinearValue extends BaseValue {
     constructor(varBase = 10, offset = 0) {
         super(varBase);
         this.offset = offset;

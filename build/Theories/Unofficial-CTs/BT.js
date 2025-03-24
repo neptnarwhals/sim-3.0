@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
+import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -89,8 +89,8 @@ class btSim extends theoryClass {
         this.varNames = ["tai", "rao", "tay"];
         this.variables = [
             new Variable({ cost: new FirstFreeCost(new ExponentialCost(15, 2)), valueScaling: new StepwisePowerSumValue() }),
-            new Variable({ cost: new ExponentialCost(5, 10), valueScaling: new LinearValue(2) }),
-            new Variable({ cost: new ExponentialCost(1e10, 10), valueScaling: new LinearValue(10) })
+            new Variable({ cost: new ExponentialCost(5, 10), valueScaling: new ExponentialValue(2) }),
+            new Variable({ cost: new ExponentialCost(1e10, 10), valueScaling: new ExponentialValue(10) })
         ];
         this.conditions = this.getBuyingConditions();
         this.milestoneConditions = this.getMilestoneConditions();

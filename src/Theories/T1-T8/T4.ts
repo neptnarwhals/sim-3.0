@@ -1,6 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
+import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -198,13 +198,13 @@ class t4Sim extends theoryClass<theory> implements specificTheoryProps {
     //initialize variables
     this.variables = [
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(5, 1.305)), valueScaling: new StepwisePowerSumValue() }),
-      new Variable({ cost: new ExponentialCost(20, 3.75), valueScaling: new LinearValue(2) }),
-      new Variable({ cost: new ExponentialCost(2000, 2.468), valueScaling: new LinearValue(2) }),
-      new Variable({ cost: new ExponentialCost(1e4, 4.85), valueScaling: new LinearValue(3) }),
-      new Variable({ cost: new ExponentialCost(1e8, 12.5), valueScaling: new LinearValue(5) }),
-      new Variable({ cost: new ExponentialCost(1e10, 58), valueScaling: new LinearValue(10) }),
+      new Variable({ cost: new ExponentialCost(20, 3.75), valueScaling: new ExponentialValue(2) }),
+      new Variable({ cost: new ExponentialCost(2000, 2.468), valueScaling: new ExponentialValue(2) }),
+      new Variable({ cost: new ExponentialCost(1e4, 4.85), valueScaling: new ExponentialValue(3) }),
+      new Variable({ cost: new ExponentialCost(1e8, 12.5), valueScaling: new ExponentialValue(5) }),
+      new Variable({ cost: new ExponentialCost(1e10, 58), valueScaling: new ExponentialValue(10) }),
       new Variable({ cost: new ExponentialCost(1e3, 100), valueScaling: new StepwisePowerSumValue() }),
-      new Variable({ cost: new ExponentialCost(1e4, 1000), valueScaling: new LinearValue(2) }),
+      new Variable({ cost: new ExponentialCost(1e4, 1000), valueScaling: new ExponentialValue(2) }),
     ];
     this.variableSum = 0;
     this.varNames = ["c1", "c2", "c3", "c4", "c5", "c6", "q1", "q2"];

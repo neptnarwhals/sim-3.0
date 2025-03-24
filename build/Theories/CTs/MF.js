@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
+import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -256,25 +256,25 @@ class mfSim extends theoryClass {
         this.variables = official ?
             [
                 new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), valueScaling: new StepwisePowerSumValue(2, 7) }),
-                new Variable({ cost: new ExponentialCost(1e3, 50), valueScaling: new LinearValue(2) }),
+                new Variable({ cost: new ExponentialCost(1e3, 50), valueScaling: new ExponentialValue(2) }),
                 new Variable({ cost: new ExponentialCost(1e3, 25), valueScaling: new StepwisePowerSumValue(2, 5), value: l10(3) }),
-                new Variable({ cost: new ExponentialCost(1e4, 100), valueScaling: new LinearValue(1.25) }),
-                new Variable({ cost: new ExponentialCost(1e50, 300), valueScaling: new LinearValue(1.1) }),
+                new Variable({ cost: new ExponentialCost(1e4, 100), valueScaling: new ExponentialValue(1.25) }),
+                new Variable({ cost: new ExponentialCost(1e50, 300), valueScaling: new ExponentialValue(1.1) }),
                 new Variable({ cost: new ExponentialCost(80, 80), valueScaling: new StepwisePowerSumValue(), value: 0 }),
-                new Variable({ cost: new ExponentialCost(1e4, Math.pow(10, 4.5)), valueScaling: new LinearValue(1.3) }),
+                new Variable({ cost: new ExponentialCost(1e4, Math.pow(10, 4.5)), valueScaling: new ExponentialValue(1.3) }),
                 new Variable({ cost: new ExponentialCost(1e50, 70), valueScaling: new StepwisePowerSumValue() }),
-                new Variable({ cost: new ExponentialCost(1e52, 1e6), valueScaling: new LinearValue(1.5) }), // v4
+                new Variable({ cost: new ExponentialCost(1e52, 1e6), valueScaling: new ExponentialValue(1.5) }), // v4
             ] :
             [
                 new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), valueScaling: new StepwisePowerSumValue(2, 7) }),
-                new Variable({ cost: new ExponentialCost(1e3, 100), valueScaling: new LinearValue(2) }),
+                new Variable({ cost: new ExponentialCost(1e3, 100), valueScaling: new ExponentialValue(2) }),
                 new Variable({ cost: new ExponentialCost(1e3, 25), valueScaling: new StepwisePowerSumValue(2, 5), value: 1 }),
-                new Variable({ cost: new ExponentialCost(1e4, 55), valueScaling: new LinearValue(1.25) }),
-                new Variable({ cost: new ExponentialCost(1e50, 300), valueScaling: new LinearValue(1.1) }),
+                new Variable({ cost: new ExponentialCost(1e4, 55), valueScaling: new ExponentialValue(1.25) }),
+                new Variable({ cost: new ExponentialCost(1e50, 300), valueScaling: new ExponentialValue(1.1) }),
                 new Variable({ cost: new ExponentialCost(80, 80), valueScaling: new StepwisePowerSumValue(), value: 1 }),
-                new Variable({ cost: new ExponentialCost(1e4, Math.pow(10, 4.5)), valueScaling: new LinearValue(1.3) }),
+                new Variable({ cost: new ExponentialCost(1e4, Math.pow(10, 4.5)), valueScaling: new ExponentialValue(1.3) }),
                 new Variable({ cost: new ExponentialCost(1e50, 70), valueScaling: new StepwisePowerSumValue() }),
-                new Variable({ cost: new ExponentialCost(1e55, 1e6), valueScaling: new LinearValue(1.5) }), // v4
+                new Variable({ cost: new ExponentialCost(1e55, 1e6), valueScaling: new ExponentialValue(1.5) }), // v4
             ];
         this.conditions = this.getBuyingConditions();
         this.milestoneConditions = this.getMilestoneConditions();

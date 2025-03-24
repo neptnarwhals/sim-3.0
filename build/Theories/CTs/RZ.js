@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue, LinearRegularValue } from "../../Utils/value";
+import { ExponentialValue, StepwisePowerSumValue, LinearValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { c1Exp, lookups, resolution, zeta } from "./helpers/RZ.js";
@@ -269,10 +269,10 @@ class rzSim extends theoryClass {
             }),
             new Variable({
                 cost: new ExponentialCost(1500, Math.pow(2, 0.699 * 4)),
-                valueScaling: new LinearValue(2),
+                valueScaling: new ExponentialValue(2),
             }),
             new Variable({
-                cost: new CompositeCost(1, new ConstantCost("1e15"), new CompositeCost(1, new ConstantCost("1e45"), new CompositeCost(1, new ConstantCost("1e360"), new CompositeCost(1, new ConstantCost("1e810"), new CompositeCost(1, new ConstantCost("1e1050"), new ConstantCost("e1200")))))), valueScaling: new LinearRegularValue(0.5)
+                cost: new CompositeCost(1, new ConstantCost("1e15"), new CompositeCost(1, new ConstantCost("1e45"), new CompositeCost(1, new ConstantCost("1e360"), new CompositeCost(1, new ConstantCost("1e810"), new CompositeCost(1, new ConstantCost("1e1050"), new ConstantCost("e1200")))))), valueScaling: new LinearValue(0.5)
                 // cost: new ExponentialCost(1e21, 1e79),
                 // power: use outside method
             }),
@@ -287,11 +287,11 @@ class rzSim extends theoryClass {
             // const getw2 = (level) => BigNumber.TWO.pow(level);
             new Variable({
                 cost: new ExponentialCost(1e5, 10),
-                valueScaling: new LinearValue(2),
+                valueScaling: new ExponentialValue(2),
             }),
             new Variable({
                 cost: new ExponentialCost("3.16227766017e600", '1e30'),
-                valueScaling: new LinearValue(2),
+                valueScaling: new ExponentialValue(2),
             }),
             // new Variable({
             //     cost: new ExponentialCost("1e600", "1e300"),

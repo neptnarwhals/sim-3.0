@@ -1,6 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
+import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import pubtable from "./helpers/BaPpubtable.json" assert { type: "json" };
@@ -202,15 +202,15 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     this.variables = [
       new Variable({ cost: new ExponentialCost(1e6, 1e6), valueScaling: new StepwisePowerSumValue()}), //tdot
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(0.0625, 0.25, true)), valueScaling: new StepwisePowerSumValue(65536, 64) }), //c1
-      new Variable({ cost: new ExponentialCost(16, 4, true), valueScaling: new LinearValue(2) }), // c2
-      new Variable({ cost: new ExponentialCost(19683, 19683), valueScaling: new LinearValue(3) }), // c3
-      new Variable({ cost: new ExponentialCost(4**16, 32, true), valueScaling: new LinearValue(4) }), // c4
-      new Variable({ cost: new ExponentialCost(5**25, 25*Math.log2(5), true), valueScaling: new LinearValue(5) }), // c5
-      new Variable({ cost: new ExponentialCost(6**36, 36*Math.log2(6), true), valueScaling: new LinearValue(6) }), // c6
-      new Variable({ cost: new ExponentialCost(7**49, 49*Math.log2(7), true), valueScaling: new LinearValue(7) }), // c7
-      new Variable({ cost: new ExponentialCost(8**64, 64*Math.log2(8), true), valueScaling: new LinearValue(8) }), // c8
-      new Variable({ cost: new ExponentialCost(9**81, 81*Math.log2(9), true), valueScaling: new LinearValue(9) }), // c9
-      new Variable({ cost: new ExponentialCost(10**100, 100*Math.log2(10), true), valueScaling: new LinearValue(10) }), // c10
+      new Variable({ cost: new ExponentialCost(16, 4, true), valueScaling: new ExponentialValue(2) }), // c2
+      new Variable({ cost: new ExponentialCost(19683, 19683), valueScaling: new ExponentialValue(3) }), // c3
+      new Variable({ cost: new ExponentialCost(4**16, 32, true), valueScaling: new ExponentialValue(4) }), // c4
+      new Variable({ cost: new ExponentialCost(5**25, 25*Math.log2(5), true), valueScaling: new ExponentialValue(5) }), // c5
+      new Variable({ cost: new ExponentialCost(6**36, 36*Math.log2(6), true), valueScaling: new ExponentialValue(6) }), // c6
+      new Variable({ cost: new ExponentialCost(7**49, 49*Math.log2(7), true), valueScaling: new ExponentialValue(7) }), // c7
+      new Variable({ cost: new ExponentialCost(8**64, 64*Math.log2(8), true), valueScaling: new ExponentialValue(8) }), // c8
+      new Variable({ cost: new ExponentialCost(9**81, 81*Math.log2(9), true), valueScaling: new ExponentialValue(9) }), // c9
+      new Variable({ cost: new ExponentialCost(10**100, 100*Math.log2(10), true), valueScaling: new ExponentialValue(10) }), // c10
       new Variable({ cost: new ExponentialCost(10**40, 60*Math.log2(10), true), valueScaling: new StepwisePowerSumValue(6, 16), value:1 }), // n
     ];
     this.conditions = this.getBuyingConditions();

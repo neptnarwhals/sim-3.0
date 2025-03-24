@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
+import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -284,15 +284,15 @@ class t3Sim extends theoryClass {
             new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.18099)), valueScaling: new StepwisePowerSumValue() }),
             new Variable({ cost: new ExponentialCost(10, 1.308), valueScaling: new StepwisePowerSumValue() }),
             new Variable({ cost: new ExponentialCost(3000, 1.675), valueScaling: new StepwisePowerSumValue() }),
-            new Variable({ cost: new ExponentialCost(20, 6.3496), valueScaling: new LinearValue(2) }),
-            new Variable({ cost: new ExponentialCost(10, 2.74), valueScaling: new LinearValue(2) }),
-            new Variable({ cost: new ExponentialCost(1000, 1.965), valueScaling: new LinearValue(2) }),
-            new Variable({ cost: new ExponentialCost(500, 18.8343), valueScaling: new LinearValue(2) }),
-            new Variable({ cost: new ExponentialCost(1e5, 3.65), valueScaling: new LinearValue(2) }),
-            new Variable({ cost: new ExponentialCost(1e5, 2.27), valueScaling: new LinearValue(2) }),
-            new Variable({ cost: new ExponentialCost(1e4, 1248.27), valueScaling: new LinearValue(2) }),
-            new Variable({ cost: new ExponentialCost(1e3, 6.81744), valueScaling: new LinearValue(2) }),
-            new Variable({ cost: new ExponentialCost(1e5, 2.98), valueScaling: new LinearValue(2) }), //c33
+            new Variable({ cost: new ExponentialCost(20, 6.3496), valueScaling: new ExponentialValue(2) }),
+            new Variable({ cost: new ExponentialCost(10, 2.74), valueScaling: new ExponentialValue(2) }),
+            new Variable({ cost: new ExponentialCost(1000, 1.965), valueScaling: new ExponentialValue(2) }),
+            new Variable({ cost: new ExponentialCost(500, 18.8343), valueScaling: new ExponentialValue(2) }),
+            new Variable({ cost: new ExponentialCost(1e5, 3.65), valueScaling: new ExponentialValue(2) }),
+            new Variable({ cost: new ExponentialCost(1e5, 2.27), valueScaling: new ExponentialValue(2) }),
+            new Variable({ cost: new ExponentialCost(1e4, 1248.27), valueScaling: new ExponentialValue(2) }),
+            new Variable({ cost: new ExponentialCost(1e3, 6.81744), valueScaling: new ExponentialValue(2) }),
+            new Variable({ cost: new ExponentialCost(1e5, 2.98), valueScaling: new ExponentialValue(2) }), //c33
         ];
         this.curMult = 0;
         //milestones  [dimensions, b1exp, b2exp, b3exp]

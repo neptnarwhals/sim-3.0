@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, logToExp, sleep } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
+import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -85,11 +85,11 @@ class t1Sim extends theoryClass {
         this.varNames = ["q1", "q2", "c1", "c2", "c3", "c4"];
         this.variables = [
             new Variable({ cost: new FirstFreeCost(new ExponentialCost(5, 2)), valueScaling: new StepwisePowerSumValue() }),
-            new Variable({ cost: new ExponentialCost(100, 10), valueScaling: new LinearValue(2) }),
+            new Variable({ cost: new ExponentialCost(100, 10), valueScaling: new ExponentialValue(2) }),
             new Variable({ cost: new ExponentialCost(15, 2), valueScaling: new StepwisePowerSumValue() }),
-            new Variable({ cost: new ExponentialCost(3000, 10), valueScaling: new LinearValue(2) }),
-            new Variable({ cost: new ExponentialCost(1e4, 4.5 * Math.log2(10), true), valueScaling: new LinearValue(10) }),
-            new Variable({ cost: new ExponentialCost(1e10, 8 * Math.log2(10), true), valueScaling: new LinearValue(10) }),
+            new Variable({ cost: new ExponentialCost(3000, 10), valueScaling: new ExponentialValue(2) }),
+            new Variable({ cost: new ExponentialCost(1e4, 4.5 * Math.log2(10), true), valueScaling: new ExponentialValue(10) }),
+            new Variable({ cost: new ExponentialCost(1e10, 8 * Math.log2(10), true), valueScaling: new ExponentialValue(10) }),
         ];
         //values of the different terms, so they are accesible for variable buying conditions
         this.term1 = 0;
