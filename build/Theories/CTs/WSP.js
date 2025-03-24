@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -112,10 +112,10 @@ class wspSim extends theoryClass {
         this.varNames = ["q1", "q2", "n", "c1", "c2"];
         this.variables = [
             new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 3.38 / 4, true)), valueScaling: new StepwisePowerSumValue() }),
-            new Variable({ cost: new ExponentialCost(1000, 3.38 * 3, true), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(1000, 3.38 * 3, true), valueScaling: new LinearValue(2) }),
             new Variable({ cost: new ExponentialCost(20, 3.38, true) }),
             new Variable({ cost: new ExponentialCost(50, 3.38 / 1.5, true), valueScaling: new StepwisePowerSumValue(2, 50) }),
-            new Variable({ cost: new ExponentialCost(1e10, 3.38 * 10, true), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(1e10, 3.38 * 10, true), valueScaling: new LinearValue(2) }),
         ];
         this.S = 0;
         this.conditions = this.getBuyingConditions();

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -147,11 +147,11 @@ class t7Sim extends theoryClass {
         this.variables = [
             new Variable({ cost: new FirstFreeCost(new ExponentialCost(500, 1.51572)), valueScaling: new StepwisePowerSumValue() }),
             new Variable({ cost: new ExponentialCost(10, 1.275), value: 1, valueScaling: new StepwisePowerSumValue() }),
-            new Variable({ cost: new ExponentialCost(40, 8), varBase: 2 }),
-            new Variable({ cost: new ExponentialCost(1e5, 63), varBase: 2 }),
-            new Variable({ cost: new ExponentialCost(10, 2.82), varBase: 2 }),
-            new Variable({ cost: new ExponentialCost(1e8, 60), varBase: 2 }),
-            new Variable({ cost: new ExponentialCost(1e2, 2.81), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(40, 8), valueScaling: new LinearValue(2) }),
+            new Variable({ cost: new ExponentialCost(1e5, 63), valueScaling: new LinearValue(2) }),
+            new Variable({ cost: new ExponentialCost(10, 2.82), valueScaling: new LinearValue(2) }),
+            new Variable({ cost: new ExponentialCost(1e8, 60), valueScaling: new LinearValue(2) }),
+            new Variable({ cost: new ExponentialCost(1e2, 2.81), valueScaling: new LinearValue(2) }),
         ];
         this.drho13 = 0;
         this.drho23 = 0;

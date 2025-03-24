@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
-import { StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { c1Exp, getb, lookups, resolution, zeta } from "./helpers/RZ.js";
@@ -269,7 +269,7 @@ class rzSim extends theoryClass {
             }),
             new Variable({
                 cost: new ExponentialCost(1500, Math.pow(2, 0.699 * 4)),
-                varBase: 2,
+                valueScaling: new LinearValue(2),
             }),
             new Variable({
                 cost: new CompositeCost(1, new ConstantCost("1e15"), new CompositeCost(1, new ConstantCost("1e45"), new CompositeCost(1, new ConstantCost("1e360"), new CompositeCost(1, new ConstantCost("1e810"), new CompositeCost(1, new ConstantCost("1e1050"), new ConstantCost("e1200"))))))
@@ -287,11 +287,11 @@ class rzSim extends theoryClass {
             // const getw2 = (level) => BigNumber.TWO.pow(level);
             new Variable({
                 cost: new ExponentialCost(1e5, 10),
-                varBase: 2,
+                valueScaling: new LinearValue(2),
             }),
             new Variable({
                 cost: new ExponentialCost("3.16227766017e600", '1e30'),
-                varBase: 2,
+                valueScaling: new LinearValue(2),
             }),
             // new Variable({
             //     cost: new ExponentialCost("1e600", "1e300"),

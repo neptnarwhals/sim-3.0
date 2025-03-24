@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, l2 } from "../../Utils/helpers.js";
-import { StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -127,9 +127,9 @@ class slSim extends theoryClass {
         this.varNames = ["a1", "a2", "b1", "b2"];
         this.variables = [
             new Variable({ cost: new FirstFreeCost(new ExponentialCost(1, 0.369 * l2(10), true)), valueScaling: new StepwisePowerSumValue(3.5, 3) }),
-            new Variable({ cost: new ExponentialCost(175, 10), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(175, 10), valueScaling: new LinearValue(2) }),
             new Variable({ cost: new ExponentialCost(500, 0.649 * l2(10), true), valueScaling: new StepwisePowerSumValue(6.5, 4) }),
-            new Variable({ cost: new ExponentialCost(1000, 0.926 * l2(10), true), varBase: 2 }),
+            new Variable({ cost: new ExponentialCost(1000, 0.926 * l2(10), true), valueScaling: new LinearValue(2) }),
         ];
         this.inverseE_Gamma = 0;
         this.conditions = this.getBuyingConditions();
