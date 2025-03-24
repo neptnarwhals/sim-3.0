@@ -11,7 +11,7 @@ import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
-import { ExponentialCost } from '../../Utils/cost.js';
+import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
 export default function mf(data) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield ((new mfSimWrap(data)).simulate());
@@ -210,7 +210,7 @@ class mfSim extends theoryClass {
         this.official = official;
         this.variables = official ?
             [
-                new Variable({ cost: new ExponentialCost(10, 2), stepwisePowerSum: { base: 2, length: 7 }, firstFreeCost: true }),
+                new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), stepwisePowerSum: { base: 2, length: 7 } }),
                 new Variable({ cost: new ExponentialCost(1e3, 50), varBase: 2 }),
                 new Variable({ cost: new ExponentialCost(1e3, 25), stepwisePowerSum: { base: 2, length: 5 }, value: l10(3) }),
                 new Variable({ cost: new ExponentialCost(1e4, 100), varBase: 1.25 }),
@@ -221,7 +221,7 @@ class mfSim extends theoryClass {
                 new Variable({ cost: new ExponentialCost(1e52, 1e6), varBase: 1.5 }), // v4
             ] :
             [
-                new Variable({ cost: new ExponentialCost(10, 2), stepwisePowerSum: { base: 2, length: 7 }, firstFreeCost: true }),
+                new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), stepwisePowerSum: { base: 2, length: 7 } }),
                 new Variable({ cost: new ExponentialCost(1e3, 100), varBase: 2 }),
                 new Variable({ cost: new ExponentialCost(1e3, 25), stepwisePowerSum: { base: 2, length: 5 }, value: 1 }),
                 new Variable({ cost: new ExponentialCost(1e4, 55), varBase: 1.25 }),

@@ -2,7 +2,7 @@ import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
-import { ExponentialCost } from '../../Utils/cost.js';
+import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
 
 export default async function wsp(data: theoryData): Promise<simResult> {
   const sim = new wspSim(data);
@@ -107,7 +107,7 @@ class wspSim extends theoryClass<theory> implements specificTheoryProps {
     //initialize variables
     this.varNames = ["q1", "q2", "n", "c1", "c2"];
     this.variables = [
-      new Variable({ cost: new ExponentialCost(10, 3.38 / 4, true), stepwisePowerSum: { default: true }, firstFreeCost: true }),
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 3.38 / 4, true)), stepwisePowerSum: { default: true }}),
       new Variable({ cost: new ExponentialCost(1000, 3.38 * 3, true), varBase: 2 }),
       new Variable({ cost: new ExponentialCost(20, 3.38, true) }),
       new Variable({ cost: new ExponentialCost(50, 3.38 / 1.5, true), stepwisePowerSum: { base: 2, length: 50 } }),

@@ -3,7 +3,7 @@ import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js"
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import pubtable from "./helpers/BaPpubtable.json" assert { type: "json" };
-import { ExponentialCost } from '../../Utils/cost.js';
+import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
 
 export default async function bap(data: theoryData): Promise<simResult> {
   const sim = new bapSim(data);
@@ -200,7 +200,7 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
     this.varNames = ["tdot", "c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8", "c9", "c10", "n"];
     this.variables = [
       new Variable({ cost: new ExponentialCost(1e6, 1e6), stepwisePowerSum: { default: true }}), //tdot
-      new Variable({ cost: new ExponentialCost(0.0625, 0.25, true), stepwisePowerSum: { base:65536, length:64 }, firstFreeCost: true }), //c1
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(0.0625, 0.25, true)), stepwisePowerSum: { base:65536, length:64 } }), //c1
       new Variable({ cost: new ExponentialCost(16, 4, true), varBase: 2 }), // c2
       new Variable({ cost: new ExponentialCost(19683, 19683), varBase: 3 }), // c3
       new Variable({ cost: new ExponentialCost(4**16, 32, true), varBase: 4 }), // c4

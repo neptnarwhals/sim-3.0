@@ -222,18 +222,6 @@ function simAll(data) {
     });
 }
 function createSimAllOutput(arr) {
-    //   return [
-    //     data.theory,
-    //     data.sigma,
-    //     logToExp(data.lastPub, 2),
-    //     logToExp(data.pubRho, 2),
-    //     logToExp((data.pubRho - data.lastPub) * jsonData.theories[data.theory].tauFactor, 2),
-    //     formatNumber(data.pubMulti),
-    //     data.strat + stratExtra,
-    //     data.maxTauH === 0 ? 0 : Number(formatNumber(data.maxTauH * jsonData.theories[data.theory].tauFactor)),
-    //     convertTime(Math.max(0, data.pubT - data.recovery.time)),
-    //     [data.pubRho, data.recovery.recoveryTime ? data.recovery.time : Math.max(0, data.pubT - data.recovery.time)],
-    //   ];
     return [
         arr[0][0],
         arr[0][2],

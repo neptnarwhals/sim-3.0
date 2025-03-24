@@ -1,5 +1,5 @@
 import { add, subtract } from "./helpers.js";
-import { parseValue, BaseCost} from "./cost";
+import { parseValue, BaseCost, FirstFreeCost} from "./cost";
 
 interface variableData {
   level?: number;
@@ -7,7 +7,6 @@ interface variableData {
   varBase?: number;
   value?: number | string;
   stepwisePowerSum?: { default?: boolean; length?: number; base?: number };
-  firstFreeCost?: boolean;
 }
 
 export default class Variable {
@@ -17,7 +16,6 @@ export default class Variable {
   value: number;
   stepwisePowerSum: { default?: boolean; length: number; base: number };
   varBase: number;
-  firstFreeCost: number;
   isZero: boolean;
 
   constructor(data: variableData) {
@@ -28,7 +26,6 @@ export default class Variable {
     this.isZero = false;
     this.stepwisePowerSum = { length: 0, base: 0 };
     this.varBase = 0;
-    this.firstFreeCost = 0;
     this.init();
   }
   init() {
@@ -47,8 +44,9 @@ export default class Variable {
         ? { base: this.data.stepwisePowerSum.base, length: this.data.stepwisePowerSum.length }
         : { base: 0, length: 0 };
     this.varBase = this.data.varBase ? this.data.varBase : 10;
-    this.firstFreeCost = this.data.firstFreeCost === true ? 1 : 0;
-    if (this.data.firstFreeCost) this.buy();
+    if(this.data.cost instanceof FirstFreeCost) {
+      this.buy();
+    }
   }
   buy() {
     if (this.stepwisePowerSum.base !== 0) {
@@ -58,10 +56,10 @@ export default class Variable {
       this.isZero = false;
     } else this.value = Math.log10(this.varBase) * (this.level + 1);
     this.level++;
-    this.cost = this.data.cost.getCost(this.level - this.firstFreeCost);
+    this.cost = this.data.cost.getCost(this.level);
   }
   getCostForLevel(level: number) {
-    return this.data.cost.getCost(level - this.firstFreeCost);
+    return this.data.cost.getCost(level);
   }
   reCalculate() {
     if (this.stepwisePowerSum.base !== 0) {

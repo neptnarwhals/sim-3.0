@@ -13,7 +13,7 @@ import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { c1Exp, getb, lookups, resolution, zeta } from "./helpers/RZ.js";
 import goodzeros from "./helpers/RZgoodzeros.json" assert { type: "json" };
-import { ExponentialCost, StepwiseCost, CompositeCost, ConstantCost } from '../../Utils/cost.js';
+import { ExponentialCost, StepwiseCost, CompositeCost, ConstantCost, FirstFreeCost } from '../../Utils/cost.js';
 export default function rz(data) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield ((new rzSimWrap(data)).simulate());
@@ -261,8 +261,7 @@ class rzSim extends theoryClass {
         this.varNames = ["c1", "c2", "b", "w1", "w2", "w3" /*, "b+"*/];
         this.variables = [
             new Variable({
-                firstFreeCost: true,
-                cost: new ExponentialCost(225, Math.pow(2, 0.699)),
+                cost: new FirstFreeCost(new ExponentialCost(225, Math.pow(2, 0.699))),
                 // const c1Cost = new FirstFreeCost(new ExponentialCost(225, 0.699));
                 // const getc1 = (level) => Utils.getStepwisePowerSum(level, 2, 8, 0);
                 stepwisePowerSum: {

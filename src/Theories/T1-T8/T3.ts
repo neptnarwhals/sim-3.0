@@ -2,7 +2,7 @@ import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
-import { ExponentialCost } from '../../Utils/cost.js';
+import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
 
 export default async function t3(data: theoryData): Promise<simResult> {
   const sim = new t3Sim(data);
@@ -276,7 +276,7 @@ class t3Sim extends theoryClass<theory> implements specificTheoryProps {
     this.currencies = [0, 0, 0];
     this.varNames = ["b1", "b2", "b3", "c11", "c12", "c13", "c21", "c22", "c23", "c31", "c32", "c33"];
     this.variables = [
-      new Variable({ cost: new ExponentialCost(10, 1.18099), stepwisePowerSum: { default: true }, firstFreeCost: true }), //b1
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.18099)), stepwisePowerSum: { default: true } }), //b1
       new Variable({ cost: new ExponentialCost(10, 1.308), stepwisePowerSum: { default: true } }), //b2
       new Variable({ cost: new ExponentialCost(3000, 1.675), stepwisePowerSum: { default: true } }), //b3
       new Variable({ cost: new ExponentialCost(20, 6.3496), varBase: 2 }), //c11

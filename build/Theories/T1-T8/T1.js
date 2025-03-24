@@ -11,7 +11,7 @@ import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, logToExp, sleep } from "../../Utils/helpers.js";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
-import { ExponentialCost } from '../../Utils/cost.js';
+import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
 export default function t1(data) {
     return __awaiter(this, void 0, void 0, function* () {
         const sim = new t1Sim(data);
@@ -83,7 +83,7 @@ class t1Sim extends theoryClass {
         this.rho = 0;
         this.varNames = ["q1", "q2", "c1", "c2", "c3", "c4"];
         this.variables = [
-            new Variable({ cost: new ExponentialCost(5, 2), stepwisePowerSum: { default: true }, firstFreeCost: true }),
+            new Variable({ cost: new FirstFreeCost(new ExponentialCost(5, 2)), stepwisePowerSum: { default: true } }),
             new Variable({ cost: new ExponentialCost(100, 10), varBase: 2 }),
             new Variable({ cost: new ExponentialCost(15, 2), stepwisePowerSum: { default: true } }),
             new Variable({ cost: new ExponentialCost(3000, 10), varBase: 2 }),

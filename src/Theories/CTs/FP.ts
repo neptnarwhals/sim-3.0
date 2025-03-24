@@ -2,7 +2,7 @@ import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
-import { CompositeCost, ExponentialCost } from '../../Utils/cost.js';
+import { CompositeCost, ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
 
 export default async function fp(data: theoryData): Promise<simResult> {
   const sim = new fpSim(data);
@@ -228,14 +228,13 @@ class fpSim extends theoryClass<theory, milestones> implements specificTheoryPro
     this.varNames = ["tdot", "c1", "c2", "q1", "q2", "r1", "n1", "s"];
     this.variables = [
       new Variable({ cost: new ExponentialCost(1e4, 1e4) }),
-      new Variable({ cost: new ExponentialCost(10, 1.4), stepwisePowerSum: { base: 150, length: 100 }, firstFreeCost: true }),
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 1.4)), stepwisePowerSum: { base: 150, length: 100 }}),
       new Variable({ cost: new CompositeCost(15, new ExponentialCost(1e15, 40), new ExponentialCost(1e37, 16.42)), varBase: 2 }),
-      new Variable({ cost: new ExponentialCost(1e35, 12), stepwisePowerSum: { base: 10, length: 10 }, firstFreeCost: true }),
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(1e35, 12)), stepwisePowerSum: { base: 10, length: 10 }}),
       new Variable({ cost: new ExponentialCost(1e76, 1e3) }),
       new Variable({
-        cost: new CompositeCost(285, new ExponentialCost(1e80, 25), new ExponentialCost("1e480", 150)),
-        stepwisePowerSum: { base: 2, length: 5 },
-        firstFreeCost: true,
+        cost: new FirstFreeCost(new CompositeCost(285, new ExponentialCost(1e80, 25), new ExponentialCost("1e480", 150))),
+        stepwisePowerSum: { base: 2, length: 5 }
       }),
       new Variable({ cost: new ExponentialCost(1e4, 3e6) }),
       new Variable({ cost: new ExponentialCost("1e730", 1e30) }),

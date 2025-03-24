@@ -64,6 +64,6 @@ export class FirstFreeCost extends BaseCost {
         this.trueCost = trueCost;
     }
     getCost(level) {
-        return this.trueCost.getCost(level);
+        return this.trueCost.getCost(level - 1);
     }
 }

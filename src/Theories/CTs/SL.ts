@@ -2,7 +2,7 @@ import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, l2 } from "../../Utils/helpers.js";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
-import { ExponentialCost } from '../../Utils/cost.js';
+import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
 
 export default async function sl(data: theoryData): Promise<simResult> {
   const sim = new slSim(data);
@@ -115,7 +115,7 @@ class slSim extends theoryClass<theory> implements specificTheoryProps {
     this.rho3 = 0;
     this.varNames = ["a1", "a2", "b1", "b2"];
     this.variables = [
-      new Variable({ cost: new ExponentialCost(1, 0.369 * l2(10), true), stepwisePowerSum: { base: 3.5, length: 3 }, firstFreeCost: true }),
+      new Variable({ cost: new FirstFreeCost(new ExponentialCost(1, 0.369 * l2(10), true)), stepwisePowerSum: { base: 3.5, length: 3 }}),
       new Variable({ cost: new ExponentialCost(175, 10), varBase: 2 }),
       new Variable({ cost: new ExponentialCost(500, 0.649 * l2(10), true), stepwisePowerSum: { base: 6.5, length: 4 } }),
       new Variable({ cost: new ExponentialCost(1000, 0.926 * l2(10), true), varBase: 2 }),

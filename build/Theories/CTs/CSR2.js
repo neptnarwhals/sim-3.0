@@ -11,7 +11,7 @@ import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
-import { ExponentialCost } from '../../Utils/cost.js';
+import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
 export default function csr2(data) {
     return __awaiter(this, void 0, void 0, function* () {
         const sim = new csr2Sim(data);
@@ -138,7 +138,7 @@ class csr2Sim extends theoryClass {
         //initialize variables
         this.varNames = ["q1", "q2", "c1", "n", "c2"];
         this.variables = [
-            new Variable({ cost: new ExponentialCost(10, 5), stepwisePowerSum: { default: true }, firstFreeCost: true }),
+            new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 5)), stepwisePowerSum: { default: true } }),
             new Variable({ cost: new ExponentialCost(15, 128), varBase: 2 }),
             new Variable({ cost: new ExponentialCost(1e6, 16), value: 1, stepwisePowerSum: { default: true } }),
             new Variable({ cost: new ExponentialCost(50, Math.pow(2, (Math.log2(256) * 3.346))) }),
