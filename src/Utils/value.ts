@@ -39,10 +39,15 @@ export class LinearValue extends BaseValue {
 }
 
 export class LinearRegularValue extends BaseValue {
+    offset: number;
+    constructor(varBase: number = 10, offset: number = 0) {
+        super(varBase);
+        this.offset = offset;
+    }
     computeNewValue(prevValue: number, currentLevel: number, isZero: boolean): number {
-        return this.varBase * (currentLevel + 1);
+        return this.offset + this.varBase * (currentLevel + 1);
     }
     recomputeValue(level: number): number {
-        return this.varBase * level;
+        return this.offset + this.varBase * level;
     }
 }

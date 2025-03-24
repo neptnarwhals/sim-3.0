@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
+import { LinearValue, StepwisePowerSumValue, BaseValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { CompositeCost, ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -19,6 +19,22 @@ export default function fp(data) {
         const res = yield sim.simulate();
         return res;
     });
+}
+class VariableSValue extends BaseValue {
+    getS(level) {
+        const cutoffs = [32, 39];
+        if (level < cutoffs[0])
+            return 1 + level * 0.15;
+        if (level < cutoffs[1])
+            return this.getS(cutoffs[0] - 1) + 0.15 + (level - cutoffs[0]) * 0.2;
+        return this.getS(cutoffs[1] - 1) + 0.2 + (level - cutoffs[1]) * 0.15;
+    }
+    computeNewValue(prevValue, currentLevel, isZero) {
+        return this.getS(currentLevel + 1);
+    }
+    recomputeValue(level) {
+        return this.getS(level);
+    }
 }
 const un = [
     0, 9749, 38997, 92821, 155989, 271765, 371285, 448661, 623957, 808853, 1087061, 1415829, 1485141, 1663893, 1794645, 2068245, 2495829, 2681877,
@@ -195,14 +211,6 @@ class fpSim extends theoryClass {
             return l10(3) * (n - 1);
         return l10(1 / 3) + subtract(l10(2) + l10(3) * n, l10(3));
     }
-    getS(level) {
-        const cutoffs = [32, 39];
-        if (level < cutoffs[0])
-            return 1 + level * 0.15;
-        if (level < cutoffs[1])
-            return this.getS(cutoffs[0] - 1) + 0.15 + (level - cutoffs[0]) * 0.2;
-        return this.getS(cutoffs[1] - 1) + 0.2 + (level - cutoffs[1]) * 0.15;
-    }
     updateN() {
         this.T_n = this.T(this.n);
         this.U_n = this.U(this.n);
@@ -229,7 +237,8 @@ class fpSim extends theoryClass {
                 valueScaling: new StepwisePowerSumValue(2, 5)
             }),
             new Variable({ cost: new ExponentialCost(1e4, 3e6), valueScaling: new LinearValue(10) }),
-            new Variable({ cost: new ExponentialCost("1e730", 1e30), valueScaling: new LinearValue(10) }),
+            new Variable({ cost: new ExponentialCost("1e730", 1e30), valueScaling: new VariableSValue(), value: 10 }),
+            // TODO: we are passing 10 here as log10(10) = 1 (this is a hack, should be fixed).
         ];
         this.T_n = 1;
         this.U_n = 1;
@@ -281,16 +290,16 @@ class fpSim extends theoryClass {
             this.updateN();
             this.updateN_flag = false;
         }
-        if (["FPdMS", "FPmodBurstC1MS"].includes(this.strat) && this.lastPub > 700 && this.getS(this.variables[7].level) < 2) {
+        if (["FPdMS", "FPmodBurstC1MS"].includes(this.strat) && this.lastPub > 700 && this.variables[7].value < 2) {
             this.milestones.sterm = 1;
-            if (this.ticks % 20 < 10 / this.getS(this.variables[7].level))
+            if (this.ticks % 20 < 10 / this.variables[7].value)
                 this.milestones.sterm = 0;
         }
         const vq1 = this.variables[3].value - l10(1 + 1000 / Math.pow(this.variables[3].level, 1.5));
         const vr1 = this.variables[5].value - l10(1 + 1e9 / Math.pow(this.variables[5].level, 4));
         const A = this.approx(this.variables[4].level);
         this.t_var += (this.variables[0].level / 5 + 0.2) * this.dt;
-        const qdot = vq1 + A + l10(this.U_n) * (7 + (this.milestones.sterm > 0 ? this.getS(this.variables[7].level) : 0)) - 3;
+        const qdot = vq1 + A + l10(this.U_n) * (7 + (this.milestones.sterm > 0 ? this.variables[7].value : 0)) - 3;
         this.q = this.milestones.fractals > 0 ? add(this.q, qdot + l10(this.dt)) : this.q;
         let rdot;
         if (this.milestones.expterm < 1)
@@ -301,7 +310,7 @@ class fpSim extends theoryClass {
         let rhodot = this.totMult +
             this.variables[1].value +
             this.variables[2].value +
-            l10(this.T_n) * (7 + (this.milestones.sterm > 0 ? this.getS(this.variables[7].level) - 2 : 0)) +
+            l10(this.T_n) * (7 + (this.milestones.sterm > 0 ? this.variables[7].value - 2 : 0)) +
             l10(this.t_var);
         rhodot += this.milestones.fractals > 0 ? this.q : 0;
         rhodot += this.milestones.fractals > 1 ? this.r : 0;

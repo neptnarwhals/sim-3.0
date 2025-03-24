@@ -1,6 +1,6 @@
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
-import { LinearValue, StepwisePowerSumValue } from "../../Utils/value";
+import { LinearRegularValue, LinearValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
@@ -143,7 +143,8 @@ class csr2Sim extends theoryClass<theory> implements specificTheoryProps {
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 5)), valueScaling: new StepwisePowerSumValue() }),
       new Variable({ cost: new ExponentialCost(15, 128), valueScaling: new LinearValue(2) }),
       new Variable({ cost: new ExponentialCost(1e6, 16), value: 1, valueScaling: new StepwisePowerSumValue() }),
-      new Variable({ cost: new ExponentialCost(50, 2 ** (Math.log2(256) * 3.346)), valueScaling: new LinearValue(10) }),
+      new Variable({ cost: new ExponentialCost(50, 2 ** (Math.log2(256) * 3.346)), valueScaling: new LinearRegularValue(1, 1), value: 10 }),
+        //TODO: this value set to 10 because log10 = 1, fix this hack.
       new Variable({ cost: new ExponentialCost(1e3, 10 ** 5.65), valueScaling: new LinearValue(2) }),
     ];
     this.recursionValue = <Array<number>>data.recursionValue ?? [Infinity, 0];
@@ -203,7 +204,7 @@ class csr2Sim extends theoryClass<theory> implements specificTheoryProps {
 
     if (this.updateError_flag) {
       const c2level = this.milestones[1] > 0 ? this.variables[4].level : 0;
-      const vn = this.variables[3].level + 1 + c2level;
+      const vn = this.variables[3].value + c2level;
       this.updateError(vn);
 
       this.updateError_flag = false;
