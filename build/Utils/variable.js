@@ -1,5 +1,36 @@
 import { add, subtract } from "./helpers.js";
 import { parseValue, FirstFreeCost } from "./cost";
+class BaseValue {
+    constructor(varBase = 10) {
+        this.varBase = varBase;
+    }
+}
+export class StepwisePowerSumValue extends BaseValue {
+    constructor(varBase = 10, base = 2, length = 10) {
+        super(varBase);
+        this.base = base;
+        this.length = length;
+    }
+    computeNewValue(prevValue, currentLevel, isZero) {
+        let toAdd = Math.log10(this.base) * Math.floor(currentLevel / this.length);
+        return isZero ? toAdd : add(prevValue, toAdd);
+    }
+    recomputeValue(level) {
+        const intPart = Math.floor(level / this.length);
+        const modPart = level - intPart * this.length;
+        const d = this.length / (this.base - 1);
+        return subtract(Math.log10(d + modPart) + Math.log10(this.base) * intPart, Math.log10(d));
+    }
+}
+export class LinearValue extends BaseValue {
+    computeNewValue(prevValue, currentLevel, isZero) {
+        return Math.log10(this.varBase) * (currentLevel + 1);
+    }
+    recomputeValue(level) {
+        return Math.log10(this.varBase) * level;
+    }
+}
+let placeholderValueCompute = new LinearValue(10);
 export default class Variable {
     constructor(data) {
         this.data = data;
@@ -7,40 +38,44 @@ export default class Variable {
         this.cost = 0;
         this.value = 0;
         this.isZero = false;
-        this.stepwisePowerSum = { length: 0, base: 0 };
-        this.varBase = 0;
+        this.valueCompute = placeholderValueCompute;
         this.init();
     }
+    prepareStepwiseSum() {
+        var _a;
+        let stepwisePowerSum;
+        if (((_a = this.data.stepwisePowerSum) === null || _a === void 0 ? void 0 : _a.default) === true) {
+            stepwisePowerSum = { base: 2, length: 10 };
+        }
+        else if (this.data.stepwisePowerSum && typeof this.data.stepwisePowerSum.length == "number" && typeof this.data.stepwisePowerSum.base == "number") {
+            stepwisePowerSum = { base: this.data.stepwisePowerSum.base, length: this.data.stepwisePowerSum.length };
+        }
+        return stepwisePowerSum;
+    }
     init() {
-        var _a, _b, _c, _d;
+        var _a;
         this.level = (_a = this.data.level) !== null && _a !== void 0 ? _a : 0;
         this.cost = this.data.cost.getCost(this.level);
         this.value = typeof this.data.value === "number" || typeof this.data.value === "string" ? parseValue(String(this.data.value)) : 0;
-        this.isZero = false;
         if (this.value === -Infinity) {
             this.value = 0;
             this.isZero = true;
         }
-        this.stepwisePowerSum =
-            ((_b = this.data.stepwisePowerSum) === null || _b === void 0 ? void 0 : _b.default) === true
-                ? { base: 2, length: 10 }
-                : typeof ((_c = this.data.stepwisePowerSum) === null || _c === void 0 ? void 0 : _c.base) === "number" && typeof ((_d = this.data.stepwisePowerSum) === null || _d === void 0 ? void 0 : _d.length) === "number"
-                    ? { base: this.data.stepwisePowerSum.base, length: this.data.stepwisePowerSum.length }
-                    : { base: 0, length: 0 };
-        this.varBase = this.data.varBase ? this.data.varBase : 10;
+        else {
+            this.isZero = false;
+        }
+        let varBase = this.data.varBase ? this.data.varBase : 10;
+        let stepwisePowerSum = this.prepareStepwiseSum();
+        this.valueCompute = stepwisePowerSum
+            ? new StepwisePowerSumValue(varBase, stepwisePowerSum.base, stepwisePowerSum.length)
+            : new LinearValue(varBase);
         if (this.data.cost instanceof FirstFreeCost) {
             this.buy();
         }
     }
     buy() {
-        if (this.stepwisePowerSum.base !== 0) {
-            this.value = this.isZero
-                ? Math.log10(this.stepwisePowerSum.base) * Math.floor(this.level / this.stepwisePowerSum.length)
-                : add(this.value, Math.log10(this.stepwisePowerSum.base) * Math.floor(this.level / this.stepwisePowerSum.length));
-            this.isZero = false;
-        }
-        else
-            this.value = Math.log10(this.varBase) * (this.level + 1);
+        this.value = this.valueCompute.computeNewValue(this.value, this.level, this.isZero);
+        this.isZero = false;
         this.level++;
         this.cost = this.data.cost.getCost(this.level);
     }
@@ -48,14 +83,7 @@ export default class Variable {
         return this.data.cost.getCost(level);
     }
     reCalculate() {
-        if (this.stepwisePowerSum.base !== 0) {
-            const intPart = Math.floor(this.level / this.stepwisePowerSum.length);
-            const modPart = this.level - intPart * this.stepwisePowerSum.length;
-            const d = this.stepwisePowerSum.length / (this.stepwisePowerSum.base - 1);
-            this.value = subtract(Math.log10(d + modPart) + Math.log10(this.stepwisePowerSum.base) * intPart, Math.log10(d));
-        }
-        else
-            this.value = Math.log10(this.varBase) * this.level;
+        this.value = this.valueCompute.recomputeValue(this.level);
     }
     reset() {
         this.init();

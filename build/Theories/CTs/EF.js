@@ -123,12 +123,12 @@ class efSim extends theoryClass {
         if (Math.max(this.lastPub, this.maxRho) > 325)
             this.nextMilestoneCost = Infinity;
         this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
-        if (this.variables[4].varBase !== 1.1 + 0.01 * this.milestones[3]) {
-            this.variables[4].varBase = 1.1 + 0.01 * this.milestones[3];
+        if (this.variables[4].valueCompute.varBase !== 1.1 + 0.01 * this.milestones[3]) {
+            this.variables[4].valueCompute.varBase = 1.1 + 0.01 * this.milestones[3];
             this.variables[4].reCalculate();
         }
-        if (this.variables[6].varBase !== 1.1 + 0.0125 * this.milestones[4]) {
-            this.variables[6].varBase = 1.1 + 0.0125 * this.milestones[4];
+        if (this.variables[6].valueCompute.varBase !== 1.1 + 0.0125 * this.milestones[4]) {
+            this.variables[6].valueCompute.varBase = 1.1 + 0.0125 * this.milestones[4];
             this.variables[6].reCalculate();
         }
     }
