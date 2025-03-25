@@ -1,5 +1,5 @@
 import { global } from "../../Sim/main.js";
-import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
 import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
@@ -30,7 +30,6 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   vMaxBuy: number;
   resetCombination: number[];
   dynamicResetMulti: number;
-  official: boolean;
   buyV: boolean;
   resetcond: boolean;
   normalPubRho: number;
@@ -143,9 +142,9 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       [0, 0, 0, 0, 0, 0],
       [1, 0, 0, 0, 0, 0],
       [1, 1, 0, 0, 0, 0],
-      [1, 1, 0, 1, 0, 0],
-      [1, 1, 0, 2, 0, 0],
-      [1, 1, 1, 2, 0, 0],
+      [1, 1, 1, 0, 0, 0],
+      [1, 1, 2, 0, 0, 0],
+      [1, 1, 2, 1, 0, 0],
       [1, 1, 2, 2, 0, 0],
       [1, 1, 2, 2, 1, 0],
       [1, 1, 2, 2, 2, 0],
@@ -172,38 +171,20 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     return Math.max(0, val * this.tauFactor * 0.17);
   }
   updateMilestones(): void {
-    let stage = 0;
     const points = [20, 50, 175, 225, 275, 325, 425, 475, 525];
-    for (let i = 0; i < points.length; i++) {
-      if (Math.max(this.lastPub, this.maxRho) >= points[i]) stage = i + 1;
-    }
+    const stage = binarySearch(points, Math.max(this.lastPub, this.maxRho));
     this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
     this.updateC()
   }
 
-  xexp(): number {
-    if (this.official){
-      return 3.2 + 0.1 * this.milestones[2]
-    }
-    else {
-      return 3.2 + 0.24 * this.milestones[2]
-    }
-  }
   omegaexp(): number {
-    if (this.official){
-      return 4.1 + 0.15 * this.milestones[3]
-    }
-    else {
-      return 4.1 + 0.22 * this.milestones[3]
-    }
+    return 4.1 + 0.15 * this.milestones[2]
+  }
+  xexp(): number {
+    return 3.2 + 0.1 * this.milestones[3]
   }
   vexp(): number {
-    if (this.official){
-      return 1.3 + 0.31 * this.milestones[4]
-    }
-    else {
-      return 1.3 + 0.39 * this.milestones[4]
-    }
+    return 1.3 + 0.31 * this.milestones[4]
   }
   a1exp(): number {
     return 1 + 0.01 * this.milestones[5]
@@ -213,12 +194,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.x = 0;
     this.vx = 10 ** (this.variables[5].value + this.variables[6].value - 20);
     this.vz = 10 ** (this.variables[7].value + this.variables[8].value - 18);
-    if (this.official){
-      this.vtot = Math.sqrt(this.vx * this.vx + this.vz * this.vz);
-    }
-    else {
-      this.vtot = Math.sqrt(this.vx * this.vx + 2 * this.vz * this.vz);
-    }
+    this.vtot = Math.sqrt(this.vx * this.vx + this.vz * this.vz);
     this.resets++
     this.stratExtra = ""
     if (this.resets>1) {
@@ -242,13 +218,13 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   }
 
   updateC(): void {
-    const xterm = this.official ? l10(4e13)*this.xexp() : l10(1e15)*this.xexp()
-    const omegaterm = this.official ? (l10(m0 / (q0*mu0*i0)) - l10(900)) * this.omegaexp() : (l10(m0 / (q0*mu0*i0)) - l10(1000)) * this.omegaexp()
-    const vterm = this.official ? this.milestones[0] ? l10(3e19) * 1.3 + l10(1e5)*(this.vexp() - 1.3) : 0 : this.milestones[0] ? l10(3e19) * 1.3 + l10(1e6)*(this.vexp() - 1.3) : 0
-    this.c = this.official ? xterm + omegaterm + vterm + l10(8.67e23) : xterm + omegaterm + vterm + l10(4.49e19)
+    const xterm = l10(4e13)*this.xexp()
+    const omegaterm = (l10(m0 / (q0*mu0*i0)) - l10(900)) * this.omegaexp()
+    const vterm = this.milestones[0] ? l10(3e19) * 1.3 + l10(1e5)*(this.vexp() - 1.3) : 0
+    this.c = xterm + omegaterm + vterm + l10(8.67e23)
   }
 
-  constructor(data: theoryData, resetCombination: number[], vMaxBuy: number, official: boolean) {
+  constructor(data: theoryData, resetCombination: number[], vMaxBuy: number) {
     super(data);
     this.pubUnlock = 8;
     this.totMult = data.rho < this.pubUnlock ? 0 : this.getTotMult(data.rho);
@@ -268,8 +244,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     this.dynamicResetMulti = resetCombination[0];
     this.buyV = true;
     this.resetcond = false;
-    this.official=official;
-    this.variables = official ? 
+    this.variables =
     [
       new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), valueScaling: new StepwisePowerSumValue(2, 7) }), // c1
       new Variable({ cost: new ExponentialCost(1e3, 50), valueScaling: new ExponentialValue(2) }), // c2
@@ -280,17 +255,6 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       new Variable({ cost: new ExponentialCost(1e4, 10**4.5), valueScaling: new ExponentialValue(1.3) }), // v2
       new Variable({ cost: new ExponentialCost(1e50, 70), valueScaling: new StepwisePowerSumValue() }), // v3
       new Variable({ cost: new ExponentialCost(1e52, 1e6), valueScaling: new ExponentialValue(1.5) }), // v4
-    ] :
-    [
-      new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), valueScaling: new StepwisePowerSumValue(2, 7) }), // c1
-      new Variable({ cost: new ExponentialCost(1e3, 100), valueScaling: new ExponentialValue(2) }), // c2
-      new Variable({ cost: new ExponentialCost(1e3, 25), valueScaling: new StepwisePowerSumValue(2, 5), value: 1 }), // a1
-      new Variable({ cost: new ExponentialCost(1e4, 55), valueScaling: new ExponentialValue(1.25) }), // a2
-      new Variable({ cost: new ExponentialCost(1e50, 300), valueScaling: new ExponentialValue(1.1) }), // delta
-      new Variable({ cost: new ExponentialCost(80, 80), valueScaling: new StepwisePowerSumValue(), value: 1 }), // v1
-      new Variable({ cost: new ExponentialCost(1e4, 10**4.5), valueScaling: new ExponentialValue(1.3) }), // v2
-      new Variable({ cost: new ExponentialCost(1e50, 70), valueScaling: new StepwisePowerSumValue() }), // v3
-      new Variable({ cost: new ExponentialCost(1e55, 1e6), valueScaling: new ExponentialValue(1.5) }), // v4
     ];
     this.conditions = this.getBuyingConditions();
     this.milestoneConditions = this.getMilestoneConditions();
@@ -328,14 +292,9 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
 
     this.x += newdt * this.vx
     let icap = va2*i0;
-    if (this.official) {
-      let scale = 1 - Math.E ** (-newdt*va1/(400*va2));
-      if (scale < 1e-13) scale = newdt*va1/400/va2;
-      this.i = this.i + scale*(icap - this.i)
-    }
-    else {
-      this.i = icap - (icap - this.i)*(Math.E ** (-this.dt*va1/10/va2))
-    }
+    let scale = 1 - Math.E ** (-newdt*va1/(400*va2));
+    if (scale < 1e-13) scale = newdt*va1/(400*va2);
+    this.i = this.i + scale*(icap - this.i)
     this.i = Math.min(this.i, icap);
 
     const xterm = l10(this.x) * this.xexp()
@@ -396,7 +355,6 @@ class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
       this._originalData = data;
   }
   async simulate() {
-    let official = true;
     let resetMultiValues = [];
     for (let i = 1.3; i <= 2.6; i += 0.1) {
       resetMultiValues.push(parseFloat(i.toFixed(1)));
@@ -408,7 +366,7 @@ class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
     for (const vMaxBuy of vMaxBuys) {
       for (const resetMulti of resetMultiValues) {
         for (const resetCombination of getAllCombinations(resetMulti)) {
-          let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy, official); // last variable is for switching on/off official version
+          let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy);
           let bestSimRes = await bestSim.simulate();
           // Unnecessary additional cosating attempt
           // let internalSim = new mfSim(this._originalData, resetCombination)
