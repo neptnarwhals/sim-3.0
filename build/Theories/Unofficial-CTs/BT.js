@@ -13,6 +13,7 @@ import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
+import { parseValue } from "../../Sim/parsers.js";
 export default function bt(data) {
     return __awaiter(this, void 0, void 0, function* () {
         const sim = new btSim(data);
@@ -90,7 +91,7 @@ class btSim extends theoryClass {
         this.variables = [
             new Variable({ cost: new FirstFreeCost(new ExponentialCost(15, 2)), valueScaling: new StepwisePowerSumValue() }),
             new Variable({ cost: new ExponentialCost(5, 10), valueScaling: new ExponentialValue(2) }),
-            new Variable({ cost: new ExponentialCost(1e10, 10), valueScaling: new ExponentialValue(10) })
+            new Variable({ cost: new ExponentialCost(1e10, 10, true), valueScaling: new ExponentialValue(10) })
         ];
         this.conditions = this.getBuyingConditions();
         this.milestoneConditions = this.getMilestoneConditions();
@@ -123,13 +124,15 @@ class btSim extends theoryClass {
         });
     }
     tick() {
-        const tayexponent = ((this.milestones[2] + 1) * (this.milestones[2] + 2) * 0.5 - 1) * 0.0001;
+        const tayexponent = ((this.milestones[2] + 1) * (this.milestones[2] + 2) * 0.5 - 1) * 0.0003;
         const vtai = this.variables[0].value * (1 + 0.08 * this.milestones[0]);
         const vrao = this.variables[1].value * (1 + 0.077 * this.milestones[1]);
-        const vtay = this.variables[2].value * (this.milestones[3] == 0 ? tayexponent : 1);
+        const vtay = this.variables[2].value * (this.milestones[3] == 0 ? tayexponent : 0.015);
         const rhodot = this.totMult + vtai + vrao + vtay;
         this.rho = add(this.rho, rhodot + l10(this.dt));
-        this.rho = Math.min(this.rho, 1500);
+        if (this.milestones[3] == 1 && Math.max(this.maxRho, this.lastPub) * this.tauFactor < parseValue("9e599")) {
+            this.rho = parseValue("1.05e1500");
+        }
         this.t += this.dt / 1.5;
         this.dt *= this.ddt;
         if (this.maxRho < this.recovery.value)
