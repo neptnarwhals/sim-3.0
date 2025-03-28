@@ -81,10 +81,9 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       },
       ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
     ]
-    let self = this;
-    function tailActiveGen(i: number, offset: number) {
-      return function() {
-        if (self.maxRho <= self.lastPub + offset) {
+    const tailActiveGen = (i: number, offset: number) => {
+      return () => {
+        if (this.maxRho <= this.lastPub + offset) {
           if (idleStrat[i] == true) {
             return true;
           }

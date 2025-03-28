@@ -70,10 +70,9 @@ class mfSim extends theoryClass {
             },
             ...new Array(4).fill(() => (this.maxRho <= this.lastPub + this.vMaxBuy && this.buyV))
         ];
-        let self = this;
-        function tailActiveGen(i, offset) {
-            return function () {
-                if (self.maxRho <= self.lastPub + offset) {
+        const tailActiveGen = (i, offset) => {
+            return () => {
+                if (this.maxRho <= this.lastPub + offset) {
                     if (idleStrat[i] == true) {
                         return true;
                     }
@@ -86,7 +85,7 @@ class mfSim extends theoryClass {
                     return activeStrat[i]();
                 }
             };
-        }
+        };
         function makeMFdPostRecovery(offset) {
             let tailActive = [];
             for (let i = 0; i < 9; i++) {
