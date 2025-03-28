@@ -522,6 +522,15 @@
                     "stratFilterCondition": "Active || Very-Active"
                 }
             }
+        },
+        "TC": {
+            "tauFactor": 0.6,
+            "UI_visible": false,
+            "strats": {
+                "TC": {
+                    "stratFilterCondition": "true"
+                }
+            }
         }
     },
     "stratCategories": ["Best Overall", "Best Active", "Best Semi-Idle", "Best Idle"],

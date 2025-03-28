@@ -18,7 +18,7 @@ export function parseData(data) {
         //parsing sigma
         if (data.sigma.length > 0 && data.sigma.match(/^[0-9]+$/) !== null && parseInt(data.sigma) >= 0 && parseFloat(data.sigma) % 1 === 0)
             parsedDataObj.sigma = parseInt(data.sigma);
-        else if (data.theory.charAt(0) === "T")
+        else if (data.theory.match(/T[1-8]/))
             throw "Invalid sigma value. Sigma must be an integer that's >= 0";
         //parsing currency
         if (data.rho.length > 0)
