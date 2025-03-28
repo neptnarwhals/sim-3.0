@@ -80,11 +80,110 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
         return (this.variables[4].cost <= this.normalPubRho - l10(2)) && this.variables[4].cost < Math.min(this.variables[1].cost, this.variables[3].cost);
       },
       ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
-    ]
-    let self = this;
-    function tailActiveGen(i: number, offset: number) {
-      return function() {
-        if (self.maxRho <= self.lastPub + offset) {
+    ];
+    const gnarStrat0 = [
+      () => {
+        const dPower: number[] = [3.09152, 3.00238, 2.91940]
+        return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1]*(this.variables[4].cost + l10(dPower[this.milestones[2]])));
+      },
+      () => {
+        return true;
+      },
+      () => {
+        return l10(this.i) + l10(1.2) < this.variables[3].value - 15 || (this.variables[2].cost + l10(20) < this.maxRho && l10(this.i) + l10(1.012) < this.variables[3].value - 15);
+      },
+      () => {
+        return true;
+      },
+      () => {
+        const dPower: number[] = [3.09152, 3.00238, 2.91940]
+        return this.variables[4].cost + l10(dPower[this.milestones[2]]) < Math.min(this.variables[1].cost + l10(2), this.variables[3].cost);
+      },
+      ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
+    ];
+    const gnarStrat1 = [
+      () => {
+        const dPower: number[] = [3.09152, 3.00238, 2.91940]
+        return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1]*(this.variables[4].cost + l10(dPower[this.milestones[2]])));
+      },
+      () => {
+        return true;
+      },
+      () => {
+        return l10(this.i) + l10(1.233) < this.variables[3].value - 15 || (this.variables[2].cost + l10(20) < this.maxRho && l10(this.i) + l10(1.012) < this.variables[3].value - 15);
+      },
+      () => {
+        return true;
+      },
+      () => {
+        const dPower: number[] = [3.09152, 3.00238, 2.91940]
+        return this.variables[4].cost + l10(dPower[this.milestones[2]]) < Math.min(this.variables[1].cost + l10(2), this.variables[3].cost);
+      },
+      ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
+    ];
+    const gnarStrat2 = [
+      () => {
+        const dPower: number[] = [3.09152, 3.00238, 2.91940]
+        return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1]*(this.variables[4].cost + l10(dPower[this.milestones[2]])));
+      },
+      () => {
+        return true;
+      },
+      () => {
+        return l10(this.i) + l10(1.266) < this.variables[3].value - 15 || (this.variables[2].cost + l10(20) < this.maxRho && l10(this.i) + l10(1.012) < this.variables[3].value - 15);
+      },
+      () => {
+        return true;
+      },
+      () => {
+        const dPower: number[] = [3.09152, 3.00238, 2.91940]
+        return this.variables[4].cost + l10(dPower[this.milestones[2]]) < Math.min(this.variables[1].cost + l10(2), this.variables[3].cost);
+      },
+      ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
+    ];
+    const gnarStrat3 = [
+      () => {
+        const dPower: number[] = [3.09152, 3.00238, 2.91940]
+        return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1]*(this.variables[4].cost + l10(dPower[this.milestones[2]])));
+      },
+      () => {
+        return true;
+      },
+      () => {
+        return l10(this.i) + l10(1.3) < this.variables[3].value - 15 || (this.variables[2].cost + l10(20) < this.maxRho && l10(this.i) + l10(1.012) < this.variables[3].value - 15);
+      },
+      () => {
+        return true;
+      },
+      () => {
+        const dPower: number[] = [3.09152, 3.00238, 2.91940]
+        return this.variables[4].cost + l10(dPower[this.milestones[2]]) < Math.min(this.variables[1].cost + l10(2), this.variables[3].cost);
+      },
+      ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
+    ];
+    const gnarStrat4 = [
+      () => {
+        const dPower: number[] = [3.09152, 3.00238, 2.91940]
+        return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1]*(this.variables[4].cost + l10(dPower[this.milestones[2]])));
+      },
+      () => {
+        return true;
+      },
+      () => {
+        return l10(this.i) + l10(1.35) < this.variables[3].value - 15 || (this.variables[2].cost + l10(20) < this.maxRho && l10(this.i) + l10(1.012) < this.variables[3].value - 15);
+      },
+      () => {
+        return true;
+      },
+      () => {
+        const dPower: number[] = [3.09152, 3.00238, 2.91940]
+        return this.variables[4].cost + l10(dPower[this.milestones[2]]) < Math.min(this.variables[1].cost + l10(2), this.variables[3].cost);
+      },
+      ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
+    ];
+    const tailActiveGen = (i: number, offset: number) => {
+      return () => {
+        if (this.maxRho <= this.lastPub + offset) {
           if (idleStrat[i] == true) {
             return true;
           }
@@ -108,6 +207,11 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
       MF: idleStrat,
       MFd: activeStrat,
+      MFdGnar0: gnarStrat0,
+      MFdGnar1: gnarStrat1,
+      MFdGnar2: gnarStrat2,
+      MFdGnar3: gnarStrat3,
+      MFdGnar4: gnarStrat4,
       MFdPostRecovery0: makeMFdPostRecovery(0),
       MFdPostRecovery1: makeMFdPostRecovery(1),
       MFdPostRecovery2: makeMFdPostRecovery(2),
@@ -117,7 +221,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       MFdPostRecovery6: makeMFdPostRecovery(6),
       MFdPostRecovery7: makeMFdPostRecovery(7),
       MFdPostRecovery8: makeMFdPostRecovery(8),
-      MFdPostRecovery9: makeMFdPostRecovery(9),
+      MFdPostRecovery9: makeMFdPostRecovery(9)
     };
     const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
     return condition;
@@ -153,6 +257,11 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     const tree: { [key in stratType[theory]]: Array<Array<number>> } = {
       MF: globalOptimalRoute,
       MFd: globalOptimalRoute,
+      MFdGnar0: globalOptimalRoute,
+      MFdGnar1: globalOptimalRoute,
+      MFdGnar2: globalOptimalRoute,
+      MFdGnar3: globalOptimalRoute,
+      MFdGnar4: globalOptimalRoute,
       MFdPostRecovery0: globalOptimalRoute,
       MFdPostRecovery1: globalOptimalRoute,
       MFdPostRecovery2: globalOptimalRoute,
@@ -171,7 +280,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     return Math.max(0, val * this.tauFactor * 0.17);
   }
   updateMilestones(): void {
-    const points = [20, 50, 175, 225, 275, 325, 425, 475, 525];
+    const points = [0, 20, 50, 175, 225, 275, 325, 425, 475, 525];
     const stage = binarySearch(points, Math.max(this.lastPub, this.maxRho));
     this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
     this.updateC()

@@ -452,6 +452,21 @@
         "MFd": {
           "stratFilterCondition": "Active || Very-Active"
         },
+        "MFdGnar0": {
+          "stratFilterCondition": "Active || Very-Active"
+        },
+        "MFdGnar1": {
+          "stratFilterCondition": "false"
+        },
+        "MFdGnar2": {
+          "stratFilterCondition": "false"
+        },
+        "MFdGnar3": {
+          "stratFilterCondition": "false"
+        },
+        "MFdGnar4": {
+          "stratFilterCondition": "false"
+        },
         "MFdPostRecovery0": {
           "stratFilterCondition": "false"
         },
