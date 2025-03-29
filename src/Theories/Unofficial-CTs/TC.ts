@@ -148,7 +148,7 @@ class tcSim extends theoryClass<theory> implements specificTheoryProps {
       new Variable({ cost: new ExponentialCost(1000, 8), valueScaling: new ExponentialValue(2) }), // r2
       new Variable({ cost: new ExponentialCost("1e400", 10**4.5), valueScaling: new ExponentialValue(Math.E) }), // c2
       new Variable({ cost: new ExponentialCost(1e15, 1000), valueScaling: new LinearValue(1) }), // dTExponent
-      new Variable({ cost: new ExponentialCost("1e750", 1e5), valueScaling: new StepwisePowerSumValue() }), // p1
+      new Variable({ cost: new ExponentialCost("1e750", 16.60964), valueScaling: new StepwisePowerSumValue() }), // p1
       new Variable({ cost: new ExponentialCost("1e900", 1e15), valueScaling: new ExponentialValue(2) }), // p2
     ];
     this.conditions = this.getBuyingConditions();

@@ -132,7 +132,7 @@ class tcSim extends theoryClass {
             new Variable({ cost: new ExponentialCost(1000, 8), valueScaling: new ExponentialValue(2) }),
             new Variable({ cost: new ExponentialCost("1e400", Math.pow(10, 4.5)), valueScaling: new ExponentialValue(Math.E) }),
             new Variable({ cost: new ExponentialCost(1e15, 1000), valueScaling: new LinearValue(1) }),
-            new Variable({ cost: new ExponentialCost("1e750", 1e5), valueScaling: new StepwisePowerSumValue() }),
+            new Variable({ cost: new ExponentialCost("1e750", 16.60964), valueScaling: new StepwisePowerSumValue() }),
             new Variable({ cost: new ExponentialCost("1e900", 1e15), valueScaling: new ExponentialValue(2) }), // p2
         ];
         this.conditions = this.getBuyingConditions();
