@@ -23,7 +23,12 @@ export default function tc(data) {
 class tcSim extends theoryClass {
     getBuyingConditions() {
         const conditions = {
-            TC: [true, true, true, true, true, true, true],
+            TC: new Array(7).fill(true),
+            TCd: [
+                true,
+                () => this.variables[1].cost + l10(10) < this.variables[2].cost,
+                ...new Array(5).fill(true)
+            ]
         };
         const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
         return condition;
@@ -58,6 +63,7 @@ class tcSim extends theoryClass {
     getPidValues(strat) {
         switch (strat) {
             case "TC":
+            case "TCd":
                 return [5, 2, 1, 200];
             default:
                 return [5, 0, 0, 100];
@@ -66,6 +72,7 @@ class tcSim extends theoryClass {
     getAutomationSettings(strat) {
         switch (strat) {
             case "TC":
+            case "TCd":
                 return [30, 1.5];
             default:
                 return [30, 1.5];
@@ -93,6 +100,7 @@ class tcSim extends theoryClass {
         ];
         const tree = {
             TC: globalOptimalRoute,
+            TCd: globalOptimalRoute
         };
         return tree[this.strat];
     }

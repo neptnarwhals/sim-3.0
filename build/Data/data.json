@@ -529,6 +529,9 @@
             "strats": {
                 "TC": {
                     "stratFilterCondition": "true"
+                },
+                "TCd": {
+                    "stratFilterCondition": "Active || Very-Active"
                 }
             }
         }
