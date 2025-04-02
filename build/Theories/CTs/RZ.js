@@ -14,11 +14,16 @@ import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
 import { c1Exp, lookups, resolution, zeta } from "./helpers/RZ.js";
 import goodzeros from "./helpers/RZgoodzeros.json" assert { type: "json" };
-import { ExponentialCost, StepwiseCost, CompositeCost, ConstantCost, FirstFreeCost } from '../../Utils/cost.js';
+import { ExponentialCost, StepwiseCost, FirstFreeCost, BaseCost } from '../../Utils/cost.js';
 export default function rz(data) {
     return __awaiter(this, void 0, void 0, function* () {
         return yield ((new rzSimWrap(data)).simulate());
     });
+}
+class VariableBcost extends BaseCost {
+    getCost(level) {
+        return [15, 45, 360, 810, 1050, 1200][level];
+    }
 }
 function mergeSortedLists(list1, list2) {
     let mergedList = [];
@@ -277,7 +282,7 @@ class rzSim extends theoryClass {
                 valueScaling: new ExponentialValue(2),
             }),
             new Variable({
-                cost: new CompositeCost(1, new ConstantCost("1e15"), new CompositeCost(1, new ConstantCost("1e45"), new CompositeCost(1, new ConstantCost("1e360"), new CompositeCost(1, new ConstantCost("1e810"), new CompositeCost(1, new ConstantCost("1e1050"), new ConstantCost("e1200")))))), valueScaling: new LinearValue(0.5)
+                cost: new VariableBcost, valueScaling: new LinearValue(0.5)
                 // cost: new ExponentialCost(1e21, 1e79),
                 // power: use outside method
             }),
