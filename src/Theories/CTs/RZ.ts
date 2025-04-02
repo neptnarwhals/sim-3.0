@@ -131,7 +131,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             true
         ]
         const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
-            RZ: new Array(6).fill(true),
+            RZ: semiPassiveStrat,
             RZd: activeStrat,
             RZBH: semiPassiveStrat,
             RZBHLong: semiPassiveStrat,
@@ -649,9 +649,18 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
             let ret = await internalSim.simulate();
             let internalSim2 = new rzSim(this._originalData);
             internalSim2.normalPubRho = internalSim.pubRho;
+            internalSim2.maxC1Level = internalSim.variables[0].level - 14;
+            internalSim2.maxC1LevelActual = internalSim.variables[0].level;
             let ret2 = internalSim2.simulate();
             let bestSim = internalSim.maxTauH > internalSim2.maxTauH ? internalSim: internalSim2;
             let bestRet = internalSim.maxTauH > internalSim2.maxTauH ? ret: ret2;
+
+            let internalSim3 = new rzSim(this._originalData);
+            internalSim3.normalPubRho = internalSim.pubRho;
+            internalSim3.maxC1Level = internalSim.variables[0].level - 15;
+            let ret3 = internalSim3.simulate();
+            bestSim = bestSim.maxTauH > internalSim3.maxTauH ? bestSim: internalSim3;
+            bestRet = bestSim.maxTauH > internalSim3.maxTauH ? bestRet: ret3;
             for (let key in bestSim) {
                 // @ts-ignore
                 if (bestSim.hasOwnProperty(key) && typeof bestSim[key] !== "function") {
