@@ -108,7 +108,9 @@ class rzSim extends theoryClass {
             RZ: new Array(6).fill(true),
             RZd: activeStrat,
             RZBH: semiPassiveStrat,
+            RZBHLong: semiPassiveStrat,
             RZdBH: activeStrat,
+            RZdBHLong: activeStrat,
             RZSpiralswap: activeStrat,
             RZdMS: activeStrat,
             RZMS: semiPassiveStrat,
@@ -151,7 +153,9 @@ class rzSim extends theoryClass {
             RZ: noBHRoute,
             RZd: noBHRoute,
             RZBH: BHRoute,
+            RZBHLong: BHRoute,
             RZdBH: BHRoute,
+            RZdBHLong: BHRoute,
             RZSpiralswap: noBHRoute,
             RZdMS: noBHRoute,
             RZMS: noBHRoute,
@@ -168,6 +172,7 @@ class rzSim extends theoryClass {
         const max = [3, 1, 1, 1];
         const originPriority = [2, 1, 3];
         const peripheryPriority = [2, 3, 1];
+        let BHStrats = new Set(["RZBH", "RZdBH", "RZBHLong", "RZdBHLong"]);
         if (this.strat === "RZSpiralswap" && stage >= 2 && stage <= 4) {
             // Spiralswap
             let priority = originPriority;
@@ -195,7 +200,7 @@ class rzSim extends theoryClass {
                 }
             }
         }
-        else if ((this.strat === "RZBH" || this.strat === "RZdBH") && stage === 6) {
+        else if (BHStrats.has(this.strat) && stage === 6) {
             // Black hole coasting
             if ((!this.bhAtRecovery && (this.t_var <= this.targetZero)) ||
                 (this.bhAtRecovery && (this.maxRho < this.lastPub))) {
@@ -456,6 +461,9 @@ class rzSimWrap extends theoryClass {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.strat.includes("BH") && this.lastPub >= 600) {
                 let zeroList = this.strat.startsWith("RZd") ? rzdZeros : rzZeros;
+                if (this.strat.includes("Long")) {
+                    zeroList = goodzeros.longZeros;
+                }
                 let startZeroIndex = 0;
                 let bestSim = new rzSim(this._originalData);
                 bestSim.bhAtRecovery = true;
@@ -477,6 +485,13 @@ class rzSimWrap extends theoryClass {
                         }
                     }
                 }
+                if (this.strat.includes("Long")) {
+                    boundaryCondition = {
+                        "toRho": 9999999999, "from": 3000, "to": 999999999
+                    };
+                    bestSim = null;
+                    bestSimRes = null;
+                }
                 for (let i = startZeroIndex; i < zeroList.length; i++) {
                     let zero = zeroList[i];
                     if (boundaryCondition != null) {
@@ -487,7 +502,7 @@ class rzSimWrap extends theoryClass {
                     let internalSim = new rzSim(this._originalData);
                     internalSim.targetZero = zero;
                     let res = yield internalSim.simulate();
-                    if (bestSim.maxTauH < internalSim.maxTauH) {
+                    if (bestSim == null || bestSim.maxTauH < internalSim.maxTauH) {
                         bestSim = internalSim;
                         bestSimRes = res;
                     }
@@ -524,6 +539,9 @@ class rzSimWrap extends theoryClass {
                         // @ts-ignore
                         this[key] = bestSim[key];
                     }
+                }
+                if (bestSimRes == null) {
+                    throw new Error("result somehow not set?");
                 }
                 return bestSimRes;
             }
