@@ -128,7 +128,9 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             RZ: new Array(6).fill(true),
             RZd: activeStrat,
             RZBH: semiPassiveStrat,
+            RZBHLong: semiPassiveStrat,
             RZdBH: activeStrat,
+            RZdBHLong: activeStrat,
             RZSpiralswap: activeStrat,
             RZdMS: activeStrat,
             RZMS: semiPassiveStrat,
@@ -171,7 +173,9 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
             RZ: noBHRoute,
             RZd: noBHRoute,
             RZBH: BHRoute,
+            RZBHLong: BHRoute,
             RZdBH: BHRoute,
+            RZdBHLong: BHRoute,
             RZSpiralswap: noBHRoute,
             RZdMS: noBHRoute,
             RZMS: noBHRoute,
@@ -188,6 +192,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
         const max = [3, 1, 1, 1];
         const originPriority = [2, 1, 3];
         const peripheryPriority = [2, 3, 1];
+        let BHStrats = new Set(["RZBH", "RZdBH", "RZBHLong", "RZdBHLong"]);
 
         if (this.strat === "RZSpiralswap" && stage >= 2 && stage <= 4)
         {
@@ -216,7 +221,7 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
                 }
             }
         }
-        else if ((this.strat === "RZBH" || this.strat === "RZdBH") && stage === 6)
+        else if (BHStrats.has(this.strat) && stage === 6)
         {
             // Black hole coasting
             if (
@@ -501,13 +506,16 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
         super(data);
         this._originalData = data;
     }
-    async simulate() {
+    async simulate(): Promise<simResult> {
         if(this.strat.includes("BH") && this.lastPub >= 600) {
             let zeroList = this.strat.startsWith("RZd") ? rzdZeros : rzZeros;
+            if(this.strat.includes("Long")) {
+                zeroList = goodzeros.longZeros;
+            }
             let startZeroIndex = 0;
-            let bestSim: rzSim = new rzSim(this._originalData);
+            let bestSim: rzSim | null = new rzSim(this._originalData);
             bestSim.bhAtRecovery = true;
-            let bestSimRes = await bestSim.simulate();
+            let bestSimRes: simResult | null = await bestSim.simulate();
             let boundaryCondition = null;
             if(!this.strat.startsWith("RZd")) {
                 for(let x of goodzeros.rzIdleBHBoundaries) {
@@ -525,6 +533,13 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
                     }
                 }
             }
+            if(this.strat.includes("Long")) {
+                boundaryCondition = {
+                    "toRho": 9999999999, "from": 3000, "to": 999999999
+                }
+                bestSim = null;
+                bestSimRes = null;
+            }
             for(let i = startZeroIndex; i < zeroList.length; i++) {
                 let zero = zeroList[i];
                 if(boundaryCondition != null) {
@@ -535,7 +550,7 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
                 let internalSim = new rzSim(this._originalData)
                 internalSim.targetZero = zero;
                 let res = await internalSim.simulate();
-                if(bestSim.maxTauH < internalSim.maxTauH) {
+                if(bestSim == null || bestSim.maxTauH < internalSim.maxTauH) {
                     bestSim = internalSim;
                     bestSimRes = res;
                 }
@@ -573,6 +588,9 @@ class rzSimWrap extends theoryClass<theory> implements specificTheoryProps {
                     // @ts-ignore
                     this[key] = bestSim[key];
                 }
+            }
+            if(bestSimRes == null) {
+                throw new Error("result somehow not set?");
             }
             return bestSimRes;
         }
