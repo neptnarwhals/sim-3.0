@@ -81,7 +81,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       },
       ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
     ];
-    const gnarStrat0 = [
+    const gnarStrat = [
       () => {
         const dPower: number[] = [3.09152, 3.00238, 2.91940]
         return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1]*(this.variables[4].cost + l10(dPower[this.milestones[2]])));
@@ -101,7 +101,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       },
       ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
     ];
-    const gnarStrat1 = [
+    const gnarStratSLOW = [
       () => {
         const dPower: number[] = [3.09152, 3.00238, 2.91940]
         return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1]*(this.variables[4].cost + l10(dPower[this.milestones[2]])));
@@ -110,67 +110,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
         return true;
       },
       () => {
-        return l10(this.i) + l10(1.233) < this.variables[3].value - 15 || (this.variables[2].cost + l10(20) < this.maxRho && l10(this.i) + l10(1.012) < this.variables[3].value - 15);
-      },
-      () => {
-        return true;
-      },
-      () => {
-        const dPower: number[] = [3.09152, 3.00238, 2.91940]
-        return this.variables[4].cost + l10(dPower[this.milestones[2]]) < Math.min(this.variables[1].cost + l10(2), this.variables[3].cost);
-      },
-      ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
-    ];
-    const gnarStrat2 = [
-      () => {
-        const dPower: number[] = [3.09152, 3.00238, 2.91940]
-        return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1]*(this.variables[4].cost + l10(dPower[this.milestones[2]])));
-      },
-      () => {
-        return true;
-      },
-      () => {
-        return l10(this.i) + l10(1.266) < this.variables[3].value - 15 || (this.variables[2].cost + l10(20) < this.maxRho && l10(this.i) + l10(1.012) < this.variables[3].value - 15);
-      },
-      () => {
-        return true;
-      },
-      () => {
-        const dPower: number[] = [3.09152, 3.00238, 2.91940]
-        return this.variables[4].cost + l10(dPower[this.milestones[2]]) < Math.min(this.variables[1].cost + l10(2), this.variables[3].cost);
-      },
-      ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
-    ];
-    const gnarStrat3 = [
-      () => {
-        const dPower: number[] = [3.09152, 3.00238, 2.91940]
-        return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1]*(this.variables[4].cost + l10(dPower[this.milestones[2]])));
-      },
-      () => {
-        return true;
-      },
-      () => {
-        return l10(this.i) + l10(1.3) < this.variables[3].value - 15 || (this.variables[2].cost + l10(20) < this.maxRho && l10(this.i) + l10(1.012) < this.variables[3].value - 15);
-      },
-      () => {
-        return true;
-      },
-      () => {
-        const dPower: number[] = [3.09152, 3.00238, 2.91940]
-        return this.variables[4].cost + l10(dPower[this.milestones[2]]) < Math.min(this.variables[1].cost + l10(2), this.variables[3].cost);
-      },
-      ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
-    ];
-    const gnarStrat4 = [
-      () => {
-        const dPower: number[] = [3.09152, 3.00238, 2.91940]
-        return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1]*(this.variables[4].cost + l10(dPower[this.milestones[2]])));
-      },
-      () => {
-        return true;
-      },
-      () => {
-        return l10(this.i) + l10(1.35) < this.variables[3].value - 15 || (this.variables[2].cost + l10(20) < this.maxRho && l10(this.i) + l10(1.012) < this.variables[3].value - 15);
+        return l10(this.i) + l10(1.2) < this.variables[3].value - 15 || (this.variables[2].cost + l10(20) < this.maxRho && l10(this.i) + l10(1.012) < this.variables[3].value - 15);
       },
       () => {
         return true;
@@ -207,11 +147,8 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
       MF: idleStrat,
       MFd: activeStrat,
-      MFdGnar0: gnarStrat0,
-      MFdGnar1: gnarStrat1,
-      MFdGnar2: gnarStrat2,
-      MFdGnar3: gnarStrat3,
-      MFdGnar4: gnarStrat4,
+      MFdGnar: gnarStrat,
+      MFdGnarSLOW: gnarStratSLOW,
       MFdPostRecovery0: makeMFdPostRecovery(0),
       MFdPostRecovery1: makeMFdPostRecovery(1),
       MFdPostRecovery2: makeMFdPostRecovery(2),
@@ -257,11 +194,8 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     const tree: { [key in stratType[theory]]: Array<Array<number>> } = {
       MF: globalOptimalRoute,
       MFd: globalOptimalRoute,
-      MFdGnar0: globalOptimalRoute,
-      MFdGnar1: globalOptimalRoute,
-      MFdGnar2: globalOptimalRoute,
-      MFdGnar3: globalOptimalRoute,
-      MFdGnar4: globalOptimalRoute,
+      MFdGnar: globalOptimalRoute,
+      MFdGnarSLOW: globalOptimalRoute,
       MFdPostRecovery0: globalOptimalRoute,
       MFdPostRecovery1: globalOptimalRoute,
       MFdPostRecovery2: globalOptimalRoute,
@@ -373,6 +307,12 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
   }
   async simulate() {
     let pubCondition = false;
+    this.boughtVars.push({
+      variable: this.resetCombination.toString(),
+      level: 0,
+      cost: 0,
+      timeStamp: 0
+    })
     while (!pubCondition) {
       if (!global.simulating) break;
       if ((this.ticks + 1) % 500000 === 0) await sleep();
@@ -465,7 +405,7 @@ class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
   }
   async simulate() {
     let resetMultiValues = [];
-    for (let i = 1.3; i <= 2.6; i += 0.1) {
+    for (let i = 1.3; i <= 3; i += 0.1) {
       resetMultiValues.push(parseFloat(i.toFixed(1)));
     }
     const vMaxBuys: number[] = Array.from({ length: 21 }, (_, index) => index);
@@ -474,10 +414,10 @@ class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
     let finalSimRes: any;
     for (const vMaxBuy of vMaxBuys) {
       for (const resetMulti of resetMultiValues) {
-        for (const resetCombination of getAllCombinations(resetMulti)) {
+        for (const resetCombination of getAllCombinations(resetMulti, this.strat == "MFdGnarSLOW" ? true : false)) {
           let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy);
           let bestSimRes = await bestSim.simulate();
-          // Unnecessary additional cosating attempt
+          // Unnecessary additional coasting attempt
           // let internalSim = new mfSim(this._originalData, resetCombination)
           // internalSim.normalPubRho = bestSim.pubRho;
           // let res = await internalSim.simulate();
@@ -508,10 +448,8 @@ class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
   }
 }
 
-function getAllCombinations(resetMulti: number) {
-  // Disabled reset combinations
-  // const values = [resetMulti, resetMulti + 0.3, resetMulti - 0.3].filter(val => val >= 1);
-  const values = [resetMulti].filter(val => val >= 1);
+function getAllCombinations(resetMulti: number, slowMode: boolean) {
+  const values = slowMode ? [resetMulti, resetMulti + 0.3, resetMulti - 0.3].filter(val => val >= 1) : [resetMulti].filter(val => val >= 1);
   const combinations: number[][] = [];
 
   function combine(prefix:number[], array:number[]) {
