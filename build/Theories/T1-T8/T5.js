@@ -24,7 +24,13 @@ class t5Sim extends theoryClass {
     getBuyingConditions() {
         const conditions = {
             T5: [true, true, true, true, true],
-            T5Idle: [true, true, () => this.maxRho + (this.lastPub - 200) / 165 < this.lastPub, () => this.c2worth, true],
+            T5Idle: [
+                true,
+                true,
+                () => this.maxRho + (this.lastPub - 200) / 165 < this.lastPub,
+                () => this.c2worth,
+                true
+            ],
             T5AI2: [
                 () => this.variables[0].cost + l10(3 + (this.variables[0].level % 10)) <= Math.min(this.variables[1].cost, this.variables[3].cost, this.milestones[2] > 0 ? this.variables[4].cost : 1000),
                 true,
@@ -64,20 +70,33 @@ class t5Sim extends theoryClass {
         const stage = Math.min(6, Math.floor(Math.max(this.lastPub, this.maxRho) / 25));
         this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
     }
+    //calculateQ(ic1: number, ic2: number, ic3: number) {
+    //  const log10E = Math.log10(Math.E);
+    //  let sub = -Infinity;
+    //  if (ic2 + ic3 > this.q) sub = subtract(ic2 + ic3, this.q);
+    //  else if (ic2 + ic3 < this.q) sub = subtract(this.q, ic2 + ic3);
+    //  const sign = ic2 + ic3 >= this.q ? 1 : -1;
+    //  let relT = 0;
+    //  if (sub > this.q) relT = -(10 ** (ic2 - ic1 - ic3 + sign * Math.log10((sub - this.q) / log10E)));
+    //  else if (sub < this.q) relT = 10 ** (ic2 - ic1 - ic3 + sign * Math.log10((this.q - sub) / log10E));
+    //  return ic2 + ic3 - Math.log10(1 + 1 / Math.E ** ((relT + this.dt) * 10 ** (ic1 - ic2 + ic3)));
+    //}
+    // Solves q using the differential equation result
     calculateQ(ic1, ic2, ic3) {
-        const log10E = Math.log10(Math.E);
-        let sub = -Infinity;
-        if (ic2 + ic3 > this.q)
-            sub = subtract(ic2 + ic3, this.q);
-        else if (ic2 + ic3 < this.q)
-            sub = subtract(this.q, ic2 + ic3);
-        const sign = ic2 + ic3 >= this.q ? 1 : -1;
-        let relT = 0;
-        if (sub > this.q)
-            relT = -(Math.pow(10, (ic2 - ic1 - ic3 + sign * Math.log10((sub - this.q) / log10E))));
-        else if (sub < this.q)
-            relT = Math.pow(10, (ic2 - ic1 - ic3 + sign * Math.log10((this.q - sub) / log10E)));
-        return ic2 + ic3 - Math.log10(1 + 1 / Math.pow(Math.E, ((relT + this.dt) * Math.pow(10, (ic1 - ic2 + ic3)))));
+        const qcap = ic2 + ic3;
+        const gamma = Math.pow(10, (ic1 + ic3 - ic2)); // q growth speed characteristic parameter
+        const adjust = this.q - subtract(qcap, this.q); // initial condition
+        const sigma = Math.pow(10, (adjust + gamma * this.dt * l10(Math.E)));
+        let newq;
+        // Approximation when q << qcap
+        if (sigma < 1e-30) {
+            newq = qcap + adjust + gamma * this.dt * l10(Math.E);
+        }
+        // Normal resolution
+        else {
+            newq = qcap - l10(1 + 1 / sigma);
+        }
+        return Math.min(newq, qcap);
     }
     constructor(data) {
         super(data);

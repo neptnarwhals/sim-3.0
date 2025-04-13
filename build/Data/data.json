@@ -429,6 +429,12 @@
                 "RZBH": {
                     "stratFilterCondition": "(Idle || Semi-Idle) && rho >= 600"
                 },
+                "RZBHLong": {
+                    "stratFilterCondition": "false"
+                },
+                "RZdBHLong": {
+                    "stratFilterCondition": "false"
+                },
                 "RZdBH": {
                     "stratFilterCondition": "(Active || Very-Active) && rho >= 600"
                 },
