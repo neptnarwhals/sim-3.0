@@ -20,6 +20,7 @@ import rz from "../Theories/CTs/RZ.js";
 import mf from "../Theories/CTs/MF.js";
 import bap from "../Theories/CTs/BaP.js";
 import bt from "../Theories/Unofficial-CTs/BT.js";
+import tc from "../Theories/Unofficial-CTs/TC";
 
 const output = qs(".output");
 
@@ -143,6 +144,8 @@ async function singleSim(data: Omit<parsedData, "simAllInputs">): Promise<simRes
       return await bap(sendData);
     case "BT":
       return await bt(sendData);
+    case "TC":
+      return await tc(sendData);
   }
 }
 

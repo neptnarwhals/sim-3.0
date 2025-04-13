@@ -25,7 +25,11 @@ class btSim extends theoryClass {
     getBuyingConditions() {
         const conditions = {
             BT: [true, true, true],
-            BTd: [() => this.variables[0].cost + l10(this.lastPub < 275 ? 12 + (this.variables[0].level % 10) : 10 + (this.variables[0].level % 10)) < this.variables[1].cost, true, true],
+            BTd: [
+                () => this.variables[0].cost + l10(this.lastPub < 275 ? 12 + (this.variables[0].level % 10) : 10 + (this.variables[0].level % 10)) < this.variables[1].cost,
+                true,
+                true
+            ],
         };
         const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
         return condition;
