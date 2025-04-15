@@ -1,3 +1,4 @@
+
 import { global } from "../../Sim/main.js";
 import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
 import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
@@ -81,7 +82,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       },
       ...new Array(4).fill(() => (this.maxRho <= this.lastPub+this.vMaxBuy && this.buyV))
     ];
-    const gnarStrat = [
+    const activeStrat2 = [
       () => {
         const dPower: number[] = [3.09152, 3.00238, 2.91940]
         return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1]*(this.variables[4].cost + l10(dPower[this.milestones[2]])));
@@ -127,8 +128,8 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     const conditions: { [key in stratType[theory]]: Array<boolean | conditionFunction> } = {
       MF: idleStrat,
       MFd: activeStrat,
-      MFdGnar: gnarStrat,
-      MFdGnarSLOW: gnarStrat,
+      MFd2: activeStrat2,
+      MFd2SLOW: activeStrat2,
       MFdPostRecovery0: makeMFdPostRecovery(0),
       MFdPostRecovery1: makeMFdPostRecovery(1),
       MFdPostRecovery2: makeMFdPostRecovery(2),
@@ -174,8 +175,8 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
     const tree: { [key in stratType[theory]]: Array<Array<number>> } = {
       MF: globalOptimalRoute,
       MFd: globalOptimalRoute,
-      MFdGnar: globalOptimalRoute,
-      MFdGnarSLOW: globalOptimalRoute,
+      MFd2: globalOptimalRoute,
+      MFd2SLOW: globalOptimalRoute,
       MFdPostRecovery0: globalOptimalRoute,
       MFdPostRecovery1: globalOptimalRoute,
       MFdPostRecovery2: globalOptimalRoute,
@@ -300,7 +301,7 @@ class mfSim extends theoryClass<theory> implements specificTheoryProps {
       this.ticks++;
     }
     this.pubMulti = 10 ** (this.getTotMult(this.pubRho) - this.totMult);
-    const result = createResult(this, this.strat === "MFdGnarSLOW" ? " " + this.resetCombination: this.stratExtra);
+    const result = createResult(this, this.strat === "MFd2SLOW" ? " " + this.resetCombination: this.stratExtra);
 
     while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT) this.boughtVars.pop();
     global.varBuy.push([result[7], this.boughtVars]);
@@ -389,7 +390,7 @@ class mfSimWrap extends theoryClass<theory> implements specificTheoryProps {
     let finalSimRes: any;
     for (const vMaxBuy of vMaxBuys) {
       for (const resetMulti of resetMultiValues) {
-        for (const resetCombination of getAllCombinations(resetMulti, this.strat === "MFdGnarSLOW" ? true : false)) {
+        for (const resetCombination of getAllCombinations(resetMulti, this.strat === "MFd2SLOW" ? true : false)) {
           let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy);
           let bestSimRes = await bestSim.simulate();
           // Unnecessary additional coasting attempt
