@@ -70,7 +70,7 @@ class mfSim extends theoryClass {
             },
             ...new Array(4).fill(() => (this.maxRho <= this.lastPub + this.vMaxBuy && this.buyV))
         ];
-        const gnarStrat = [
+        const activeStrat2 = [
             () => {
                 const dPower = [3.09152, 3.00238, 2.91940];
                 return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1] * (this.variables[4].cost + l10(dPower[this.milestones[2]])));
@@ -116,8 +116,8 @@ class mfSim extends theoryClass {
         const conditions = {
             MF: idleStrat,
             MFd: activeStrat,
-            MFdGnar: gnarStrat,
-            MFdGnarSLOW: gnarStrat,
+            MFd2: activeStrat2,
+            MFd2SLOW: activeStrat2,
             MFdPostRecovery0: makeMFdPostRecovery(0),
             MFdPostRecovery1: makeMFdPostRecovery(1),
             MFdPostRecovery2: makeMFdPostRecovery(2),
@@ -162,8 +162,8 @@ class mfSim extends theoryClass {
         const tree = {
             MF: globalOptimalRoute,
             MFd: globalOptimalRoute,
-            MFdGnar: globalOptimalRoute,
-            MFdGnarSLOW: globalOptimalRoute,
+            MFd2: globalOptimalRoute,
+            MFd2SLOW: globalOptimalRoute,
             MFdPostRecovery0: globalOptimalRoute,
             MFdPostRecovery1: globalOptimalRoute,
             MFdPostRecovery2: globalOptimalRoute,
@@ -212,18 +212,22 @@ class mfSim extends theoryClass {
                 cost: this.maxRho,
                 timeStamp: this.t
             });
+            // console.log(this.strat + " vMaxBuy="+this.vMaxBuy+": "+(this.resets) + " resets ("+ parseFloat((this.t/3600).toFixed(2)).toFixed(2)+" hours & "+(10**(this.maxRho % 1)).toFixed(2)+'e'+Math.floor(this.maxRho) + " rho), "+"resetMulti= "+this.dynamicResetMulti+", v1="+this.variables[5].level+", v2="+this.variables[6].level+", v3="+this.variables[7].level+", v4="+this.variables[8].level)
+            const currentIndex = this.resetCombination.indexOf(this.dynamicResetCombination);
+            if (currentIndex + 1 < this.resetCombination.length) {
+                this.dynamicResetCombination = this.resetCombination[currentIndex + 1];
+            }
+            else {
+                this.dynamicResetCombination = this.resetCombination[0];
+            }
+            this.dynamicResetLevels = this.getMaxVBuy();
+            this.lastResetLevels = [this.variables[5].level, this.variables[6].level, this.variables[7].level, this.variables[8].level];
+            this.nextResetLevels = [];
+            for (let i = 0; i < this.lastResetLevels.length; i++) {
+                this.nextResetLevels.push(this.lastResetLevels[i] + this.dynamicResetLevels[i]);
+            }
         }
-        // console.log(this.strat + " vMaxBuy="+this.vMaxBuy+": "+(this.resets) + " resets ("+ parseFloat((this.t/3600).toFixed(2)).toFixed(2)+" hours & "+(10**(this.maxRho % 1)).toFixed(2)+'e'+Math.floor(this.maxRho) + " rho), "+"resetMulti= "+this.dynamicResetMulti+", v1="+this.variables[5].level+", v2="+this.variables[6].level+", v3="+this.variables[7].level+", v4="+this.variables[8].level)
-        const currentIndex = this.resetCombination.indexOf(this.dynamicResetMulti);
-        if (currentIndex + 1 < this.resetCombination.length) {
-            this.dynamicResetMulti = this.resetCombination[currentIndex + 1];
-        }
-        else {
-            this.dynamicResetMulti = this.resetCombination[0];
-        }
-        if (this.rho > 65) {
-            this.buyV = false;
-        }
+        this.buyV = false;
     }
     updateC() {
         const xterm = l10(4e13) * this.xexp();
@@ -231,7 +235,7 @@ class mfSim extends theoryClass {
         const vterm = this.milestones[0] ? l10(3e19) * 1.3 + l10(1e5) * (this.vexp() - 1.3) : 0;
         this.c = xterm + omegaterm + vterm + l10(8.67e23);
     }
-    constructor(data, resetCombination, vMaxBuy) {
+    constructor(data, resetCombination, vMaxBuy, overage) {
         super(data);
         this.pubUnlock = 8;
         this.totMult = data.rho < this.pubUnlock ? 0 : this.getTotMult(data.rho);
@@ -244,13 +248,18 @@ class mfSim extends theoryClass {
         this.vtot = 0;
         this.resets = 0;
         this.varNames = ["c1", "c2", "a1", "a2", "δ", "v1", "v2", "v3", "v4"];
-        this.stratExtra = "";
         this.normalPubRho = -1;
         this.resetCombination = resetCombination;
+        this.dynamicResetCombination = resetCombination[0];
         this.vMaxBuy = vMaxBuy;
-        this.dynamicResetMulti = resetCombination[0];
-        this.buyV = true;
-        this.resetcond = false;
+        this.overage = overage;
+        this.dynamicResetLevels = [2, 1, 0, 0];
+        this.lastResetLevels = [0, 0, 0, 0];
+        this.nextResetLevels = [2, 1, 0, 0];
+        this.nextResetCost = l10(16480);
+        this.buyV = false;
+        this.stratExtra = "";
+        this.resetCond = false;
         this.variables =
             [
                 new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), valueScaling: new StepwisePowerSumValue(2, 7) }),
@@ -287,7 +296,7 @@ class mfSim extends theoryClass {
                 this.ticks++;
             }
             this.pubMulti = Math.pow(10, (this.getTotMult(this.pubRho) - this.totMult));
-            const result = createResult(this, this.strat === "MFdGnarSLOW" ? " " + this.resetCombination : this.stratExtra);
+            const result = createResult(this, " Resets: " + this.resetCombination + " Overage: " + this.overage);
             while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT)
                 this.boughtVars.pop();
             global.varBuy.push([result[7], this.boughtVars]);
@@ -312,9 +321,8 @@ class mfSim extends theoryClass {
         const vterm = this.milestones[0] ? l10(this.vtot) * this.vexp() : 0;
         const rhodot = this.totMult + this.c + vc1 + vc2 + xterm + omegaterm + vterm;
         this.rho = add(this.rho, rhodot + l10(this.dt));
-        const vvx = Math.pow(10, (this.variables[5].value + this.variables[6].value - 20));
-        this.resetcond = vvx / this.vx > this.dynamicResetMulti;
-        if (this.resetcond && this.buyV) {
+        this.resetCond = ((this.nextResetLevels[0] <= this.variables[5].level) && (this.nextResetLevels[1] <= this.variables[6].level) && (this.nextResetLevels[2] <= this.variables[7].level) && (this.nextResetLevels[3] <= this.variables[8].level));
+        if (this.resetCond && this.buyV) {
             this.resetParticle();
         }
         this.t += this.dt / 1.5;
@@ -331,11 +339,12 @@ class mfSim extends theoryClass {
     buyVariables() {
         for (let i = this.variables.length - 1; i >= 0; i--) {
             while (true) {
-                if ((!this.buyV) && (i >= 5 && (this.rho > (Math.max(this.variables[5].cost, this.variables[6].cost, this.variables[7].cost, this.variables[8].cost) + l10(2))))) {
+                if ((!this.buyV) && (i >= 5 && (this.rho > this.nextResetCost))) {
                     this.buyV = true;
                 }
                 if (this.rho > this.variables[i].cost && this.conditions[i]() && this.milestoneConditions[i]()) {
-                    if (this.maxRho + 10 > this.lastPub) {
+                    // debug: REPLACE TRUE WITH "this.maxRho + 10 > this.lastPub"
+                    if (true) {
                         this.boughtVars.push({
                             variable: this.varNames[i],
                             level: this.variables[i].level + 1,
@@ -352,6 +361,49 @@ class mfSim extends theoryClass {
             }
         }
     }
+    getMaxVBuy() {
+        let v2ToBuy = this.dynamicResetCombination[0];
+        let v4ToBuy = this.dynamicResetCombination[1];
+        let v1Cur = this.variables[5].level;
+        let v2Cur = this.variables[6].level;
+        let v3Cur = this.variables[7].level;
+        let v4Cur = this.variables[8].level;
+        const v2MaxCost = v2ToBuy !== 0 ? (4 + 4.5 * (v2Cur + v2ToBuy - 1)) : 0;
+        if (v2MaxCost + this.overage < 52) {
+            v4ToBuy = 0;
+        }
+        const v4MaxCost = v4ToBuy !== 0 ? (52 + 6 * (v4Cur + v4ToBuy - 1)) : 0;
+        const maxSpend = add(Math.max(v2MaxCost, v4MaxCost), this.overage);
+        let v1ToBuy = 0;
+        while ((l10(80) + l10(80) * (v1Cur + v1ToBuy)) <= maxSpend) {
+            v1ToBuy++;
+        }
+        let v3ToBuy = 0;
+        while (((50 + l10(70) * (v3Cur + v3ToBuy)) <= maxSpend) && (maxSpend >= 52)) {
+            v3ToBuy++;
+        }
+        const varLevels = [v1ToBuy, v2ToBuy, v3ToBuy, v4ToBuy];
+        return varLevels;
+    }
+    getTotalVCost() {
+        const costsBase = [l10(80), 4, 50, 52];
+        const costsInc = [l10(80), 4.5, l10(70), 6];
+        let totalCost = 0;
+        for (let i = 0; i < 4; i++) {
+            let buyLevel = this.dynamicResetLevels[i];
+            if (buyLevel >= 0) {
+                let index = i + 5;
+                let vLevel = this.variables[index].level;
+                let totalVarCost = 0;
+                for (let j = 0; j < buyLevel; j++) {
+                    const varCost = costsBase[i] + costsInc[i] * (vLevel + j);
+                    totalVarCost = add(totalVarCost, varCost);
+                }
+                totalCost = add(totalCost, totalVarCost);
+            }
+        }
+        return totalCost;
+    }
 }
 class mfSimWrap extends theoryClass {
     constructor(data) {
@@ -360,17 +412,22 @@ class mfSimWrap extends theoryClass {
     }
     simulate() {
         return __awaiter(this, void 0, void 0, function* () {
-            let resetMultiValues = [];
-            for (let i = 1.3; i <= 3; i += 0.1) {
-                resetMultiValues.push(parseFloat(i.toFixed(1)));
-            }
-            const vMaxBuys = Array.from({ length: 21 }, (_, index) => index);
+            let overages = [0.2, 0.4, 0.6, 0.8, 1, 1.2, 1.4, 1.6, 1.8, 2, 2.2, 2.4, 2.6, 2.8, 3];
+            const resetVarValues = [[1, 0], [1, 1], [2, 1], [2, 2]];
+            //const resetCombos: number[][][] = [
+            //  [[1, 0], [1, 1]], [[1, 0], [2, 1]], [[1, 0], [2, 2]], 
+            //  [[1, 1]], [[1, 1], [2, 1]], [[1, 1], [2, 2]], 
+            //  [[2, 1]], [[2, 1], [2, 2]], 
+            //  [[2, 2]]
+            //] 
+            const vMaxBuys = Array.from({ length: 15 }, (_, index) => index);
             let finalSim;
             let finalSimRes;
             for (const vMaxBuy of vMaxBuys) {
-                for (const resetMulti of resetMultiValues) {
-                    for (const resetCombination of getAllCombinations(resetMulti, this.strat === "MFdGnarSLOW" ? true : false)) {
-                        let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy);
+                for (const resetCombination of getAllCombinations(resetVarValues, true)) {
+                    for (let i = 0; i < overages.length; i++) {
+                        const overage = overages[i];
+                        let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy, overage);
                         let bestSimRes = yield bestSim.simulate();
                         // Unnecessary additional coasting attempt
                         // let internalSim = new mfSim(this._originalData, resetCombination)
@@ -404,17 +461,19 @@ class mfSimWrap extends theoryClass {
         });
     }
 }
-function getAllCombinations(resetMulti, slowMode) {
-    const values = slowMode === true ? [resetMulti, resetMulti + 0.3, resetMulti - 0.3].filter(val => val >= 1) : [resetMulti].filter(val => val >= 1);
+function getAllCombinations(values, slowMode) {
     const combinations = [];
-    function combine(prefix, array) {
-        if (prefix.length > 0) {
-            combinations.push([...prefix]);
-        }
-        for (let i = 0; i < array.length; i++) {
-            combine([...prefix, array[i]], array.slice(i + 1));
+    for (let i = 0; i < values.length; i++) {
+        for (let j = 0; j < values.length; j++) {
+            if (slowMode) {
+                for (let k = 0; k < values.length; k++) {
+                    combinations.push([values[i], values[j], values[k]]);
+                }
+            }
+            else {
+                combinations.push([values[i], values[j]]);
+            }
         }
     }
-    combine([resetMulti], values.slice(1));
     return combinations;
 }

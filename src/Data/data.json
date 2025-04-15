@@ -458,10 +458,10 @@
         "MFd": {
           "stratFilterCondition": "Active || Very-Active"
         },
-        "MFdGnar": {
+        "MFd2": {
           "stratFilterCondition": "Active || Very-Active"
         },
-        "MFdGnarSLOW": {
+        "MFd2SLOW": {
           "stratFilterCondition": "false"
         },
         "MFdPostRecovery0": {
