@@ -76,7 +76,8 @@ export function modeUpdate() {
         timeDiffWrapper.style.display = "grid";
     if (mode.value !== "All" && mode.value !== "Time diff.")
         singleInput.style.display = "grid";
-    // if (mode.value === "Chain") hardCap.style.display = "block";
+    if (mode.value === "Chain")
+        hardCap.style.display = "block";
     if (mode.value === "All") {
         simAllInputs.style.display = "grid";
         modeInputDescription.style.display = "none";

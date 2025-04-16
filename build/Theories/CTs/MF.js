@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { global } from "../../Sim/main.js";
-import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
 import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
@@ -70,6 +70,26 @@ class mfSim extends theoryClass {
             },
             ...new Array(4).fill(() => (this.maxRho <= this.lastPub + this.vMaxBuy && this.buyV))
         ];
+        const activeStrat2 = [
+            () => {
+                const dPower = [3.09152, 3.00238, 2.91940];
+                return this.variables[0].cost + l10(8 + (this.variables[0].level % 7)) <= Math.min(this.variables[1].cost + l10(2), this.variables[3].cost, this.milestones[1] * (this.variables[4].cost + l10(dPower[this.milestones[2]])));
+            },
+            () => {
+                return true;
+            },
+            () => {
+                return l10(this.i) + l10(1.2) < this.variables[3].value - 15 || (this.variables[2].cost + l10(20) < this.maxRho && l10(this.i) + l10(1.012) < this.variables[3].value - 15);
+            },
+            () => {
+                return true;
+            },
+            () => {
+                const dPower = [3.09152, 3.00238, 2.91940];
+                return this.variables[4].cost + l10(dPower[this.milestones[2]]) < Math.min(this.variables[1].cost + l10(2), this.variables[3].cost);
+            },
+            ...new Array(4).fill(() => (this.maxRho <= this.lastPub + this.vMaxBuy && this.buyV))
+        ];
         const tailActiveGen = (i, offset) => {
             return () => {
                 if (this.maxRho <= this.lastPub + offset) {
@@ -96,6 +116,8 @@ class mfSim extends theoryClass {
         const conditions = {
             MF: idleStrat,
             MFd: activeStrat,
+            MFd2: activeStrat2,
+            MFd2SLOW: activeStrat2,
             MFdPostRecovery0: makeMFdPostRecovery(0),
             MFdPostRecovery1: makeMFdPostRecovery(1),
             MFdPostRecovery2: makeMFdPostRecovery(2),
@@ -105,7 +127,7 @@ class mfSim extends theoryClass {
             MFdPostRecovery6: makeMFdPostRecovery(6),
             MFdPostRecovery7: makeMFdPostRecovery(7),
             MFdPostRecovery8: makeMFdPostRecovery(8),
-            MFdPostRecovery9: makeMFdPostRecovery(9),
+            MFdPostRecovery9: makeMFdPostRecovery(9)
         };
         const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
         return condition;
@@ -129,9 +151,9 @@ class mfSim extends theoryClass {
             [0, 0, 0, 0, 0, 0],
             [1, 0, 0, 0, 0, 0],
             [1, 1, 0, 0, 0, 0],
-            [1, 1, 0, 1, 0, 0],
-            [1, 1, 0, 2, 0, 0],
-            [1, 1, 1, 2, 0, 0],
+            [1, 1, 1, 0, 0, 0],
+            [1, 1, 2, 0, 0, 0],
+            [1, 1, 2, 1, 0, 0],
             [1, 1, 2, 2, 0, 0],
             [1, 1, 2, 2, 1, 0],
             [1, 1, 2, 2, 2, 0],
@@ -140,6 +162,8 @@ class mfSim extends theoryClass {
         const tree = {
             MF: globalOptimalRoute,
             MFd: globalOptimalRoute,
+            MFd2: globalOptimalRoute,
+            MFd2SLOW: globalOptimalRoute,
             MFdPostRecovery0: globalOptimalRoute,
             MFdPostRecovery1: globalOptimalRoute,
             MFdPostRecovery2: globalOptimalRoute,
@@ -157,38 +181,19 @@ class mfSim extends theoryClass {
         return Math.max(0, val * this.tauFactor * 0.17);
     }
     updateMilestones() {
-        let stage = 0;
-        const points = [20, 50, 175, 225, 275, 325, 425, 475, 525];
-        for (let i = 0; i < points.length; i++) {
-            if (Math.max(this.lastPub, this.maxRho) >= points[i])
-                stage = i + 1;
-        }
+        const points = [0, 20, 50, 175, 225, 275, 325, 425, 475, 525];
+        const stage = binarySearch(points, Math.max(this.lastPub, this.maxRho));
         this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
         this.updateC();
     }
-    xexp() {
-        if (this.official) {
-            return 3.2 + 0.1 * this.milestones[2];
-        }
-        else {
-            return 3.2 + 0.24 * this.milestones[2];
-        }
-    }
     omegaexp() {
-        if (this.official) {
-            return 4.1 + 0.15 * this.milestones[3];
-        }
-        else {
-            return 4.1 + 0.22 * this.milestones[3];
-        }
+        return 4.1 + 0.15 * this.milestones[2];
+    }
+    xexp() {
+        return 3.2 + 0.1 * this.milestones[3];
     }
     vexp() {
-        if (this.official) {
-            return 1.3 + 0.31 * this.milestones[4];
-        }
-        else {
-            return 1.3 + 0.39 * this.milestones[4];
-        }
+        return 1.3 + 0.31 * this.milestones[4];
     }
     a1exp() {
         return 1 + 0.01 * this.milestones[5];
@@ -197,12 +202,7 @@ class mfSim extends theoryClass {
         this.x = 0;
         this.vx = Math.pow(10, (this.variables[5].value + this.variables[6].value - 20));
         this.vz = Math.pow(10, (this.variables[7].value + this.variables[8].value - 18));
-        if (this.official) {
-            this.vtot = Math.sqrt(this.vx * this.vx + this.vz * this.vz);
-        }
-        else {
-            this.vtot = Math.sqrt(this.vx * this.vx + 2 * this.vz * this.vz);
-        }
+        this.vtot = Math.sqrt(this.vx * this.vx + this.vz * this.vz);
         this.resets++;
         this.stratExtra = "";
         if (this.resets > 1) {
@@ -226,12 +226,12 @@ class mfSim extends theoryClass {
         }
     }
     updateC() {
-        const xterm = this.official ? l10(4e13) * this.xexp() : l10(1e15) * this.xexp();
-        const omegaterm = this.official ? (l10(m0 / (q0 * mu0 * i0)) - l10(900)) * this.omegaexp() : (l10(m0 / (q0 * mu0 * i0)) - l10(1000)) * this.omegaexp();
-        const vterm = this.official ? this.milestones[0] ? l10(3e19) * 1.3 + l10(1e5) * (this.vexp() - 1.3) : 0 : this.milestones[0] ? l10(3e19) * 1.3 + l10(1e6) * (this.vexp() - 1.3) : 0;
-        this.c = this.official ? xterm + omegaterm + vterm + l10(8.67e23) : xterm + omegaterm + vterm + l10(4.49e19);
+        const xterm = l10(4e13) * this.xexp();
+        const omegaterm = (l10(m0 / (q0 * mu0 * i0)) - l10(900)) * this.omegaexp();
+        const vterm = this.milestones[0] ? l10(3e19) * 1.3 + l10(1e5) * (this.vexp() - 1.3) : 0;
+        this.c = xterm + omegaterm + vterm + l10(8.67e23);
     }
-    constructor(data, resetCombination, vMaxBuy, official) {
+    constructor(data, resetCombination, vMaxBuy) {
         super(data);
         this.pubUnlock = 8;
         this.totMult = data.rho < this.pubUnlock ? 0 : this.getTotMult(data.rho);
@@ -251,8 +251,7 @@ class mfSim extends theoryClass {
         this.dynamicResetMulti = resetCombination[0];
         this.buyV = true;
         this.resetcond = false;
-        this.official = official;
-        this.variables = official ?
+        this.variables =
             [
                 new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), valueScaling: new StepwisePowerSumValue(2, 7) }),
                 new Variable({ cost: new ExponentialCost(1e3, 50), valueScaling: new ExponentialValue(2) }),
@@ -263,17 +262,6 @@ class mfSim extends theoryClass {
                 new Variable({ cost: new ExponentialCost(1e4, Math.pow(10, 4.5)), valueScaling: new ExponentialValue(1.3) }),
                 new Variable({ cost: new ExponentialCost(1e50, 70), valueScaling: new StepwisePowerSumValue() }),
                 new Variable({ cost: new ExponentialCost(1e52, 1e6), valueScaling: new ExponentialValue(1.5) }), // v4
-            ] :
-            [
-                new Variable({ cost: new FirstFreeCost(new ExponentialCost(10, 2)), valueScaling: new StepwisePowerSumValue(2, 7) }),
-                new Variable({ cost: new ExponentialCost(1e3, 100), valueScaling: new ExponentialValue(2) }),
-                new Variable({ cost: new ExponentialCost(1e3, 25), valueScaling: new StepwisePowerSumValue(2, 5), value: 1 }),
-                new Variable({ cost: new ExponentialCost(1e4, 55), valueScaling: new ExponentialValue(1.25) }),
-                new Variable({ cost: new ExponentialCost(1e50, 300), valueScaling: new ExponentialValue(1.1) }),
-                new Variable({ cost: new ExponentialCost(80, 80), valueScaling: new StepwisePowerSumValue(), value: 1 }),
-                new Variable({ cost: new ExponentialCost(1e4, Math.pow(10, 4.5)), valueScaling: new ExponentialValue(1.3) }),
-                new Variable({ cost: new ExponentialCost(1e50, 70), valueScaling: new StepwisePowerSumValue() }),
-                new Variable({ cost: new ExponentialCost(1e55, 1e6), valueScaling: new ExponentialValue(1.5) }), // v4
             ];
         this.conditions = this.getBuyingConditions();
         this.milestoneConditions = this.getMilestoneConditions();
@@ -299,7 +287,7 @@ class mfSim extends theoryClass {
                 this.ticks++;
             }
             this.pubMulti = Math.pow(10, (this.getTotMult(this.pubRho) - this.totMult));
-            const result = createResult(this, this.stratExtra);
+            const result = createResult(this, this.strat === "MFd2SLOW" ? " " + this.resetCombination : this.stratExtra);
             while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT)
                 this.boughtVars.pop();
             global.varBuy.push([result[7], this.boughtVars]);
@@ -314,15 +302,10 @@ class mfSim extends theoryClass {
         const vc2 = this.variables[1].value;
         this.x += newdt * this.vx;
         let icap = va2 * i0;
-        if (this.official) {
-            let scale = 1 - Math.pow(Math.E, (-newdt * va1 / (400 * va2)));
-            if (scale < 1e-13)
-                scale = newdt * va1 / 400 / va2;
-            this.i = this.i + scale * (icap - this.i);
-        }
-        else {
-            this.i = icap - (icap - this.i) * (Math.pow(Math.E, (-this.dt * va1 / 10 / va2)));
-        }
+        let scale = 1 - Math.pow(Math.E, (-newdt * va1 / (400 * va2)));
+        if (scale < 1e-13)
+            scale = newdt * va1 / (400 * va2);
+        this.i = this.i + scale * (icap - this.i);
         this.i = Math.min(this.i, icap);
         const xterm = l10(this.x) * this.xexp();
         const omegaterm = (l10((q0 / m0) * mu0 * this.i) + this.variables[4].value) * this.omegaexp();
@@ -377,9 +360,8 @@ class mfSimWrap extends theoryClass {
     }
     simulate() {
         return __awaiter(this, void 0, void 0, function* () {
-            let official = true;
             let resetMultiValues = [];
-            for (let i = 1.3; i <= 2.6; i += 0.1) {
+            for (let i = 1.3; i <= 3; i += 0.1) {
                 resetMultiValues.push(parseFloat(i.toFixed(1)));
             }
             const vMaxBuys = Array.from({ length: 21 }, (_, index) => index);
@@ -387,10 +369,10 @@ class mfSimWrap extends theoryClass {
             let finalSimRes;
             for (const vMaxBuy of vMaxBuys) {
                 for (const resetMulti of resetMultiValues) {
-                    for (const resetCombination of getAllCombinations(resetMulti)) {
-                        let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy, official); // last variable is for switching on/off official version
+                    for (const resetCombination of getAllCombinations(resetMulti, this.strat === "MFd2SLOW" ? true : false)) {
+                        let bestSim = new mfSim(this._originalData, resetCombination, vMaxBuy);
                         let bestSimRes = yield bestSim.simulate();
-                        // Unnecessary additional cosating attempt
+                        // Unnecessary additional coasting attempt
                         // let internalSim = new mfSim(this._originalData, resetCombination)
                         // internalSim.normalPubRho = bestSim.pubRho;
                         // let res = await internalSim.simulate();
@@ -422,10 +404,8 @@ class mfSimWrap extends theoryClass {
         });
     }
 }
-function getAllCombinations(resetMulti) {
-    // Disabled reset combinations
-    // const values = [resetMulti, resetMulti + 0.3, resetMulti - 0.3].filter(val => val >= 1);
-    const values = [resetMulti].filter(val => val >= 1);
+function getAllCombinations(resetMulti, slowMode) {
+    const values = slowMode === true ? [resetMulti, resetMulti + 0.3, resetMulti - 0.3].filter(val => val >= 1) : [resetMulti].filter(val => val >= 1);
     const combinations = [];
     function combine(prefix, array) {
         if (prefix.length > 0) {
