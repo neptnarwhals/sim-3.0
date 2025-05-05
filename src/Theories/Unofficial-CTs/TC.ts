@@ -77,7 +77,7 @@ class tcSim extends theoryClass<theory> implements specificTheoryProps {
     switch (strat) {
       case "TC":
       case "TCd":
-        return [5, 30, 11, 190];
+        return [5, 30, 11, 189];
       default:
         return [5, 0, 0, 100];
     }
