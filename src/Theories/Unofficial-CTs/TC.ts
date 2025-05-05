@@ -77,7 +77,7 @@ class tcSim extends theoryClass<theory> implements specificTheoryProps {
     switch (strat) {
       case "TC":
       case "TCd":
-        return [5, 2, 1, 200];
+        return [5, 30, 11, 190];
       default:
         return [5, 0, 0, 100];
     }
@@ -87,7 +87,7 @@ class tcSim extends theoryClass<theory> implements specificTheoryProps {
     switch (strat) {
       case "TC":
       case "TCd":
-        return [30, 1.5];
+        return [200, 1];
       default:
         return [30, 1.5];
     }
@@ -199,7 +199,7 @@ class tcSim extends theoryClass<theory> implements specificTheoryProps {
     this.error[1] = this.error[0];
     this.error[0] = this.setPoint - this.T;
     this.integral += this.error[0];
-    let derivative = (this.error[0] - this.error[1]) / this.dt;
+    let derivative = (this.error[0] - this.error[1]) / this.systemDt;
     // Anti-windup scheme
     if (this.integral > 100) this.integral = 100;
     if (this.integral < -100) this.integral = -100;
