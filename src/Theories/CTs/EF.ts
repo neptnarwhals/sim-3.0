@@ -124,7 +124,7 @@ class efSim extends theoryClass<theory> implements specificTheoryProps {
         break;
       }
     }
-    if (Math.max(this.lastPub, this.maxRho) > 325) this.nextMilestoneCost = Infinity;
+    if (Math.max(this.lastPub, this.maxRho) >= 325) this.nextMilestoneCost = Infinity;
     this.milestones = this.milestoneTree[Math.min(this.milestoneTree.length - 1, stage)];
     if (this.variables[4].valueScaling.varBase !== 1.1 + 0.01 * this.milestones[3]) {
       this.variables[4].valueScaling.varBase = 1.1 + 0.01 * this.milestones[3];
