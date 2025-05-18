@@ -84,6 +84,27 @@ class t6Sim extends theoryClass<theory> implements specificTheoryProps {
         false,
         true,
       ],
+      T6noC1234dIdleRecovery: [
+        () => {
+          if (this.lastPub >= this.maxRho) {
+            return true;
+          }
+          return this.variables[0].cost + l10(7 + (this.variables[0].level % 10)) < Math.min(this.variables[1].cost, this.variables[3].cost, this.milestones[2] > 0 ? this.variables[8].cost : Infinity)
+        },
+        true,
+        () => {
+          if (this.lastPub >= this.maxRho) {
+            return true;
+          }
+          return this.variables[2].cost + l10(5) < Math.min(this.variables[1].cost, this.variables[3].cost, this.milestones[2] > 0 ? this.variables[8].cost : Infinity)
+        },
+        true,
+        false,
+        false,
+        false,
+        false,
+        true,
+      ],
       T6AI: [],
     };
     const condition = conditions[this.strat].map((v) => (typeof v === "function" ? v : () => v));
@@ -127,6 +148,7 @@ class t6Sim extends theoryClass<theory> implements specificTheoryProps {
       T6noC345d: globalOptimalRoute,
       T6noC1234d: globalOptimalRoute,
       T6AI: globalOptimalRoute,
+      T6noC1234dIdleRecovery: globalOptimalRoute,
     };
     return tree[this.strat];
   }

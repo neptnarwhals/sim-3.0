@@ -228,6 +228,10 @@
                     "stratFilterCondition": "Active && rho >= 800",
                     "forcedCondition": "rho >= 125"
                 },
+                "T6noC1234dIdleRecovery": {
+                    "stratFilterCondition": "false",
+                    "forcedCondition": "rho >= 125"
+                },
                 "T6AI": {
                     "stratFilterCondition": "Very-Active && rho >= 100"
                 }
