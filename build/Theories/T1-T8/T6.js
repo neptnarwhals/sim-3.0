@@ -31,7 +31,7 @@ class t6Sim extends theoryClass {
             T6noC1234: [true, true, true, true, false, false, false, false, true],
             T6Snax: [true, true, true, true, () => this.stopC12[2], () => this.stopC12[2], false, false, true],
             T6C3d: [
-                () => this.variables[0].cost + l10(3) < Math.min(this.variables[1].cost, this.variables[3].cost, this.variables[6].cost),
+                () => this.variables[0].cost + l10(3) < Math.min(this.variables[1].cost, this.milestones[0] > 0 ? this.variables[3].cost : Infinity, this.variables[6].cost),
                 true,
                 () => this.variables[2].cost + l10(3) < Math.min(this.variables[1].cost, this.variables[3].cost, this.variables[6].cost),
                 true,
@@ -42,7 +42,7 @@ class t6Sim extends theoryClass {
                 false,
             ],
             T6C4d: [
-                () => this.variables[0].cost + l10(5) < Math.min(this.variables[1].cost, this.variables[3].cost, this.variables[7].cost),
+                () => this.variables[0].cost + l10(5) < Math.min(this.variables[1].cost, this.milestones[0] > 0 ? this.variables[3].cost : Infinity, this.variables[7].cost),
                 true,
                 () => this.variables[2].cost + l10(5) < Math.min(this.variables[1].cost, this.variables[3].cost, this.variables[7].cost),
                 true,
