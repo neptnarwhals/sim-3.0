@@ -1,0 +1,105 @@
+.simTable,
+.simTable th,
+.simTable td,
+.simTable tr {
+  background-color: var(--table-bg);
+  color: var(--table-f-clr);
+  border: 1px solid var(--table-f-clr);
+  transition: background-color 100ms ease-in-out, color 100ms ease-in-out;
+  position: relative;
+  height: fit-content;
+  white-space: nowrap;
+  text-align: left;
+}
+
+
+.small td {
+  padding-inline: 0.2rem;
+  font-size: 0.8rem;
+}
+.small th {
+  padding-inline: 0.9rem;
+  font-size: 0.85rem;
+}
+.big th {
+  padding-inline: 0.3em;
+  font-size: 0.8rem;
+}
+.big td {
+  padding-inline: 0.3em;
+  font-size: 0.7rem;
+}
+.simTable {
+  margin-block-start: 2.5rem;
+}
+
+.boughtVars {
+  padding: 5rem 0 5rem 1rem;
+  background-color: var(--dialog-bg);
+  color: var(--dialog-f-clr);
+  border: 0.1rem solid var(--dialog-f-clr);
+  border-radius: 0.5rem;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  max-height: 70vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.boughtVars table tr td.highlighted {
+  background-color: var(--highlight-clr-1);
+}
+
+.boughtVars table,
+.boughtVars tr,
+.boughtVars td,
+.timeDiffTable,
+.timeDiffTable tr,
+.timeDiffTable td {
+  border-collapse: collapse;
+  padding: 0.3rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+.boughtVars thead tr,
+.timeDiffTable thead tr {
+  border-bottom: 2px solid var(--dialog-f-clr);
+}
+.boughtVars tbody tr,
+.timeDiffTable tbody tr {
+  border-top: 2px solid var(--dialog-f-clr);
+}
+.boughtVars td ~ td,
+.timeDiffTable td ~ td {
+  border-left: 1px solid var(--dialog-f-clr);
+}
+.boughtVarsCloseBtn {
+  border-radius: 50%;
+  width: 1.5rem;
+  aspect-ratio: 1;
+  background-color: var(--close-btn-bg);
+  color: var(--close-btn-fg);
+  font-weight: bold;
+  font-size: 0.8rem;
+  font-style: italic;
+  font-family: "Luicida Handwriting";
+  cursor: pointer;
+  transition: scale 100ms;
+  position: fixed;
+  right: 10%;
+  top: 5%;
+  outline: 0.1em solid var(--close-btn-fg);
+}
+.boughtVars > div::-webkit-scrollbar {
+  width: 1rem;
+}
+.boughtVars > div::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb-bg);
+  border: 1px solid var(--scrollbar-thumb-border);
+  border-radius: 0.5rem;
+}
+.boughtVars > div::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-track-bg);
+  border-radius: 0.5rem;
+}

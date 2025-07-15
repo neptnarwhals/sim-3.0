@@ -8,8 +8,10 @@
     <link rel="stylesheet" href="./Styles/fonts/Computer Modern Bright Semibold/cmun-bright-semibold.css" />
     <link rel="stylesheet" href="./Styles/fonts/Computer Modern Concrete/Concrete/cmun-concrete.css" />
     <link rel="stylesheet" href="./Styles/main.css" />
-    <link rel="stylesheet" href="./Styles/simStyles.css" />
     <link rel="stylesheet" href="./Styles/navbar.css" />
+    <link rel="stylesheet" href="./Styles/controls.css" />
+    <link rel="stylesheet" href="./Styles/output.css" />
+    <link rel="stylesheet" href="./Styles/narrow.css" />
     <link rel="stylesheet" href="./Styles/terminal.css" />
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-7TELWBF6QQ"></script>
     <script>
@@ -33,7 +35,7 @@
         <button style="margin-left: 1rem; cursor: pointer" class="settingsButtons instructionsBtn">Instructions</button>
         <button style="margin-left: 0.8rem" class="settingsBtn"></button>
       </div>
-      <h1 class="font-color" style="font-family: Computer Modern Concrete; font-weight: 600">e<sup>x</sup> Theory simulator</h1>
+      <h1 class="nav-title" style="font-family: Computer Modern Concrete; font-weight: 600">e<sup>x</sup> Theory simulator</h1>
     </div>
     <div class="content-wrapper">
       <div class="controls">
@@ -68,7 +70,10 @@
           <span class="description">Mode: </span>
           <select class="mode"></select>
         </div>
-        <input style="display: none; position: relative; width: min(1rem, 5vw); outline: none" type="checkbox" class="hardCap" />
+        <div class="hardCapWrapper" style="display: none">
+          <span class="description">Hard cap? </span>
+          <input style="position: relative; width: min(1rem, 5vw); outline: none" type="checkbox" class="hardCap" />
+        </div>
         <div class="extraInputs">
           <span class="extraInputDescription" style="margin-right: 0.8rem">mode inputs</span>
           <div class="simAllInputs">
