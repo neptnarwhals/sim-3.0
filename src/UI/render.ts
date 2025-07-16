@@ -2,6 +2,7 @@ import { qs, qsa, event, ce, findIndex } from "../Utils/helpers.js";
 import data from "../Data/data.json" assert { type: "json" };
 import { updateTimeDiffTable } from "../Sim/parsers.js";
 import { global } from "../Sim/main.js";
+import { getSimState } from "./simState.js";
 
 //Inputs
 const theory = qs<HTMLSelectElement>(".theory");
@@ -13,6 +14,7 @@ const hardCap = qs(".hardCapWrapper");
 const semi_idle = qs<HTMLInputElement>(".semi-idle");
 const hard_active = qs<HTMLInputElement>(".hard-active");
 const timeDiffInputs = qsa<HTMLInputElement>(".timeDiffInput");
+const themeSelector = qs<HTMLSelectElement>(".themeSelector");
 
 //Other containers/elements
 const extraInputs = qs(".extraInputs");
@@ -26,6 +28,16 @@ const modeInputDescription = qs(".extraInputDescription");
 const theories = Object.keys(data.theories) as Array<theoryType>;
 
 window.onload = () => {
+  for (let i = 0; i < data.themes.length; i++) {
+    const option = ce<HTMLSelectElement>("option");
+    option.value = data.themes[i];
+    option.textContent = data.themes[i];
+    themeSelector.appendChild(option);
+  }
+  event(themeSelector, "change", themeUpdate);
+  
+  getSimState();
+
   for (let i = 0; i < theories.length; i++) {
     if ((data.theories[theories[i]] as unknown as Record<"UI_visible", boolean>).UI_visible === false && !global.showUnofficials) continue;
     const option = ce<HTMLSelectElement>("option");
@@ -109,4 +121,9 @@ export function theoryUpdate() {
     option.textContent = strats[i];
     strat.appendChild(option);
   }
+}
+
+export function themeUpdate() {
+  const root = document.documentElement;
+  root.setAttribute("theme", themeSelector.value);
 }

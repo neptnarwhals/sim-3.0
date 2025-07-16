@@ -1,5 +1,5 @@
 .nav {
-  background-color: var(--bg-clr-dark-0);
+  background-color: var(--bg-accent-0);
   padding: 0.4em 1rem;
   display: grid;
   grid-template-columns: auto 1fr;
@@ -85,6 +85,12 @@
 .settings input[type="checkbox"] {
   width: 1rem;
   height: 1rem;
+}
+
+.settings select {
+  background-color: var(--input-bg);
+  color: var(--input-f-clr);
+  border-color: var(--btn-border-clr);
 }
 
 

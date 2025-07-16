@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { simulate, global } from "../Sim/main.js";
 import { qs, event, sleep, ce, qsa, convertTime, logToExp } from "../Utils/helpers.js";
-import { getSimState, setSimState } from "./simState.js";
+import { setSimState } from "./simState.js";
 import jsondata from "../Data/data.json" assert { type: "json" };
 import { theoryUpdate } from "./render.js";
 //Inputs
@@ -47,8 +47,6 @@ const tableHeaders = {
 };
 thead.innerHTML = tableHeaders.all;
 table.classList.add("big");
-if (localStorage.getItem("autoSave") === "true")
-    setTimeout(() => getSimState(), 500);
 event(showUnofficials, "click", () => __awaiter(void 0, void 0, void 0, function* () {
     if (global.showUnofficials != showUnofficials.checked) {
         global.showUnofficials = showUnofficials.checked;
@@ -151,6 +149,17 @@ function updateTable(arr) {
             }
             tbody.appendChild(rowActive);
             tbody.appendChild(rowPassive);
+            // Buffer between main theories and CTs
+            if (i < arr.length - 1 && arr[i][0].match(/T[1-8]/) && !arr[i + 1][0].match(/T[1-8]/)) {
+                const bufferRow1 = ce("tr");
+                const bufferRow2 = ce("tr");
+                bufferRow1.style.display = "none";
+                const bufferText = ce("td");
+                bufferText.innerHTML = "---";
+                bufferRow2.appendChild(bufferText);
+                tbody.appendChild(bufferRow1);
+                tbody.appendChild(bufferRow2);
+            }
         }
     }
     else {

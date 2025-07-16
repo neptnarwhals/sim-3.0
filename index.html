@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="./Styles/output.css" />
     <link rel="stylesheet" href="./Styles/narrow.css" />
     <link rel="stylesheet" href="./Styles/terminal.css" />
+    <link rel="stylesheet" href="./Styles/themes.css" />
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-7TELWBF6QQ"></script>
     <script>
       if (window.location.href === "https://tredec.github.io/sim-3.0/") {
@@ -24,6 +25,12 @@
 
         gtag("config", "G-7TELWBF6QQ");
       }
+    </script>
+    <script>
+      const defaultTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "classic";
+      const state = JSON.parse(localStorage.getItem("simState") ?? `{}`);
+      const theme = (state && state.settings && state.settings.theme) ? state.settings.theme : defaultTheme
+      document.documentElement.setAttribute("theme", theme);
     </script>
     <script defer type="module" src="./build/bundle.js"></script>
   </head>
@@ -121,6 +128,7 @@
       </div>
       <span>Show a2 and a3 lvl in EFAI strat output: </span> <input type="checkbox" class="a23" /><br /><br /><br />
       <span>Show unofficial CTs: </span> <input type="checkbox" class="unofficials" /><br /><br /><br />
+      <span>Theme: </span> <select class="themeSelector"></select><br /><br /><br />
       <span style="display: none">Copies current sim state to clipboard and local storage.</span><br /><br />
       <button class="setState settingsButtons" style="display: none">Set Sim State</button><br /><br />
       <span style="display: none">Replaces the current sim state with the saved state.</span><br /><br />
@@ -133,7 +141,7 @@
       <button class="boughtVarsCloseBtn">X</button>
       <div style="overflow: auto; max-height: 55vh; position: relative; padding-right: 1rem">
         <table style="margin: 0">
-          <thead style="position: sticky; top: 0%; background-color: rgb(13, 15, 131)">
+          <thead style="position: sticky; top: 0%; background-color: var(--dialog-bg)">
             <td>Variable</td>
             <td>Lvl</td>
             <td>Cost</td>
@@ -160,43 +168,33 @@
       <h1 style="margin-bottom: 1.5rem">Instructions</h1>
       <button class="instructionsCloseBtn">X</button>
       <h2>About the sim:</h2>
+      <br>&nbsp;
       <ul>
         <li>
           <strong>Mode:</strong> You can select from different modes allowing you to do more varied inputs. Each mode is described below:
           <ul>
             <li>
-              <strong>All:</strong> This will give you an input field where you can enter all of the values of your theories. The input order for your values will be Sigma T1 T2 ...T7 T8 WSP SL EF CS2. If you
-              don't want to sim a theory, enter 0. <br />
-              <br /> You also have the option to put an "r" or "m" at the end of each value. R means that it is a rho value, and will not be affected by rho/tau conversion. M means that the value is the total
-              multiplier (make sure to have maximum possible levels of r9 bought, because this will affect the result)  , and it will be automatically converted to rho. By default, all values are expected as tau.
-              <br /> <br /> Optionally you can put a "y" at the end, this will include harder to execute strats, for example T3Play, T6AI and T8PlaySolarswap. (By default it is off)
+              <strong>All:</strong> This will give you an input field where you can enter all of the values of your theories. The input order for your values will be : <br>
+              Sigma T1 T2 ... T7 T8 WSP SL ... BaP.<br> 
+              If you don't want to sim a theory, enter 0. <br /><br />
+              You also have the option to put an "r" or "m" at the end of each value. "r" means that it is a rho value, and will not be affected by rho/tau conversion. "m" means that the value is the total
+              multiplier (make sure to have maximum possible levels of r9 bought, because this will affect the result), and it will be automatically converted to rho. By default, all values are expected as tau.
               <br />
-              <br /> Example: 95 230 50m 250 300 300 70m 250 200 7e100r y
+              <br /> Example: 95 230 50m 250 300 300 70m 250 200 7e100r
+              <br>&nbsp;
             </li>
             <li>
-              <strong>Single:</strong> You will sim one publish for a single theory using a single (or let it automatically find the best) strategy. (Cap will not affect this mode.)
+              <strong>Single:</strong> You will sim one publish for a single theory using a single (or let it automatically find the best) strategy.
+              <br>&nbsp;
             </li>
             <li>
               <strong>Chain:</strong> For Chain Sims, you are required to enter a value for "Cap." This sims every publish until it gets to your desired tau/rho. <br /> Hard Cap?: This button hard caps the
               tau/rho to the cap you placed instead of simming the entire publication.
+              <br>&nbsp;
             </li>
             <li>
               <strong>Step:</strong> A Variant of Chain that will sim in steps of n x tau/rho where n is any number.
-            </li>
-            <li>
-              <strong>Amount:</strong> A Variant of Chain where you can select the number of publications you want the sim to do. (Cap will not affect this mode.)
-            </li>
-            <li>
-              <strong>Time:</strong> A Variant of Chain where the sim will sim for an X amount of desired hours. (Cap will not affect this mode.)
-            </li>
-            <li>
-              <strong>Time diff.:</strong> In this mode you need to enter 3 inputs.Inputs 1 and 2 are the two distributions that you want the time difference to be calculated between. The different theories
-              must be separated by a comma. For every theory you can give it one more value, which is the value of how far you are into the pub. Example of e400 t1, e500 lastPub t2 where you are at e505
-              mid-pub ande 400 t3: <br /> 400, 500 505, 400. All values also accept an r/t/m after the value. Default is tau.
-              <br />
-              <br />
-              The 3rd input is sigma for both distributions respectively, ct's (y/n) and idle strats (y/n). By default they are off. Example for 215 and 200 sigma, normal theories and idle strats only: <br />
-              215 200 n y
+              <br>&nbsp;
             </li>
           </ul>
         </li>

@@ -8,6 +8,7 @@ event(settingsBtn, "pointerdown", () => {
     document.body.style.overflow = "hidden";
 });
 event(settingsCloseBtn, "pointerdown", () => {
+    setSimState();
     settingsModal.close();
     document.body.style.overflow = "auto";
 });
@@ -38,4 +39,3 @@ event(qs(".resetSettings"), "pointerdown", () => {
     ddtSlider.value = "2.71233";
     ddtOtp.textContent = "1.0001";
 });
-// if(autoState)setTimeout(() => getSimState(), 500);
