@@ -251,6 +251,7 @@ class rzSim extends theoryClass {
         }
     }
     bhProcess(zResult = null, tmpZ = null) {
+        this.offGrid = true;
         if (zResult === null) {
             zResult = zeta(this.t_var, this.ticks, this.offGrid, lookups.zetaLookup);
         }

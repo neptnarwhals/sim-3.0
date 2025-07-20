@@ -279,6 +279,8 @@ class rzSim extends theoryClass<theory> implements specificTheoryProps {
     }
 
     bhProcess(zResult: ComplexValue | null = null, tmpZ: ComplexValue | null = null) {
+        this.offGrid = true;
+
         if (zResult === null){
             zResult = zeta(this.t_var, this.ticks, this.offGrid, lookups.zetaLookup);
         }
