@@ -1,4 +1,5 @@
 import { qs, round } from "../Utils/helpers.js";
+import { global } from "../Sim/main.js"
 import { modeUpdate } from "./render.js";
 
 //Inputs
@@ -22,12 +23,14 @@ const dtOtp = qs(".dtOtp");
 const ddtSlider = <HTMLInputElement>qs(".ddt");
 const ddtOtp = qs(".ddtOtp");
 
+const themeSelector = <HTMLSelectElement>qs(".themeSelector");
+
+const simAllStrats = <HTMLSelectElement>qs(".simallstrats");
+const skipCompletedCTs = <HTMLInputElement>qs(".skipcompletedcts");
 const showA23 = <HTMLInputElement>qs(".a23");
 const showUnofficials = <HTMLInputElement>qs(".unofficials");
 
-const themeSelector = <HTMLSelectElement>qs(".themeSelector");
-
-const defaultState = `{"settings":{"dt":"1.5","ddt":"1.0001","showA23":false,"showUnofficials":false}}`;
+const defaultState = `{"settings":{"dt":"1.5","ddt":"1.0001","skipCompletedCTs":false,"showA23":false,"showUnofficials":false}}`;
 const defaultTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? "dark" : "classic";
 
 export function setSimState() {
@@ -37,6 +40,8 @@ export function setSimState() {
       settings: {
         dt: dtOtp.textContent,
         ddt: ddtOtp.textContent,
+        simAllStrats: simAllStrats.value,
+        skipCompletedCTs: skipCompletedCTs.checked,
         showA23: showA23.checked,
         showUnofficials: showUnofficials.checked,
         theme: themeSelector.value
@@ -48,8 +53,11 @@ export function getSimState() {
   const state = JSON.parse(localStorage.getItem("simState") ?? defaultState);
   dtOtp.textContent = state.settings.dt;
   ddtOtp.textContent = state.settings.ddt;
+  simAllStrats.value = state.settings.simAllStrats ?? "all";
+  skipCompletedCTs.checked = state.settings.skipCompletedCTs ?? false;
   showA23.checked = state.settings.showA23;
   showUnofficials.checked = state.settings.showUnofficials ?? false;
+  global.showUnofficials = showUnofficials.checked;
   // Determines the slider position based on the stored value (see settings.ts)
   dtSlider.value = String(round(Math.log2((state.settings.dt - 0.15) / (4.9 / (1 + 2 ** parseFloat(dtSlider.max)))), 4));
   ddtSlider.value = String(round(Math.log((state.settings.ddt - 1) / (0.3 / 3 ** parseFloat(ddtSlider.max))) / Math.log(3), 4));
