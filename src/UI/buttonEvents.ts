@@ -1,5 +1,6 @@
 import html2canvas from "html2canvas";
 import { qs, event } from "../Utils/helpers.js";
+import { global } from "../Sim/main.js";
 
 //Buttons
 const clear = qs(".clear");
@@ -14,6 +15,7 @@ const output = qs(".output");
 event(clear, "pointerdown", () => {
   tbody = qs("tbody");
   while (tbody.firstChild) tbody.firstChild.remove();
+  global.varBuy = [];
   output.textContent = "";
   console.clear();
 });
