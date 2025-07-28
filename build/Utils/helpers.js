@@ -55,7 +55,7 @@ export function formatNumber(value, precision = 6) {
 export function round(number, decimals) {
     return Math.round(number * Math.pow(10, decimals)) / Math.pow(10, decimals);
 }
-export function add(value1, value2) {
+export function add_old(value1, value2) {
     const max = value1 > value2 ? value1 : value2;
     const min = value1 > value2 ? value2 : value1;
     const wholePart1 = Math.floor(max);
@@ -64,7 +64,12 @@ export function add(value1, value2) {
     const fractionalPart2 = Math.pow(10, (min - wholePart2));
     return wholePart1 + Math.log10(fractionalPart1 + fractionalPart2 / Math.pow(10, (wholePart1 - wholePart2)));
 }
-export function subtract(value1, value2) {
+export function add(value1, value2) {
+    const max = value1 > value2 ? value1 : value2;
+    const min = value1 > value2 ? value2 : value1;
+    return max + l10(1 + Math.pow(10, (min - max)));
+}
+export function subtract_old(value1, value2) {
     const max = value1 > value2 ? value1 : value2;
     const min = value1 > value2 ? value2 : value1;
     const wholePart1 = Math.floor(max);
@@ -72,6 +77,11 @@ export function subtract(value1, value2) {
     const wholePart2 = Math.floor(min);
     const fractionalPart2 = Math.pow(10, (min - wholePart2));
     return wholePart1 + Math.log10(fractionalPart1 - fractionalPart2 / Math.pow(10, (wholePart1 - wholePart2)));
+}
+export function subtract(value1, value2) {
+    const max = value1 > value2 ? value1 : value2;
+    const min = value1 > value2 ? value2 : value1;
+    return max + l10(1 - Math.pow(10, (min - max)));
 }
 export let l10 = Math.log10;
 export let l2 = Math.log2;

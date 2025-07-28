@@ -149,19 +149,14 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
         let partial_sum = 0;
 
         if (n_value <= 100) { //exact computation
-            for (let i = 1; i <= n_value; i++) {
+            for (let i = 1; i <= n_value + 0.01; i++) {
                 partial_sum += 1 / (i * i);
-                //partial_sum = add(partial_sum, -2*l10(i))
             }
         } else {
-          //const l10np1 = add(n_value, 0);
-          //const s = l10(Math.PI*Math.PI/6);
           partial_sum = ((Math.PI * Math.PI) / 6 - (1 / (n_value + 1) + 1 / (2 * ((n_value + 1) * (n_value + 1)))));
-          //partial_sum = subtract(s, add(-l10np1, -l10(2)-2*l10np1))
         }
 
         return 12 / (Math.PI * Math.PI) - 1.0 / partial_sum;
-        //return subtract(l10(12 / (Math.PI * Math.PI)), -partial_sum);
     }
     else {
         let a = 0.3
@@ -344,6 +339,9 @@ class bapSim extends theoryClass<theory> implements specificTheoryProps {
             this.boughtVars.push({ variable: this.varNames[minCost[1]], level: this.variables[minCost[1]].level + 1, cost: this.variables[minCost[1]].cost, timeStamp: this.t });
           }
           this.variables[minCost[1]].buy();
+          if (minCost[1] === 11) {
+            console.log(`${this.variables[11].level} -> ${10**this.variables[11].value}`);
+          }
         } else break;
       }
     }

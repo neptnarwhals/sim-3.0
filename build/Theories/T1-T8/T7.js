@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { global } from "../../Sim/main.js";
-import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { add_old, createResult, l10, subtract_old, sleep } from "../../Utils/helpers.js";
 import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
@@ -20,6 +20,8 @@ export default function t7(data) {
         return res;
     });
 }
+const add = add_old;
+const subtract = subtract_old;
 class t7Sim extends theoryClass {
     getBuyingConditions() {
         if (this.lastPub >= 100)

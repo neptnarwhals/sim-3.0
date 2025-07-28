@@ -1,5 +1,5 @@
 import { global } from "../../Sim/main.js";
-import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { add_old, createResult, l10, subtract_old, sleep } from "../../Utils/helpers.js";
 import { ExponentialValue, StepwisePowerSumValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { specificTheoryProps, theoryClass, conditionFunction } from "../theory.js";
@@ -12,6 +12,9 @@ export default async function t7(data: theoryData): Promise<simResult> {
 }
 
 type theory = "T7";
+
+const add = add_old;
+const subtract = subtract_old;
 
 class t7Sim extends theoryClass<theory> implements specificTheoryProps {
   rho: number;
