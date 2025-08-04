@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { global } from "../../Sim/main.js";
-import { add, createResult, l10, subtract, sleep, binarySearch } from "../../Utils/helpers.js";
+import { add, createResult, l10, subtract, sleep, binarySearch, getBestResult } from "../../Utils/helpers.js";
 import { ExponentialValue, StepwisePowerSumValue, LinearValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
 import { theoryClass } from "../theory.js";
@@ -544,15 +544,16 @@ class rzSimWrap extends theoryClass {
     }
     simulate() {
         return __awaiter(this, void 0, void 0, function* () {
+            // Normal BH
             if (this.strat.includes("BH") && !this.strat.includes("Rewind") && this.lastPub >= 600) {
                 let zeroList = this.strat.startsWith("RZd") ? rzdZeros : rzZeros;
                 if (this.strat.includes("Long")) {
                     zeroList = goodzeros.longZeros;
                 }
                 let startZeroIndex = 0;
-                let bestSim = new rzSim(this._originalData);
-                bestSim.bhAtRecovery = true;
-                let bestSimRes = yield bestSim.simulate();
+                let sim = new rzSim(this._originalData);
+                sim.bhAtRecovery = true;
+                let bestSimRes = yield sim.simulate();
                 let boundaryCondition = null;
                 if (!this.strat.startsWith("RZd")) {
                     for (let x of goodzeros.rzIdleBHBoundaries) {
@@ -574,7 +575,6 @@ class rzSimWrap extends theoryClass {
                     boundaryCondition = {
                         "toRho": 9999999999, "from": 3000, "to": 999999999
                     };
-                    bestSim = null;
                     bestSimRes = null;
                 }
                 for (let i = startZeroIndex; i < zeroList.length; i++) {
@@ -587,10 +587,7 @@ class rzSimWrap extends theoryClass {
                     let internalSim = new rzSim(this._originalData);
                     internalSim.targetZero = zero;
                     let res = yield internalSim.simulate();
-                    if (bestSim == null || bestSim.maxTauH < internalSim.maxTauH) {
-                        bestSim = internalSim;
-                        bestSimRes = res;
-                    }
+                    bestSimRes = getBestResult(bestSimRes, res);
                     if (!this.strat.startsWith("RZd")) {
                         // Actual bounds are 14 to 18, saves 23m, but performance is shit.
                         for (let j = 14; j <= 15; j++) {
@@ -600,10 +597,7 @@ class rzSimWrap extends theoryClass {
                             internalSim3.maxC1Level = internalSim.variables[0].level - j;
                             internalSim3.maxC1LevelActual = internalSim.variables[0].level;
                             let res3 = yield internalSim3.simulate();
-                            if (bestSim.maxTauH < internalSim3.maxTauH) {
-                                bestSim = internalSim3;
-                                bestSimRes = res3;
-                            }
+                            bestSimRes = getBestResult(bestSimRes, res3);
                         }
                     }
                     else {
@@ -612,17 +606,7 @@ class rzSimWrap extends theoryClass {
                         internalSim2.normalPubRho = internalSim.pubRho;
                         internalSim2.maxC1LevelActual = internalSim.variables[0].level;
                         let res2 = yield internalSim2.simulate();
-                        if (bestSim.maxTauH < internalSim2.maxTauH) {
-                            bestSim = internalSim2;
-                            bestSimRes = res2;
-                        }
-                    }
-                }
-                for (let key in bestSim) {
-                    // @ts-ignore
-                    if (bestSim.hasOwnProperty(key) && typeof bestSim[key] !== "function") {
-                        // @ts-ignore
-                        this[key] = bestSim[key];
+                        bestSimRes = getBestResult(bestSimRes, res2);
                     }
                 }
                 if (bestSimRes == null) {
@@ -634,11 +618,10 @@ class rzSimWrap extends theoryClass {
                 let zeroList = rzdZeros;
                 let zeroRewindList = goodzeros.rzRewind;
                 let startZeroIndex = 0;
-                let bestSim = new rzSim(this._originalData);
-                let bestSim2 = null;
-                bestSim.bhAtRecovery = true;
-                let bestSimRes = yield bestSim.simulate();
-                let bestSim2Res = null;
+                let sim = new rzSim(this._originalData);
+                sim.bhAtRecovery = true;
+                let bestSimRes = yield sim.simulate();
+                let bestSimRes2 = null;
                 let boundaryCondition = null;
                 for (let x of goodzeros.rzIdleBHBoundaries) {
                     if (this._originalData.rho <= x.toRho) {
@@ -657,24 +640,18 @@ class rzSimWrap extends theoryClass {
                     let internalSim = new rzSim(this._originalData);
                     internalSim.targetZero = zero;
                     let res = yield internalSim.simulate();
-                    if (bestSim == null || bestSim.maxTauH < internalSim.maxTauH) {
-                        bestSim = internalSim;
-                        bestSimRes = res;
-                    }
+                    bestSimRes = getBestResult(bestSimRes, res);
                     let internalSim2 = new rzSim(this._originalData);
                     internalSim2.targetZero = zero;
                     internalSim2.normalPubRho = internalSim.pubRho;
                     internalSim2.maxC1LevelActual = internalSim.variables[0].level;
                     let res2 = yield internalSim2.simulate();
-                    if (bestSim.maxTauH < internalSim2.maxTauH) {
-                        bestSim = internalSim2;
-                        bestSimRes = res2;
-                    }
+                    bestSimRes = getBestResult(bestSimRes, res2);
                 }
                 let maxW1 = Infinity;
-                for (let i = bestSim.boughtVars.length - 1; i >= 0; i--) {
-                    if (bestSim.boughtVars[i].variable === "w1") {
-                        maxW1 = bestSim.boughtVars[i].level;
+                for (let i = bestSimRes.boughtVars.length - 1; i >= 0; i--) {
+                    if (bestSimRes.boughtVars[i].variable === "w1") {
+                        maxW1 = bestSimRes.boughtVars[i].level;
                         break;
                     }
                 }
@@ -701,91 +678,46 @@ class rzSimWrap extends theoryClass {
                         internalSim.targetZero = rewindPoint;
                         internalSim.maxW1 = maxW1 + extraW1;
                         let res = yield internalSim.simulate();
-                        if (bestSim2 == null || bestSim2.maxTauH < internalSim.maxTauH) {
-                            bestSim2 = internalSim;
-                            bestSim2Res = res;
-                        }
+                        bestSimRes2 = getBestResult(bestSimRes2, res);
                         let internalSim2 = new rzSim(this._originalData);
                         internalSim2.targetZero = rewindPoint;
                         internalSim2.maxW1 = maxW1 + extraW1;
                         internalSim2.normalPubRho = internalSim.pubRho;
                         internalSim2.maxC1LevelActual = internalSim.variables[0].level;
                         let res2 = yield internalSim2.simulate();
-                        if (bestSim2.maxTauH < internalSim2.maxTauH) {
-                            bestSim2 = internalSim2;
-                            bestSim2Res = res2;
-                        }
+                        bestSimRes2 = getBestResult(bestSimRes2, res2);
                     }
                 }
-                for (let key in bestSim2) {
-                    // @ts-ignore
-                    if (bestSim2.hasOwnProperty(key) && typeof bestSim2[key] !== "function") {
-                        // @ts-ignore
-                        this[key] = bestSim2[key];
-                    }
-                }
-                if (bestSim2Res == null) {
+                if (bestSimRes2 == null) {
                     throw new Error("result somehow not set?");
                 }
-                return bestSim2Res;
+                return bestSimRes2;
             }
             else if (this.strat.includes("MS") && this._originalData.rho <= 400 && this._originalData.rho >= 10) {
-                let normalSims = [
-                    new rzSim(this._originalData),
-                    new rzSim(this._originalData),
-                    new rzSim(this._originalData),
-                    new rzSim(this._originalData),
-                    new rzSim(this._originalData),
-                    new rzSim(this._originalData),
-                    new rzSim(this._originalData)
-                ];
+                const swapPointDeltas = [0, -1, -2, -3, -4, -5, -6];
                 let normalRets = [];
-                normalSims[1].swapPointDelta = -1;
-                normalSims[2].swapPointDelta = -2;
-                normalSims[3].swapPointDelta = -3;
-                normalSims[4].swapPointDelta = -4;
-                normalSims[5].swapPointDelta = -5;
-                normalSims[6].swapPointDelta = -6;
-                for (let i = 0; i < normalSims.length; i++) {
-                    normalRets.push(yield normalSims[i].simulate());
+                for (let i = 0; i < swapPointDeltas.length; i++) {
+                    let normalSim = new rzSim(this._originalData);
+                    normalSim.swapPointDelta = swapPointDeltas[i];
+                    normalRets.push(yield normalSim.simulate());
                 }
-                let coastSims = [];
                 let coastRets = [];
-                for (let i = 0; i < normalSims.length; i++) {
+                for (let i = 0; i < normalRets.length; i++) {
                     let ss = new rzSim(this._originalData);
-                    ss.normalPubRho = normalSims[i].pubRho;
-                    ss.swapPointDelta = normalSims[i].swapPointDelta;
-                    coastSims.push(ss);
+                    ss.normalPubRho = normalRets[i].rawData.pubRho;
+                    ss.swapPointDelta = swapPointDeltas[i];
                     coastRets.push(yield ss.simulate());
                 }
-                let totalArr = [];
                 let retArr = [];
-                for (let sim of normalSims) {
-                    totalArr.push(sim);
-                }
-                for (let sim of coastSims) {
-                    totalArr.push(sim);
-                }
                 for (let ret of normalRets) {
                     retArr.push(ret);
                 }
                 for (let ret of coastRets) {
                     retArr.push(ret);
                 }
-                let bestSim = totalArr[0];
                 let bestRet = retArr[0];
-                for (let i = 0; i < totalArr.length; i++) {
-                    if (bestSim.maxTauH < totalArr[i].maxTauH) {
-                        bestSim = totalArr[i];
-                        bestRet = retArr[i];
-                    }
-                }
-                for (let key in bestSim) {
-                    // @ts-ignore
-                    if (bestSim.hasOwnProperty(key) && typeof bestSim[key] !== "function") {
-                        // @ts-ignore
-                        this[key] = bestSim[key];
-                    }
+                for (let i = 0; i < retArr.length; i++) {
+                    bestRet = getBestResult(bestRet, retArr[i]);
                 }
                 return bestRet;
             }
@@ -796,22 +728,13 @@ class rzSimWrap extends theoryClass {
                 internalSim2.normalPubRho = internalSim.pubRho;
                 internalSim2.maxC1Level = internalSim.variables[0].level - 14;
                 internalSim2.maxC1LevelActual = internalSim.variables[0].level;
-                let ret2 = internalSim2.simulate();
-                let bestSim = internalSim.maxTauH > internalSim2.maxTauH ? internalSim : internalSim2;
-                let bestRet = internalSim.maxTauH > internalSim2.maxTauH ? ret : ret2;
+                let ret2 = yield internalSim2.simulate();
+                let bestRet = getBestResult(ret, ret2);
                 let internalSim3 = new rzSim(this._originalData);
                 internalSim3.normalPubRho = internalSim.pubRho;
                 internalSim3.maxC1Level = internalSim.variables[0].level - 15;
-                let ret3 = internalSim3.simulate();
-                bestSim = bestSim.maxTauH > internalSim3.maxTauH ? bestSim : internalSim3;
-                bestRet = bestSim.maxTauH > internalSim3.maxTauH ? bestRet : ret3;
-                for (let key in bestSim) {
-                    // @ts-ignore
-                    if (bestSim.hasOwnProperty(key) && typeof bestSim[key] !== "function") {
-                        // @ts-ignore
-                        this[key] = bestSim[key];
-                    }
-                }
+                let ret3 = yield internalSim3.simulate();
+                bestRet = getBestResult(bestRet, ret3);
                 return bestRet;
             }
         });
