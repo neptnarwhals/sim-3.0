@@ -8,9 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { global } from "../../Sim/main.js";
-import { add, createResult, l10, subtract, sleep } from "../../Utils/helpers.js";
+import { add, createResult, l10, subtract, sleep, getBestResult } from "../../Utils/helpers.js";
 import { ExponentialValue, StepwisePowerSumValue, BaseValue } from "../../Utils/value";
 import Variable from "../../Utils/variable.js";
+import pubtable from "./helpers/FPpubtable.json" assert { type: "json" };
 import { theoryClass } from "../theory.js";
 import { CompositeCost, ExponentialCost, FirstFreeCost } from '../../Utils/cost.js';
 export default function fp(data) {
@@ -51,6 +52,7 @@ class fpSim extends theoryClass {
     getBuyingConditions() {
         const conditions = {
             FP: new Array(8).fill(true),
+            FPcoast: new Array(8).fill(true),
             FPdMS: [
                 true,
                 () => this.variables[1].cost + Math.log10((this.variables[1].level % 100) + 1) < this.variables[2].cost,
@@ -129,6 +131,7 @@ class fpSim extends theoryClass {
         ];
         const tree = {
             FP: globalOptimalRoute,
+            FPcoast: globalOptimalRoute,
             FPdMS: globalOptimalRoute,
             FPmodBurstC1MS: globalOptimalRoute,
         };
@@ -215,8 +218,10 @@ class fpSim extends theoryClass {
         this.U_n = 1;
         this.S_n = 0;
         this.n = 1;
-        this.prevN = 1;
         this.updateN_flag = true;
+        this.forcedPubRho = Infinity;
+        this.coasting = new Array(this.variables.length).fill(false);
+        this.bestRes = null;
         //pub values
         this.milestones = { snexp: 0, fractals: 0, nboost: 0, snboost: 0, sterm: 0, expterm: 0 };
         this.conditions = this.getBuyingConditions();
@@ -224,9 +229,37 @@ class fpSim extends theoryClass {
         this.milestoneTree = this.getMilestoneTree();
         this.updateMilestones();
     }
+    copyFrom(other) {
+        super.copyFrom(other);
+        this.milestones = Object.assign({}, other.milestones);
+        this.curMult = other.curMult;
+        this.rho = other.rho;
+        this.q = other.q;
+        this.r = other.r;
+        this.t_var = other.t_var;
+        this.T_n = other.T_n;
+        this.U_n = other.U_n;
+        this.S_n = other.S_n;
+        this.n = other.n;
+        this.updateN_flag = other.updateN_flag;
+        this.forcedPubRho = other.forcedPubRho;
+        this.coasting = [...other.coasting];
+    }
+    copy() {
+        let newsim = new fpSim(this.getDataForCopy());
+        newsim.copyFrom(this);
+        return newsim;
+    }
     simulate() {
         return __awaiter(this, void 0, void 0, function* () {
             let pubCondition = false;
+            if (this.lastPub >= 1200 && this.lastPub < 1990 && this.strat !== "FP") {
+                let newpubtable = pubtable.fpdata;
+                let pubseek = Math.round(this.lastPub * 8);
+                this.forcedPubRho = newpubtable[pubseek.toString()] / 8;
+                if (this.forcedPubRho === undefined)
+                    this.forcedPubRho = Infinity;
+            }
             while (!pubCondition) {
                 if (!global.simulating)
                     break;
@@ -237,23 +270,28 @@ class fpSim extends theoryClass {
                     this.maxRho = this.rho;
                 this.updateMilestones();
                 this.curMult = Math.pow(10, (this.getTotMult(this.maxRho) - this.totMult));
-                this.buyVariables();
-                pubCondition =
-                    (global.forcedPubTime !== Infinity
-                        ? this.t > global.forcedPubTime
-                        : this.t > this.pubT * 2 || this.pubRho > this.cap[0] || this.curMult > 10000) && this.pubRho > this.pubUnlock;
+                yield this.buyVariables();
+                if (this.forcedPubRho !== Infinity) {
+                    pubCondition = this.pubRho >= this.forcedPubRho && this.pubRho > this.pubUnlock && (this.pubRho <= 2000 || this.t > this.pubT * 2);
+                    pubCondition || (pubCondition = this.pubRho > this.cap[0]);
+                }
+                else {
+                    pubCondition =
+                        (global.forcedPubTime !== Infinity
+                            ? this.t > global.forcedPubTime
+                            : this.t > this.pubT * 2 || this.pubRho > this.cap[0] || this.curMult > 10000) && this.pubRho > this.pubUnlock;
+                }
                 this.ticks++;
             }
             this.pubMulti = Math.pow(10, (this.getTotMult(this.pubRho) - this.totMult));
             while (this.boughtVars[this.boughtVars.length - 1].timeStamp > this.pubT)
                 this.boughtVars.pop();
             const result = createResult(this, "");
-            return result;
+            return getBestResult(result, this.bestRes);
         });
     }
     tick() {
         if (this.updateN_flag) {
-            this.prevN = this.n;
             const term2 = this.milestones.nboost > 0 ? Math.floor(stepwiseSum(Math.max(0, this.variables[6].level - 30), 1, 35) * 2) : 0;
             const term3 = this.milestones.nboost > 1 ? Math.floor(stepwiseSum(Math.max(0, this.variables[6].level - 69), 1, 30) * 2.4) : 0;
             this.n = Math.min(20000, 1 + stepwiseSum(this.variables[6].level, 1, 40) + term2 + term3);
@@ -290,26 +328,50 @@ class fpSim extends theoryClass {
         if (this.maxRho < this.recovery.value)
             this.recovery.time = this.t;
         this.tauH = (this.maxRho - this.lastPub) / (this.t / 3600);
-        if (this.maxTauH < this.tauH || this.maxRho >= this.cap[0] - this.cap[1] || this.pubRho < this.pubUnlock || global.forcedPubTime !== Infinity) {
+        if (this.maxTauH < this.tauH ||
+            this.maxRho >= this.cap[0] - this.cap[1] ||
+            this.pubRho < this.pubUnlock ||
+            global.forcedPubTime !== Infinity ||
+            (this.forcedPubRho !== Infinity && this.pubRho < this.forcedPubRho)) {
+            if (this.maxTauH < this.tauH && this.maxRho >= 2000) {
+                this.coasting = new Array(this.variables.length).fill(false);
+                this.forcedPubRho = Infinity;
+            }
             this.maxTauH = this.tauH;
             this.pubT = this.t;
             this.pubRho = this.maxRho;
         }
     }
     buyVariables() {
-        for (let i = this.variables.length - 1; i >= 0; i--)
-            while (true) {
-                if (this.rho > this.variables[i].cost && this.conditions[i]() && this.milestoneConditions[i]()) {
-                    if (this.maxRho + 5 > this.lastPub) {
-                        this.boughtVars.push({ variable: this.varNames[i], level: this.variables[i].level + 1, cost: this.variables[i].cost, timeStamp: this.t });
+        return __awaiter(this, void 0, void 0, function* () {
+            const lowbounds = [0, 0.3, 0.15, 0.3, 0.3, 0.1, 0, 0];
+            const highbounds = [0, 1.5, 0.5, 1.5, 1, 1.5, 1.5, 0];
+            for (let i = this.variables.length - 1; i >= 0; i--)
+                while (true) {
+                    if (this.rho > this.variables[i].cost && this.conditions[i]() && this.milestoneConditions[i]() && !this.coasting[i]) {
+                        if (this.forcedPubRho !== Infinity) {
+                            if (this.forcedPubRho - this.variables[i].cost <= lowbounds[i]) {
+                                this.coasting[i] = true;
+                                break;
+                            }
+                            if (this.forcedPubRho - this.variables[i].cost < highbounds[i]) {
+                                let fork = this.copy();
+                                fork.coasting[i] = true;
+                                const forkres = yield fork.simulate();
+                                this.bestRes = getBestResult(this.bestRes, forkres);
+                            }
+                        }
+                        if (this.maxRho + 5 > this.lastPub) {
+                            this.boughtVars.push({ variable: this.varNames[i], level: this.variables[i].level + 1, cost: this.variables[i].cost, timeStamp: this.t });
+                        }
+                        this.rho = subtract(this.rho, this.variables[i].cost);
+                        this.variables[i].buy();
+                        if (i === 6)
+                            this.updateN_flag = true;
                     }
-                    this.rho = subtract(this.rho, this.variables[i].cost);
-                    this.variables[i].buy();
-                    if (i === 6)
-                        this.updateN_flag = true;
+                    else
+                        break;
                 }
-                else
-                    break;
-            }
+        });
     }
 }
