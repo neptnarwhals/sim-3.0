@@ -34,7 +34,7 @@ function createImage(mode: string) {
         navigator.clipboard
           .write([new ClipboardItem({ "image/png": blob } as { [key: string]: Blob })])
           .then(() => {
-            console.log("Sucsessfully created image!");
+            console.log("Sucsessfully created image and copied to clipboard!");
           })
           .catch(() => console.log("Failed creating image."));
       }
