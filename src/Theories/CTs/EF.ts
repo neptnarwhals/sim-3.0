@@ -250,7 +250,7 @@ class efSim extends theoryClass<theory> implements specificTheoryProps {
 
     this.t_var += this.dt * (this.variables[0].level / 5 + 0.2);
 
-    const a = (this.variables[7].value + this.variables[8].value + this.variables[9].value) * (0.1 * this.milestones[2] + 1);
+    const a = this.milestones[1] > 0 ? (this.variables[7].value + this.variables[8].value + this.variables[9].value) * (0.1 * this.milestones[2] + 1) : 0;
 
     const b = this.variables[3].value + this.variables[4].value;
 
